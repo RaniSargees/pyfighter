@@ -15,13 +15,14 @@ class Game():
 		self.playing = 1
 		while self.playing:
 			keys = pygame.key.get_pressed()
+			events = pygame.event.get()
 			self.dt = self.clock.tick(FPS) / 1000
 			#Events
-			for event in pygame.event.get():
+			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
 			self.win.fill((255,255,255))
-			self.sprites.update(keys)
+			self.sprites.update(keys, events)
 			self.draw()
 
 	def draw(self):

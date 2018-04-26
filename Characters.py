@@ -7,42 +7,38 @@ class Char(pygame.sprite.Sprite):
 		self.game = game
 		self.x = 200
 		self.y = 200
-		self.spd = 400
-		self.jumpTotal = 2
-		self.jumpL = self.jumpTotal
-		self.jumping = False
-		self.jumpTime = 0.8
+		self.moveSpeed = 400
+		self.jumpSpeed = -800
+		self.maxJumps = 2
+		self.currentJumps = self.maxJumps
+		self.vspeed = 0
+		self.hspeed = 0
+		self.gravity = 28
 
-	def update(self,keys):
+	def update(self,keys,events):
 		self.keys = keys
-		self.get_keys()
-		if self.jumping == True:
-			self.jumpVar -= self.game.dt
-			self.y -= ((self.jumpVar*50)**2) * self.game.dt
-			if self.jumpVar <= 0:
-				self.jumping = False
-		self.y += 500 * self.game.dt
-		if self.y > self.game.ground:
-			self.jumpL = self.jumpTotal
+		self.events = events
+		if self.y >= self.game.ground:
+			self.currentJumps = self.maxJumps
 			self.y = self.game.ground
+			self.vspeed = 0
+		else: self.vspeed += self.gravity
+		self.get_keys()
+		self.y += self.vspeed * self.game.dt
+		self.x += self.hspeed * self.game.dt
 		pygame.draw.rect(self.game.win,(0,0,0),(self.x,self.y,30,50))
 
 	def jump(self):
-		if self.jumping == False and self.jumpL:
-			self.jumpVar = self.jumpTime
-			self.jumping = True
-			self.jumpL -= 1
+		if self.currentJumps:
+			self.currentJumps -= 1
+			self.vspeed = self.jumpSpeed
 
 	def get_keys(self):
-		if self.keys[pygame.K_a]:
-			self.x -= self.spd * self.game.dt
-		if self.keys[pygame.K_d]:
-			self.x += self.spd * self.game.dt
-		if self.keys[pygame.K_w] or self.keys[pygame.K_SPACE]:
-			if self.keyhold == False:
-				self.keyhold = True
-				self.jump()
-		else:
-			self.keyhold = False
-			self.jumping = False
+		if self.keys[pygame.K_a] and not self.keys[pygame.K_d]:
+			self.hspeed = -self.moveSpeed
+		elif self.keys[pygame.K_d] and not self.keys[pygame.K_a]:
+			self.hspeed = self.moveSpeed
+		else: self.hspeed = 0
+		for e in self.events:
+			if e.type == pygame.KEYDOWN and e.key in (pygame.K_SPACE, pygame.K_w):self.jump();print(1)
 
