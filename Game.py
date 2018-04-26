@@ -12,26 +12,22 @@ class Game():
 	def new(self):
 		self.Test = Char(self)
 	def run(self):
-		self.playing = True
+		self.playing = 1
 		while self.playing:
 			keys = pygame.key.get_pressed()
-			self.dt = self.clock.tick(FPS) / 1000.0
+			self.dt = self.clock.tick(FPS) / 1000
 			#Events
-			for event in pygame.event.get(): 
+			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
-					Play = False
-			
+					self.playing = 0
 			self.win.fill((255,255,255))
 			self.sprites.update(keys)
 			self.draw()
-	
+
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
 		pygame.display.update()
-	
 
 g = Game()
-while 1:
-	g.new()
-	g.run()
-	
+g.new()
+g.run()

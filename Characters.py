@@ -12,7 +12,7 @@ class Char(pygame.sprite.Sprite):
 		self.jumpL = self.jumpTotal
 		self.jumping = False
 		self.jumpTime = 0.8
-		
+
 	def update(self,keys):
 		self.keys = keys
 		self.get_keys()
@@ -26,13 +26,13 @@ class Char(pygame.sprite.Sprite):
 			self.jumpL = self.jumpTotal
 			self.y = self.game.ground
 		pygame.draw.rect(self.game.win,(0,0,0),(self.x,self.y,30,50))
-	
+
 	def jump(self):
 		if self.jumping == False and self.jumpL:
 			self.jumpVar = self.jumpTime
 			self.jumping = True
 			self.jumpL -= 1
-	
+
 	def get_keys(self):
 		if self.keys[pygame.K_a]:
 			self.x -= self.spd * self.game.dt
@@ -45,7 +45,4 @@ class Char(pygame.sprite.Sprite):
 		else:
 			self.keyhold = False
 			self.jumping = False
-			
-			
-	
-		
+
