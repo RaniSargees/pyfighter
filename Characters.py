@@ -7,7 +7,8 @@ class Char(pygame.sprite.Sprite):
 		self.game = game
 		self.x = 200
 		self.y = 200
-		self.moveSpeed = 400
+		self.maxMoveSpeed = 400
+		self.moveSpeed = 60
 		self.jumpSpeed = -500
 		self.jumpBonusSpeed = -30
 		self.maxJumps = 2
@@ -40,10 +41,10 @@ class Char(pygame.sprite.Sprite):
 
 	def get_keys(self):
 		if self.keys[pygame.K_a] and not self.keys[pygame.K_d]:
-			self.hspeed = -self.moveSpeed
+			self.hspeed = max(self.hspeed-self.moveSpeed, -self.maxMoveSpeed)
 		elif self.keys[pygame.K_d] and not self.keys[pygame.K_a]:
-			self.hspeed = self.moveSpeed
-		else: self.hspeed = 0
+			self.hspeed = min(self.hspeed+self.moveSpeed, self.maxMoveSpeed)
+		elif self.hspeed: self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
 		self.gravityMultiplier = (bool(self.keys[pygame.K_s])*2)+1
 		for e in self.events:
 			if e.type == pygame.KEYDOWN and e.key in (pygame.K_SPACE, pygame.K_w):self.jump()
