@@ -5,6 +5,8 @@ FPS = 60
 class Game():
 	def __init__(self):
 		pygame.init()
+		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+		for x in self.joysticks: x.init()
 		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
@@ -32,3 +34,4 @@ class Game():
 g = Game()
 g.new()
 g.run()
+
