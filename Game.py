@@ -2,11 +2,17 @@ import pygame, math
 from Characters import *
 FPS = 60
 
+class dummyJoystick():
+	def __init__(i):pass
+	def get_axis(i,j):return 0
+	def get_button(i,j):return 0
+
 class Game():
 	def __init__(self):
 		pygame.init()
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
+		for x in range(2-len(self.joysticks)):self.joysticks.append(dummyJoystick())
 		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
