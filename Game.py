@@ -14,7 +14,7 @@ class Game():
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500
 	def new(self):
-		self.Test = Char(self, self.joysticks[0])
+		for x in self.joysticks:Char(self, x)
 	def run(self):
 		self.playing = 1
 		while self.playing:
