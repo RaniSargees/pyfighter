@@ -1,10 +1,6 @@
 import pygame, math
 from Characters import *
-
-class dummyJoystick():
-	def __init__(i):pass
-	def get_axis(i,j):return 0
-	def get_button(i,j):return 0
+from JoystickWrapper import *
 
 class Game():
 	def __init__(self):
@@ -22,6 +18,9 @@ class Game():
 	def run(self):
 		self.playing = 1
 		while self.playing:
+			for x in self.joysticks: #generate buttonpress events for dummy joysticks
+				try:x.update()
+				except Exception as e:print(e)
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
 			self.dt = self.clock.tick(self.FPS) / 1000
