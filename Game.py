@@ -8,7 +8,7 @@ class Game():
 		pygame.init()
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
-		for x in range(max(4-len(self.joysticks),0)):self.joysticks.append(dummyJoystick())
+		for x in range(max(4-len(self.joysticks),0)):self.joysticks.append(dummyJoystick(3-x))
 		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
@@ -20,7 +20,7 @@ class Game():
 		while self.playing:
 			for x in self.joysticks: #generate buttonpress events for dummy joysticks
 				try:x.update()
-				except Exception as e:print(e)
+				except:pass
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
 			self.dt = self.clock.tick(self.FPS) / 1000
