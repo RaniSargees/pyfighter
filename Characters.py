@@ -56,7 +56,7 @@ class Char(pygame.sprite.Sprite):
 			elif self.joystick.get_axis(0) > .5 and self.hspeed < self.maxMoveSpeed:
 				self.hspeed += self.moveSpeed
 			elif self.hspeed and self.grounded: self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
-			self.gravityMultiplier = ((bool(self.keys[pygame.K_s]) or self.joystick.get_axis(1)>.75)*2)+1
+			self.gravityMultiplier = (self.joystick.get_axis(1)>.75)*2+1
 			for e in self.events:
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.button==0 and e.joy==self.joystick.get_id():self.jump()
