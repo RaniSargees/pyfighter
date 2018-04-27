@@ -21,11 +21,14 @@ class dummyJoystick():
 	def get_button(self, button):
 		pressed = pygame.key.get_pressed()
 		if button==0: return bool(sum([pressed[x] for x in self.jump]))
+		if button==1: return bool(sum([pressed[x] for x in self.heavyatk]))
+		if button==2: return bool(sum([pressed[x] for x in self.lightatk]))
+		if button in(4,5): return bool(sum([pressed[x] for x in self.dodge]))
 	def get_id(self): return self.joy
 	def update(self):
 		pressed = pygame.key.get_pressed()
 		self.buttonstatus = [bool(sum([pressed[x] for x in y])) for y in (self.jump, self.heavyatk, self.lightatk, self.dodge)]
 		if self.oldbuttonstatus != self.buttonstatus:
 			for x in range(len(self.buttonstatus)):
-				if self.buttonstatus[x]==1 and self.oldbuttonstatus[x]==0: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN, {"button":x,"joy":self.joy}))
+				if self.buttonstatus[x]==1 and self.oldbuttonstatus[x]==0: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN, {"button":x+(x==3),"joy":self.joy}))
 			self.oldbuttonstatus = self.buttonstatus[:]

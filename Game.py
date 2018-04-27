@@ -8,7 +8,7 @@ class Game():
 		pygame.init()
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
-		for x in range(max(4-len(self.joysticks),0)):self.joysticks.append(dummyJoystick(3-x))
+		if len(self.joysticks) < 4: self.joysticks.append(dummyJoystick(len(self.joysticks)))
 		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
