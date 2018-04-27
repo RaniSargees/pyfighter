@@ -1,10 +1,10 @@
 import pygame, math
 from Characters import *
 from JoystickWrapper import *
+from Settings import *
 
 class Game():
 	def __init__(self):
-		self.FPS = 60
 		pygame.init()
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
@@ -23,12 +23,12 @@ class Game():
 				except:pass
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
-			self.dt = self.clock.tick(self.FPS) / 1000
+			self.dt = self.clock.tick(FPS) / 1000
 			#Events
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
-			self.win.fill((255,255,255))
+			self.win.fill(WHITE)
 			self.sprites.update(keys, events)
 			self.draw()
 
