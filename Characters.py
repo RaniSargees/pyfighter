@@ -21,6 +21,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.dmg = 40
 		self.joystick = joystick
+		self.stun = 0
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
@@ -42,20 +43,25 @@ class Char(pygame.sprite.Sprite):
 			self.jumpBonus = 0
 
 	def knockBack(self,hit):
+		self.stun = hit/200
 		vel = (self.dmg+abs(hit))**1.5
-		self.hspeed = (hit/abs(hit))*vel*math.cos(math.pi/4)
-		self.vspeed = -vel*math.sin(math.pi/4)
+		self.hspeed = (hit/abs(hit))*vel*math.cos(math.pi/6)
+		self.vspeed = -vel*math.sin(math.pi/6)
 
 	def get_keys(self):
-		if  self.joystick.get_axis(0) < -.5 and -self.hspeed < self.maxMoveSpeed:
-			self.hspeed -=self.moveSpeed
-		elif self.joystick.get_axis(0) > .5 and self.hspeed < self.maxMoveSpeed:
-			self.hspeed += self.moveSpeed
-		elif self.hspeed and self.grounded: self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
-		self.gravityMultiplier = ((bool(self.keys[pygame.K_s]) or self.joystick.get_axis(1)>.75)*2)+1
-		for e in self.events:
-			if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60) #testing only, remove later
-			if e.type == pygame.JOYBUTTONDOWN and e.button==0 and e.joy==self.joystick.get_id():self.jump()
-		if self.joystick.get_button(0) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
-			self.vspeed += self.jumpBonusSpeed
-			self.jumpBonus += 1
+		print(self.stun)
+		if self.stun <= 0:
+			if  self.joystick.get_axis(0) < -.5 and -self.hspeed < self.maxMoveSpeed:
+				self.hspeed -=self.moveSpeed
+			elif self.joystick.get_axis(0) > .5 and self.hspeed < self.maxMoveSpeed:
+				self.hspeed += self.moveSpeed
+			elif self.hspeed and self.grounded: self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
+			self.gravityMultiplier = ((bool(self.keys[pygame.K_s]) or self.joystick.get_axis(1)>.75)*2)+1
+			for e in self.events:
+				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(100) #testing only, remove later
+				if e.type == pygame.JOYBUTTONDOWN and e.button==0 and e.joy==self.joystick.get_id():self.jump()
+			if self.joystick.get_button(0) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
+				self.vspeed += self.jumpBonusSpeed
+				self.jumpBonus += 1
+		else:
+			self.stun -= self.game.dt
