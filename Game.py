@@ -14,7 +14,9 @@ class Game():
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500
 	def new(self):
-		for x in self.joysticks:Char(self, x)
+		self.TempFont = pygame.font.SysFont("monospace", 24)
+		for x in self.joysticks:
+			Char(self, x)
 	def run(self):
 		self.playing = 1
 		while self.playing:
@@ -34,6 +36,8 @@ class Game():
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+		for i,j in enumerate(self.sprites):
+			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,BLACK),(200*i,650))
 		pygame.display.update()
 
 g = Game()

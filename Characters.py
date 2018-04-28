@@ -72,7 +72,6 @@ class Char(pygame.sprite.Sprite):
 		if direction < 2:
 			self.hspeed = (direction-0.5)*2*vel*math.cos(math.pi/6)
 			self.vspeed = -vel*math.sin(math.pi/6)
-			print(self.vspeed)
 		elif direction >= 2:
 			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4)
 		self.currentJumps = max(1, self.currentJumps)
