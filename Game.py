@@ -39,4 +39,5 @@ class Game():
 g = Game()
 g.new()
 g.run()
+pygame.quit()
 
