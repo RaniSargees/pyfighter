@@ -35,7 +35,7 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = (self.y >= self.game.ground)
-		self.inStage = (self.x <= 1180 and self.x >= 52)
+		self.inStage = (self.x <= 1130 and self.x >= 102)
 		if self.grounded and self.inStage:
 			if self.stun <= 0:
 				self.knocked = 0
@@ -47,13 +47,15 @@ class Char(pygame.sprite.Sprite):
 				self.vspeed = 0	
 		else: self.vspeed += self.gravity * self.gravityMultiplier
 		if self.y > 800:
-			self.x = 200
+			self.dmg = 0
+			self.x = 200+(self.joystick.get_id()*200)
 			self.y = 200
+			self.vspeed = 0
+			self.hspeed = 0
 		self.get_keys()
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
-		if not(self.inStage) and self.grounded and (self.x <= 1180 and self.x >= 52):
-			print('happens')
+		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
 			self.x -= self.hspeed * self.game.dt
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x,self.y,48,72))
 

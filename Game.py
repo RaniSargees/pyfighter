@@ -14,7 +14,7 @@ class Game():
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500
 	def new(self):
-		self.TempFont = pygame.font.SysFont("monospace", 24)
+		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			Char(self, x)
 	def run(self):
@@ -36,9 +36,9 @@ class Game():
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-		pygame.draw.rect(self.win, BLACK,(100,572,1080,200))
+		pygame.draw.rect(self.win, BLACK,(150,572,980,200))
 		for i,j in enumerate(self.sprites):
-			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,BLACK),(200*i,650))
+			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, GREEN, BLUE, WHITE)[j.joystick.get_id()]),((200*i)+50,650))
 		pygame.display.update()
 
 g = Game()
