@@ -35,7 +35,8 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = (self.y >= self.game.ground)
-		if self.grounded:
+		self.inStage = (self.x <= 1180 and self.x >= 52)
+		if self.grounded and self.inStage:
 			if self.stun <= 0:
 				self.knocked = 0
 			if self.knocked:
@@ -43,11 +44,17 @@ class Char(pygame.sprite.Sprite):
 			else:
 				self.currentJumps = self.maxJumps
 				self.y = self.game.ground
-				self.vspeed = 0
+				self.vspeed = 0	
 		else: self.vspeed += self.gravity * self.gravityMultiplier
+		if self.y > 800:
+			self.x = 200
+			self.y = 200
 		self.get_keys()
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
+		if not(self.inStage) and self.grounded and (self.x <= 1180 and self.x >= 52):
+			print('happens')
+			self.x -= self.hspeed * self.game.dt
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x,self.y,48,72))
 
 	def jump(self):

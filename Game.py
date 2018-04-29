@@ -36,6 +36,7 @@ class Game():
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+		pygame.draw.rect(self.win, BLACK,(100,572,1080,200))
 		for i,j in enumerate(self.sprites):
 			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,BLACK),(200*i,650))
 		pygame.display.update()
