@@ -36,6 +36,8 @@ class Char(pygame.sprite.Sprite):
 		self.events = events
 		self.grounded = (self.y >= self.game.ground)
 		if self.grounded:
+			if self.stun <= 0:
+				self.knocked = 0
 			if self.knocked:
 				self.vspeed *= -1
 			else:
@@ -81,14 +83,13 @@ class Char(pygame.sprite.Sprite):
 
 	def get_keys(self):
 		if self.stun <= 0:
-			self.knocked = 0
 			if  self.joystick.get_axis(0) < -.5 and -self.hspeed < self.maxMoveSpeed:
 				self.hspeed -=self.moveSpeed
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5 and self.hspeed < self.maxMoveSpeed:
 				self.hspeed += self.moveSpeed
 				self.facing = 1
-			elif self.hspeed: self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
+			elif self.hspeed and not(self.knocked): self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
 			if self.joystick.get_axis(1)>.75:
 				self.facing = 3
 			elif self.joystick.get_axis(1)<-.75:
