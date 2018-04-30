@@ -32,3 +32,4 @@ class dummyJoystick():
 			for x in range(len(self.buttonstatus)):
 				if self.buttonstatus[x]==1 and self.oldbuttonstatus[x]==0: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN, {"button":x+(x==3),"joy":self.joy}))
 			self.oldbuttonstatus = self.buttonstatus[:]
+	def get_name(self): return "Dummy Joystick"

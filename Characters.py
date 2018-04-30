@@ -2,7 +2,7 @@ import pygame, math
 from Settings import *
 
 class Char(pygame.sprite.Sprite):
-	def __init__(self,game,joystick):
+	def __init__(self,game,joystick,buttonmap=[0,1,2,3,4,5]):
 		self.groups = game.sprites
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
@@ -21,6 +21,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravity = 32
 		self.gravityMultiplier = 1
 		self.joystick = joystick
+		self.buttonmap = buttonmap
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
@@ -44,7 +45,7 @@ class Char(pygame.sprite.Sprite):
 			else:
 				self.currentJumps = self.maxJumps
 				self.y = self.game.ground
-				self.vspeed = 0	
+				self.vspeed = 0
 		else: self.vspeed += self.gravity * self.gravityMultiplier
 		if self.y > 800:
 			self.dmg = 0
@@ -104,15 +105,15 @@ class Char(pygame.sprite.Sprite):
 			elif self.joystick.get_axis(1)<-.75:
 				self.facing = 2
 			self.gravityMultiplier = (self.joystick.get_axis(1) >.75)*2 + 1
-			if self.joystick.get_button(0) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
+			if self.joystick.get_button(self.buttonmap[0]) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
 				self.vspeed += self.jumpBonusSpeed
 				self.jumpBonus += 1
 			for e in self.events:
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
-					if e.button == 0: self.jump()
-					if e.button == 1: self.atkLight()
-					if e.button == 2: self.atkHeavy()
+					if e.button == self.buttonmap[0]: self.jump()
+					if e.button == self.buttonmap[1]: self.atkLight()
+					if e.button == self.buttonmap[2]: self.atkHeavy()
 
 		else:
 			self.stun -= self.game.dt

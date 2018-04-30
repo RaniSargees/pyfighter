@@ -16,7 +16,10 @@ class Game():
 	def new(self):
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
-			Char(self, x)
+			if "ouya" in x.get_name().lower():
+				Char(self, x, [0,1,3,2,4,5])
+			else:
+				Char(self, x)
 	def run(self):
 		self.playing = 1
 		while self.playing:
