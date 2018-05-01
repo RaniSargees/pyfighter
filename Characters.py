@@ -46,7 +46,7 @@ class Char(pygame.sprite.Sprite):
 				self.currentJumps = self.maxJumps
 				self.y = self.game.ground
 				self.vspeed = 0
-		else: self.vspeed += self.gravity * self.gravityMultiplier
+		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
 		if self.y > 800:
 			self.dmg = 0
 			self.x = 200+(self.joystick.get_id()*200)
@@ -78,14 +78,15 @@ class Char(pygame.sprite.Sprite):
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
+		self.gravityMultiplier=1
 		self.stun = hit/200
 		self.knocked = 1
 		vel = (self.dmg+hit)**1.5
 		if direction < 2:
-			self.hspeed = (direction-0.5)*2*vel*math.cos(math.pi/6)
-			self.vspeed = -vel*math.sin(math.pi/6)
+			self.hspeed = (direction-0.5)*2*vel*math.cos(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
+			self.vspeed = -vel*math.sin(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
 		elif direction >= 2:
-			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4)
+			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4) * (60/max(1,self.game.clock.get_fps()))
 		self.currentJumps = max(1, self.currentJumps)
 		self.dmg+=hit/4
 		#Don't remove the line below. It fixes the sliding bug
@@ -93,16 +94,18 @@ class Char(pygame.sprite.Sprite):
 
 	def get_keys(self):
 		if self.stun <= 0:
-			if  self.joystick.get_axis(0) < -.5 and -self.hspeed < self.maxMoveSpeed:
-				self.hspeed -=self.moveSpeed
+			if  self.joystick.get_axis(0) < -.5:
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed)
 				self.facing = 0
-			elif self.joystick.get_axis(0) > .5 and self.hspeed < self.maxMoveSpeed:
-				self.hspeed += self.moveSpeed
+			elif self.joystick.get_axis(0) > .5:
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed)
 				self.facing = 1
-			elif self.hspeed and not(self.knocked): self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
+			elif self.hspeed and not(self.knocked):
+				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
+				else: self.hspeed = 0
 			self.gravityMultiplier = (self.joystick.get_axis(1) >.9)*2 + 1
 			if self.joystick.get_button(self.buttonmap[0]) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
-				self.vspeed += self.jumpBonusSpeed
+				self.vspeed += self.jumpBonusSpeed * (60/max(1,self.game.clock.get_fps()))
 				self.jumpBonus += 1
 			for e in self.events:
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60,self.facing) #testing only, remove later
