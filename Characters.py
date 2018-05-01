@@ -66,15 +66,15 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = self.jumpSpeed
 			self.jumpBonus = 0
 
-	def atkLight(self):
-		if self.facing < 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-20+((self.facing==1)*(48+20)), self.y, 20, 72),4)
-			collisions=[(pygame.Rect((self.x-20+((self.facing==1)*(48+20)),self.y,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		elif self.facing >= 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x,self.y-20+((self.facing==3)*(72+10)),48,30),4)
-			collisions=[(pygame.Rect((self.x,self.y-20+((self.facing==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[x[1].knockBack(20,self.facing) for x in collisions if x[0] and not(x[1] == self)]
-	def atkHeavy(self):self.atkLight()
+	def atkLight(self, direction):
+		if direction < 2:
+			pygame.draw.rect(self.game.win,BLUE,(self.x-20+((direction==1)*(48+20)), self.y, 20, 72),4)
+			collisions=[(pygame.Rect((self.x-20+((direction==1)*(48+20)),self.y,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		elif direction >= 2:
+			pygame.draw.rect(self.game.win,BLUE,(self.x,self.y-20+((direction==3)*(72+10)),48,30),4)
+			collisions=[(pygame.Rect((self.x,self.y-20+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[x[1].knockBack(20,direction) for x in collisions if x[0] and not(x[1] == self)]
+	def atkHeavy(self, direction):self.atkLight(direction)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -100,11 +100,7 @@ class Char(pygame.sprite.Sprite):
 				self.hspeed += self.moveSpeed
 				self.facing = 1
 			elif self.hspeed and not(self.knocked): self.hspeed -= self.hspeed/abs(self.hspeed)*min(self.moveSpeed, abs(self.hspeed))
-			if self.joystick.get_axis(1)>.75:
-				self.facing = 3
-			elif self.joystick.get_axis(1)<-.75:
-				self.facing = 2
-			self.gravityMultiplier = (self.joystick.get_axis(1) >.75)*2 + 1
+			self.gravityMultiplier = (self.joystick.get_axis(1) >.9)*2 + 1
 			if self.joystick.get_button(self.buttonmap[0]) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
 				self.vspeed += self.jumpBonusSpeed
 				self.jumpBonus += 1
@@ -112,8 +108,14 @@ class Char(pygame.sprite.Sprite):
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
 					if e.button == self.buttonmap[0]: self.jump()
-					if e.button == self.buttonmap[1]: self.atkLight()
-					if e.button == self.buttonmap[2]: self.atkHeavy()
+					if e.button == self.buttonmap[1]:
+						if self.joystick.get_axis(1)> .5: self.atkLight(3)
+						elif self.joystick.get_axis(1)<-.5: self.atkLight(2)
+						else: self.atkLight(self.facing)
+					elif e.button == self.buttonmap[2]:
+						if self.joystick.get_axis(1)> .5: self.atkHeavy(3)
+						elif self.joystick.get_axis(1)<-.5: self.atkHeavy(2)
+						else: self.atkHeavy(self.facing)
 
 		else:
 			self.stun -= self.game.dt
