@@ -9,6 +9,7 @@ class Game():
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
 		if len(self.joysticks) < 4: self.joysticks.append(dummyJoystick(len(self.joysticks)))
+#"""		self.win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)"""
 		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
@@ -23,16 +24,17 @@ class Game():
 	def run(self):
 		self.playing = 1
 		while self.playing:
-			for x in self.joysticks: #generate buttonpress events for dummy joysticks
-				try:x.update()
-				except:pass
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
+			for x in self.joysticks: #generate buttonpress events for dummy joysticks
+				try:x.update(events)
+				except:pass
 			self.dt = self.clock.tick(FPS) / 1000
 			#Events
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
+				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
 			self.win.fill(WHITE)
 			self.sprites.update(keys, events)
 			self.draw()

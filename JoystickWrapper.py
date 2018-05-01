@@ -12,8 +12,6 @@ class dummyJoystick():
 		self.heavyatk = heavyatk
 		self.lightatk = lightatk
 		self.dodge = dodge
-		self.buttonstatus = [0 for y in (self.jump, self.heavyatk, self.lightatk, self.dodge)]
-		self.oldbuttonstatus = [1 for y in (self.jump, self.heavyatk, self.lightatk, self.dodge)]
 	def get_axis(self, axis):
 		pressed = pygame.key.get_pressed()
 		return -[bool(sum([pressed[x] for x in self.left]))-bool(sum([pressed[x] for x in self.right])),
@@ -25,11 +23,11 @@ class dummyJoystick():
 		if button==2: return bool(sum([pressed[x] for x in self.lightatk]))
 		if button in(4,5): return bool(sum([pressed[x] for x in self.dodge]))
 	def get_id(self): return self.joy
-	def update(self):
-		pressed = pygame.key.get_pressed()
-		self.buttonstatus = [bool(sum([pressed[x] for x in y])) for y in (self.jump, self.heavyatk, self.lightatk, self.dodge)]
-		if self.oldbuttonstatus != self.buttonstatus:
-			for x in range(len(self.buttonstatus)):
-				if self.buttonstatus[x]==1 and self.oldbuttonstatus[x]==0: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN, {"button":x+(x==3),"joy":self.joy}))
-			self.oldbuttonstatus = self.buttonstatus[:]
+	def update(self, events):
+		for e in events:
+			if e.type == pygame.KEYDOWN:
+				if e.key in self.jump: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":0}))
+				if e.key in self.heavyatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":1}))
+				if e.key in self.lightatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":2}))
+				if e.key in self.dodge: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":4}))
 	def get_name(self): return "Dummy Joystick"
