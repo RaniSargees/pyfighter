@@ -9,8 +9,8 @@ class Game():
 		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in self.joysticks: x.init()
 		if len(self.joysticks) < 4: self.joysticks.append(dummyJoystick(len(self.joysticks)))
-#"""		self.win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)"""
-		self.win = pygame.display.set_mode((1280,720))
+		self.win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#		self.win = pygame.display.set_mode((1280,720))
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500

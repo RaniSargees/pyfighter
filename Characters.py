@@ -73,7 +73,10 @@ class Char(pygame.sprite.Sprite):
 		elif direction >= 2:
 			pygame.draw.rect(self.game.win,BLUE,(self.x,self.y-20+((direction==3)*(72+10)),48,30),4)
 			collisions=[(pygame.Rect((self.x,self.y-20+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[x[1].knockBack(20,direction) for x in collisions if x[0] and not(x[1] == self)]
+		for x in collisions:
+			if x[0] and not(x[1]==self):
+				x[1].knockBack(20,direction)
+				x[1].damage(20)
 	def atkHeavy(self, direction):self.atkLight(direction)
 
 	def knockBack(self,hit,direction=0):
@@ -88,9 +91,11 @@ class Char(pygame.sprite.Sprite):
 		elif direction >= 2:
 			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4) * (60/max(1,self.game.clock.get_fps()))
 		self.currentJumps = max(1, self.currentJumps)
-		self.dmg+=hit/4
 		#Don't remove the line below. It fixes the sliding bug
-		self.y -= 5
+		self.y -= 1
+
+	def damage(self, hit):
+		self.dmg+=hit/4
 
 	def get_keys(self):
 		if self.stun <= 0:
