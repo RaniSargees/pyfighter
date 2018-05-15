@@ -67,6 +67,8 @@ class Char(pygame.sprite.Sprite):
 			self.jumpBonus = 0
 
 	def atkLight(self, direction):
+		if direction == 4:
+			direction = self.facing
 		if direction < 2:
 			pygame.draw.rect(self.game.win,BLUE,(self.x-20+((direction==1)*(48+20)), self.y, 20, 72),4)
 			collisions=[(pygame.Rect((self.x-20+((direction==1)*(48+20)),self.y,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
@@ -118,16 +120,27 @@ class Char(pygame.sprite.Sprite):
 					if e.button == self.buttonmap[1]:
 						if self.joystick.get_axis(1)> .5: self.atkLight(3)
 						elif self.joystick.get_axis(1)<-.5: self.atkLight(2)
-						else: self.atkLight(self.facing)
+						elif abs(self.joystick.get_axis(0))>.5: self.atkLight(self.facing)
+						else: self.atkLight(4)
 					elif e.button == self.buttonmap[2]:
 						if self.joystick.get_axis(1)> .5: self.atkHeavy(3)
 						elif self.joystick.get_axis(1)<-.5: self.atkHeavy(2)
-						else: self.atkHeavy(self.facing)
+						elif abs(self.joystick.get_axis(0))>.5: self.atkHeavy(self.facing)
+						else: self.atkHeavy(4)
 
 		else:
 			self.stun -= self.game.dt
 
 
 class Mage(Char):
-	def atkHeavy(self):
-		pass
+	def atkHeavy(self,direction):
+		exec(['special1(direction)','special1(direction)','special2()','special3()','special0()'][direction])
+		
+	def special0(self):
+		print(0)
+	def special1(self):
+		print(1)
+	def special2(self):
+		print(2)
+	def special3(self):
+		print(3)
