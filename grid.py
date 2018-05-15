@@ -10,7 +10,7 @@ class grid(): #grid data structure
 class button_grid(grid): #drawable grid datatype
 	def __init__(self, width, height, rect):
 		self._rect=rect;
-		self._2dlist = [[button((y*rect[2]/width+rect[0]+1,x*rect[3]/height+rect[1]+1,rect[2]/width-2,rect[3]/height-2)) for y in range(width)] for x in range(height)]
+		self._2dlist = [[button((y*rect[2]/width+rect[0],x*rect[3]/height+rect[1],rect[2]/width,rect[3]/height)) for y in range(width)] for x in range(height)]
 		self._surface = pygame.Surface((self._rect[2], self._rect[3]))
 		self._surface.fill((255,255,255))
 	def get_rect(self):				return self._rect
