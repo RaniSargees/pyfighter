@@ -5,7 +5,6 @@ from Settings import *
 
 class Game():
 	def __init__(self, win, joysticks):
-		pygame.init()
 		self.joysticks = joysticks
 		self.win = win
 		self.clock = pygame.time.Clock()
@@ -44,6 +43,7 @@ class Game():
 		pygame.display.update()
 
 
+pygame.init()
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 for x in joysticks: x.init()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
