@@ -4,13 +4,10 @@ from JoystickWrapper import *
 from Settings import *
 
 class Game():
-	def __init__(self):
+	def __init__(self, win, joysticks):
 		pygame.init()
-		self.joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
-		for x in self.joysticks: x.init()
-		if len(self.joysticks) < 4: self.joysticks.append(dummyJoystick(len(self.joysticks)))
-		self.win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-#		self.win = pygame.display.set_mode((1280,720))
+		self.joysticks = joysticks
+		self.win = win
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500
@@ -46,7 +43,14 @@ class Game():
 			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, GREEN, BLUE, WHITE)[j.joystick.get_id()]),((200*i)+50,650))
 		pygame.display.update()
 
-g = Game()
+
+joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+for x in joysticks: x.init()
+if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
+win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#win = pygame.display.set_mode((1280,720))
+
+g = Game(win, joysticks)
 g.new()
 g.run()
 pygame.quit()
