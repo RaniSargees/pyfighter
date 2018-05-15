@@ -1,8 +1,8 @@
 import pygame
 
 class dummyJoystick():
-	def __init__(self, joy, left=[pygame.K_a], right=[pygame.K_d], down=[pygame.K_s], up=[pygame.K_w,pygame.K_SPACE],\
-	jump=[pygame.K_w,pygame.K_SPACE], heavyatk=[pygame.K_j], lightatk=[pygame.K_k], dodge=[pygame.K_l]):
+	def __init__(self, joy, left=[pygame.K_a], right=[pygame.K_d], down=[pygame.K_s], up=[pygame.K_w],\
+	jump=[pygame.K_SPACE], heavyatk=[pygame.K_j], lightatk=[pygame.K_k], dodge=[pygame.K_l]):
 		self.joy = joy
 		self.left = left
 		self.right = right

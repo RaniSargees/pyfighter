@@ -77,7 +77,6 @@ class Char(pygame.sprite.Sprite):
 			if x[0] and not(x[1]==self):
 				x[1].knockBack(20,direction)
 				x[1].damage(20)
-	def atkHeavy(self, direction):self.atkLight(direction)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -127,3 +126,8 @@ class Char(pygame.sprite.Sprite):
 
 		else:
 			self.stun -= self.game.dt
+
+
+class Mage(Char):
+	def atkHeavy(self):
+		pass
