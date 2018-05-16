@@ -153,14 +153,14 @@ class Mage(Char):
 	def special0(self):
 		self.AbilRun = 0
 		self.AbilTime = -1
-		self.explotion = self.game.effects['Explotion']
+		self.explosion = self.game.effects['Explosion']
 		self.LocNow = (self.x-(self.facing==0)*352,self.y-200)
-		self.SP0Len = len(self.explotion)
+		self.SP0Len = len(self.explosion)
 		self.SP0Count = 0
 
 	def RunSpecial0(self):
 		if self.SP0Count < self.SP0Len*2:
-			self.game.win.blit(self.explotion[int(self.SP0Count/2)],self.LocNow)
+			self.game.win.blit(self.explosion[self.SP0Count//2],self.LocNow)
 			pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
 			collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			self.SP0Count += 1

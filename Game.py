@@ -26,7 +26,7 @@ class Game():
 		for fileName in os.listdir(effect_folder):
 			file = os.path.join(effect_folder, fileName)
 			temp = []
-			for i in os.listdir(file):
+			for i in sorted(os.listdir(file)):
 				if i.endswith(".jpg") or i.endswith(".png"):
 					var = (pygame.image.load(os.path.join(file,i)).convert())
 					var.set_colorkey((0,0,0))
