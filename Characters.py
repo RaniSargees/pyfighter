@@ -164,10 +164,7 @@ class Mage(Char):
 			pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
 			collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			self.SP0Count += 1
-			for x in collisions:
-				if x[0] and not(x[1]==self):
-					x[1].knockBack(50,self.facing)
-					x[1].damage(40)
+			[(x[1].knockBack(7000, self.facing),x[1].damage(50))for x in collisions if x[0] and x[1]!=self]
 		else:
 			self.AbilRun = -1
 			self.AbilTime = 0
