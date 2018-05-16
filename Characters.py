@@ -27,6 +27,7 @@ class Char(pygame.sprite.Sprite):
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
+		self.freeze=0
 		self.facing = 0
 		#0 = Left
 		#1 = Right
@@ -112,10 +113,10 @@ class Char(pygame.sprite.Sprite):
 	def get_keys(self):
 		if self.stun <= 0:
 			if  self.joystick.get_axis(0) < -.5:
-				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed)
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (self.freeze==0)
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5:
-				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed)
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (self.freeze==0)
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
@@ -151,20 +152,24 @@ class Mage(Char):
 		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
 
 	def special0(self):
-		self.AbilRun = 0
-		self.AbilTime = -1
-		self.explosion = self.game.effects['Explosion']
-		self.LocNow = (self.x-(self.facing==0)*352,self.y-200)
-		self.SP0Len = len(self.explosion)
-		self.SP0Count = 0
+		if not self.AbilRun+1:
+			self.freeze=1
+			self.AbilRun = 0
+			self.AbilTime = -1
+			self.explosion = self.game.effects['Explosion']
+			self.LocNow = (self.x-(self.facing==0)*352,self.y-200)
+			self.SP0Len = len(self.explosion)
+			self.SP0Count = 0
 
 	def RunSpecial0(self):
 		if self.SP0Count < self.SP0Len*2:
 			self.game.win.blit(self.explosion[self.SP0Count//2],self.LocNow)
-			pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
-			collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			if self.SP0Count <= 8:
+				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
+				collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			else: collisions = [];self.freeze=0
 			self.SP0Count += 1
-			[(x[1].knockBack(7000, self.facing),x[1].damage(50))for x in collisions if x[0] and x[1]!=self]
+			[(x[1].knockBack(50, self.facing),x[1].damage(8))for x in collisions if x[0] and x[1]!=self]
 		else:
 			self.AbilRun = -1
 			self.AbilTime = 0
