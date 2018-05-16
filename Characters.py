@@ -22,6 +22,8 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
+		self.AbilTime = 0
+		self.AbilRun = -1
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
@@ -54,6 +56,13 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = 0
 			self.hspeed = 0
 		self.get_keys()
+		if self.AbilRun >= 0:
+			if self.AbilTime > 0 or self.AbilTime == -1:
+				if self.AbilTime > 0:
+					self.AbilTime -= self.game.dt
+				exec(['self.RunSpecial0()','self.RunSpecial1()','self.RunSpecial2()','self.RunSpecial3()'][self.AbilRun])
+			else:
+				self.atkEnd()
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
 		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
@@ -94,7 +103,12 @@ class Char(pygame.sprite.Sprite):
 		self.currentJumps = max(1, self.currentJumps)
 		#Don't remove the line below. It fixes the sliding bug
 		self.y -= 1
-
+		
+	def atkEnd(self):
+		if not(self.AbilTime == -1):
+			self.AbilTime = 0
+			self.AbilRun = -1
+	
 	def damage(self, hit):
 		self.dmg+=hit/4
 
@@ -127,20 +141,56 @@ class Char(pygame.sprite.Sprite):
 						elif self.joystick.get_axis(1)<-.5: self.atkHeavy(2)
 						elif abs(self.joystick.get_axis(0))>.5: self.atkHeavy(self.facing)
 						else: self.atkHeavy(4)
+				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
+					if e.button == self.buttonmap[2]:
+						self.atkEnd()
 
 		else:
 			self.stun -= self.game.dt
+		
 
 
 class Mage(Char):
 	def atkHeavy(self,direction):
-		exec(['special1(direction)','special1(direction)','special2()','special3()','special0()'][direction])
+		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
 		
 	def special0(self):
-		print(0)
-	def special1(self):
+		self.AbilRun = 0
+		self.AbilTime = -1
+		self.explotion = self.game.effects['Explotion']
+		self.LocNow = (self.x-(self.facing==0)*352,self.y-200)
+		self.SP0Len = len(self.explotion)
+		self.SP0Count = 0
+		
+	def RunSpecial0(self):
+		if self.SP0Count < self.SP0Len*2:
+			self.game.win.blit(self.explotion[int(self.SP0Count/2)],self.LocNow)
+			pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
+			collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			self.SP0Count += 1
+			for x in collisions:
+				if x[0] and not(x[1]==self):
+					x[1].knockBack(50,direction)
+					x[1].damage(40)
+		else:
+			self.AbilRun = -1
+			self.AbilTime = 0
+		
+		
+		
+	def special1(self,direction):
 		print(1)
+	def RunSpecial1(self):
+		pass
+		
 	def special2(self):
 		print(2)
+	def RunSpecial2(self):
+		pass
+		
 	def special3(self):
 		print(3)
+	def RunSpecial3(self):
+		pass
+
+

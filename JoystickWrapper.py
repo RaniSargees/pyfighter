@@ -30,4 +30,9 @@ class dummyJoystick():
 				if e.key in self.heavyatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":1}))
 				if e.key in self.lightatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":2}))
 				if e.key in self.dodge: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN,{"joy":self.joy,"button":4}))
+			if e.type == pygame.KEYUP:
+				if e.key in self.jump: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONUP,{"joy":self.joy,"button":0}))
+				if e.key in self.heavyatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONUP,{"joy":self.joy,"button":1}))
+				if e.key in self.lightatk: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONUP,{"joy":self.joy,"button":2}))
+				if e.key in self.dodge: pygame.event.post(pygame.event.Event(pygame.JOYBUTTONUP,{"joy":self.joy,"button":4}))
 	def get_name(self): return "Dummy Joystick"

@@ -1,4 +1,4 @@
-import pygame, math
+import pygame, math, os
 from Characters import *
 from JoystickWrapper import *
 from Settings import *
@@ -11,12 +11,27 @@ class Game():
 		self.sprites = pygame.sprite.Group()
 		self.ground = 500
 	def new(self):
+		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower():
-				Char(self, x, [0,1,3,2,4,5])
+				Mage(self, x, [0,1,3,2,4,5])
 			else:
-				Char(self, x)
+				Mage(self, x)
+	def loadData(self):
+		game_folder = os.path.dirname(__file__)
+		img_folder = os.path.join(game_folder, 'Images')
+		effect_folder = os.path.join(img_folder, 'Effects')
+		self.effects = {}
+		for fileName in os.listdir(effect_folder):
+			file = os.path.join(effect_folder, fileName)
+			temp = []
+			for i in os.listdir(file):
+				if i.endswith(".jpg") or i.endswith(".png"):
+					var = (pygame.image.load(os.path.join(file,i)).convert())
+					var.set_colorkey((0,0,0))
+					temp.append(var)
+			self.effects[str(fileName)] = temp
 	def run(self):
 		self.playing = 1
 		while self.playing:
@@ -44,11 +59,12 @@ class Game():
 
 
 pygame.init()
+
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 for x in joysticks: x.init()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
-win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-#win = pygame.display.set_mode((1280,720))
+#win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+win = pygame.display.set_mode((1280,720))
 
 g = Game(win, joysticks)
 g.new()
