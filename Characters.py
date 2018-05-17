@@ -24,6 +24,7 @@ class Char(pygame.sprite.Sprite):
 		self.buttonmap = buttonmap
 		self.AbilTime = 0
 		self.AbilRun = -1
+		self.Release = 0
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
@@ -34,6 +35,7 @@ class Char(pygame.sprite.Sprite):
 		#2 = Up
 		#3 = Down
 		self.hitbox = (self.x+4,self.y+4,40,64)
+		
 	def update(self,keys,events):
 		self.hitbox = (self.x+4,self.y+4,40,64)
 		self.keys = keys
@@ -103,6 +105,7 @@ class Char(pygame.sprite.Sprite):
 		self.y -= 1
 
 	def atkEnd(self):
+		
 		if not(self.AbilTime == -1):
 			self.AbilTime = 0
 			self.AbilRun = -1
@@ -113,10 +116,10 @@ class Char(pygame.sprite.Sprite):
 	def get_keys(self):
 		if self.stun <= 0:
 			if  self.joystick.get_axis(0) < -.5:
-				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (self.freeze==0)
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5:
-				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (self.freeze==0)
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
@@ -141,7 +144,7 @@ class Char(pygame.sprite.Sprite):
 						else: self.atkHeavy(4)
 				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
 					if e.button == self.buttonmap[2]:
-						self.atkEnd()
+						self.Release = 1
 
 		else:
 			self.stun -= self.game.dt
@@ -153,26 +156,47 @@ class Mage(Char):
 
 	def special0(self):
 		if not self.AbilRun+1:
+			self.SP0Timer = 0
+			self.SP0GO = 0
 			self.freeze=1
 			self.AbilRun = 0
 			self.AbilTime = -1
-			self.explosion = self.game.effects['Explosion']
-			self.LocNow = (self.x-(self.facing==0)*352,self.y-200)
+			self.explosion = self.game.effects['Explosion'].copy()
 			self.SP0Len = len(self.explosion)
 			self.SP0Count = 0
 
 	def RunSpecial0(self):
-		if self.SP0Count < self.SP0Len*2:
-			self.game.win.blit(self.explosion[self.SP0Count//2],self.LocNow)
-			if self.SP0Count <= 8:
-				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+100,self.LocNow[1]+100,200,200),4)
-				collisions=[(pygame.Rect((self.LocNow[0]+100,self.LocNow[1]+100,200,200)).colliderect(x.hitbox),x)for x in self.game.sprites]
-			else: collisions = [];self.freeze=0
-			self.SP0Count += 1
-			[(x[1].knockBack(50, self.facing),x[1].damage(8))for x in collisions if x[0] and x[1]!=self]
+		if self.Release and not(self.SP0Count):
+			self.SP0GO = 1
+			scale = int(self.SP0Timer/2 * 400)
+			if scale < 100:
+				scale = 100
+			elif scale > 400:
+				scale = 400
+			for i,j in enumerate(self.explosion):
+				self.explosion[i] = pygame.transform.scale(j,(scale,scale))
+			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale/2))
+			self.scale = scale
 		else:
-			self.AbilRun = -1
-			self.AbilTime = 0
+			self.SP0Timer += self.game.dt
+		
+		if self.SP0GO:
+			if self.SP0Count < self.SP0Len*2:
+				self.game.win.blit(self.explosion[self.SP0Count//2],self.LocNow)
+				if self.SP0Count <= 8:
+					#Change the spawn location dependant on variable scale
+					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2),4)
+					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2)).colliderect(x.hitbox),x)for x in self.game.sprites]
+				else: collisions = [];self.freeze=0
+				self.SP0Count += 1
+				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//50))for x in collisions if x[0] and x[1]!=self]
+			else:
+				self.AbilRun = -1
+				self.AbilTime = 0
+				self.Release = 0
+		
+			
+			
 
 	def special1(self,direction):
 		print(1)
