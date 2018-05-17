@@ -35,7 +35,7 @@ class Char(pygame.sprite.Sprite):
 		#2 = Up
 		#3 = Down
 		self.hitbox = (self.x+4,self.y+4,40,64)
-		
+
 	def update(self,keys,events):
 		self.hitbox = (self.x+4,self.y+4,40,64)
 		self.keys = keys
@@ -105,7 +105,7 @@ class Char(pygame.sprite.Sprite):
 		self.y -= 1
 
 	def atkEnd(self):
-		
+
 		if not(self.AbilTime == -1):
 			self.AbilTime = 0
 			self.AbilRun = -1
@@ -132,18 +132,18 @@ class Char(pygame.sprite.Sprite):
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
 					if e.button == self.buttonmap[0]: self.jump()
-					if e.button == self.buttonmap[1]:
+					if e.button == self.buttonmap[2]:
 						if self.joystick.get_axis(1)> .5: self.atkLight(3)
 						elif self.joystick.get_axis(1)<-.5: self.atkLight(2)
 						elif abs(self.joystick.get_axis(0))>.5: self.atkLight(self.facing)
 						else: self.atkLight(4)
-					elif e.button == self.buttonmap[2]:
+					elif e.button == self.buttonmap[1]:
 						if self.joystick.get_axis(1)> .5: self.atkHeavy(3)
 						elif self.joystick.get_axis(1)<-.5: self.atkHeavy(2)
 						elif abs(self.joystick.get_axis(0))>.5: self.atkHeavy(self.facing)
 						else: self.atkHeavy(4)
 				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
-					if e.button == self.buttonmap[2]:
+					if e.button == self.buttonmap[1]:
 						self.Release = 1
 
 		else:
@@ -169,21 +169,16 @@ class Mage(Char):
 	def RunSpecial0(self):
 		if self.Release and not(self.SP0Count):
 			self.SP0GO = 1
-			scale = int(self.SP0Timer/2 * 400)
-			if scale < 100:
-				scale = 100
-			elif scale > 600:
-				scale = 600
-			for i,j in enumerate(self.explosion):
-				self.explosion[i] = pygame.transform.scale(j,(scale,scale))
+			scale = min(int(self.SP0Timer * 600 + 200),600)
+			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
 			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale/2))
 			self.scale = scale
 		else:
 			self.SP0Timer += self.game.dt
-		
+			if self.SP0Timer > 1: self.Release=1;
 		if self.SP0GO:
-			if self.SP0Count < self.SP0Len*2:
-				self.game.win.blit(self.explosion[self.SP0Count//2],self.LocNow)
+			if self.SP0Count < self.SP0Len:
+				self.game.win.blit(self.explosion[self.SP0Count],self.LocNow)
 				if self.SP0Count <= 8:
 					#Change the spawn location dependant on variable scale
 					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2),4)
@@ -195,9 +190,8 @@ class Mage(Char):
 				self.AbilRun = -1
 				self.AbilTime = 0
 				self.Release = 0
-		
-			
-			
+
+
 
 	def special1(self,direction):
 		print(1)
@@ -213,8 +207,6 @@ class Mage(Char):
 		#Add Flame effect and hit box around character
 		self.vspeed = -900
 		self.gravityMultiplier = 0
-		
-		
 
 	def special3(self):
 		#Drop lightning
