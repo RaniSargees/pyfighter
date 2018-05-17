@@ -156,6 +156,7 @@ class Mage(Char):
 
 	def special0(self):
 		if not self.AbilRun+1:
+			self.Release = 0
 			self.SP0Timer = 0
 			self.SP0GO = 0
 			self.freeze=1
@@ -171,8 +172,8 @@ class Mage(Char):
 			scale = int(self.SP0Timer/2 * 400)
 			if scale < 100:
 				scale = 100
-			elif scale > 400:
-				scale = 400
+			elif scale > 600:
+				scale = 600
 			for i,j in enumerate(self.explosion):
 				self.explosion[i] = pygame.transform.scale(j,(scale,scale))
 			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale/2))
@@ -204,11 +205,19 @@ class Mage(Char):
 		pass
 
 	def special2(self):
-		print(2)
+		#Anti-gravity
+		if self.AbilRun+1 == 0:
+			self.AbilRun = 2
+			self.AbilTime = 0.3
 	def RunSpecial2(self):
-		pass
+		#Add Flame effect and hit box around character
+		self.vspeed = -900
+		self.gravityMultiplier = 0
+		
+		
 
 	def special3(self):
+		#Drop lightning
 		print(3)
 	def RunSpecial3(self):
 		pass
