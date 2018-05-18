@@ -72,7 +72,7 @@ class Char(pygame.sprite.Sprite):
 		self.x += self.hspeed * self.game.dt
 		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
 			self.x -= self.hspeed * self.game.dt
-		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x,self.y,48,72))
+		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 
 	def jump(self):
 		if self.currentJumps:
@@ -207,9 +207,9 @@ class Mage(Char):
 			self.AbilRun = 2
 			self.AbilTime = 0.3
 			self.SP2Count = 0
-			self.explosion = self.game.effects['Old_Explosion'].copy()
-			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(size,size))
-			self.LocNow = (self.x-(size/2),self.y-(size-98))
+			self.explosion = self.game.effects['old_Explosion'].copy()
+			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.flip(pygame.transform.scale(j,(size,size)),self.facing,1)
+			self.LocNow = (self.x-size/2,self.y-size/2)
 	def RunSpecial2(self):
 		#Add Flame effect and hit box around character
 		self.vspeed = -800
