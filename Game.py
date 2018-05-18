@@ -1,5 +1,6 @@
 import pygame, math, os
 from Characters import *
+from Map import *
 from JoystickWrapper import *
 from Settings import *
 
@@ -9,7 +10,7 @@ class Game():
 		self.win = win
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
-		self.ground = 500
+		self.ground = pygame.sprite.Group()
 	def new(self):
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
@@ -18,6 +19,8 @@ class Game():
 				Mage(self, x, [0,3,1,2,4,5])
 			else:
 				Mage(self, x)
+		Ground(self, (140, 500, 1000, 500))
+		Ground(self, (140, 200, 100, 10))
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		img_folder = os.path.join(game_folder, 'Images')
@@ -48,11 +51,11 @@ class Game():
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
 			self.win.fill(WHITE)
 			self.sprites.update(keys, events)
+			self.ground.update()
 			self.draw()
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-		pygame.draw.rect(self.win, BLACK,(150,500,980,200))
 		for i,j in enumerate(self.sprites):
 			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, GREEN, BLUE, WHITE)[j.joystick.get_id()]),((200*i)+50,650))
 		pygame.display.update()

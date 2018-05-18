@@ -40,7 +40,7 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = (self.y >= self.game.ground)
+		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x, self.y)]
 		self.inStage = (self.x <= 1130 and self.x >= 102)
 		if self.grounded and self.inStage:
 			if self.stun <= 0:
@@ -50,8 +50,8 @@ class Char(pygame.sprite.Sprite):
 			else:
 				self.AbilAir = 0
 				self.currentJumps = self.maxJumps
-				self.y = self.game.ground
 				self.vspeed = 0
+				self.y=self.grounded[0].rect[1]
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
 		if self.y > 800:
 			self.dmg = 0
@@ -184,7 +184,7 @@ class Mage(Char):
 				if self.SP0Count <= 8:
 					#Change the spawn location dependant on variable scale
 					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
-					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2)).colliderect(x.hitbox),x)for x in self.game.sprites]
+					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
 				self.SP0Count += 1
 				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//50))for x in collisions if x[0] and x[1]!=self]
