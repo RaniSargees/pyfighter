@@ -38,7 +38,6 @@ class Char(pygame.sprite.Sprite):
 		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
 
 	def update(self,keys,events):
-		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
 		self.keys = keys
 		self.events = events
 		self.grounded = (self.y >= self.game.ground)
@@ -72,6 +71,7 @@ class Char(pygame.sprite.Sprite):
 		self.x += self.hspeed * self.game.dt
 		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
 			self.x -= self.hspeed * self.game.dt
+		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
 	def jump(self):
