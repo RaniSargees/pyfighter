@@ -35,10 +35,10 @@ class Char(pygame.sprite.Sprite):
 		#1 = Right
 		#2 = Up
 		#3 = Down
-		self.hitbox = (self.x+4,self.y+4,40,64)
+		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
 
 	def update(self,keys,events):
-		self.hitbox = (self.x+4,self.y+4,40,64)
+		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
 		self.keys = keys
 		self.events = events
 		self.grounded = (self.y >= self.game.ground)
@@ -73,7 +73,7 @@ class Char(pygame.sprite.Sprite):
 		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
 			self.x -= self.hspeed * self.game.dt
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
-
+		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
 	def jump(self):
 		if self.currentJumps:
 			self.currentJumps -= 1
@@ -84,15 +84,16 @@ class Char(pygame.sprite.Sprite):
 		if direction == 4:
 			direction = self.facing
 		if direction < 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-20+((direction==1)*(48+20)), self.y, 20, 72),4)
-			collisions=[(pygame.Rect((self.x-20+((direction==1)*(48+20)),self.y,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			pygame.draw.rect(self.game.win,BLUE,(self.x-48+((direction==1)*(48+20)), self.y-72, 20, 72),4)
+			collisions=[(pygame.Rect((self.x-48+((direction==1)*(48+20)),self.y-72,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		elif direction >= 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x,self.y-20+((direction==3)*(72+10)),48,30),4)
-			collisions=[(pygame.Rect((self.x,self.y-20+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			pygame.draw.rect(self.game.win,BLUE,(self.x-24,self.y-92+((direction==3)*(72+10)),48,30),4)
+			collisions=[(pygame.Rect((self.x-24,self.y-92+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(20, direction),x[1].damage(20))for x in collisions if x[0] and x[1]!=self]
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
+		self.AbilAir=0
 		self.gravityMultiplier=1
 		self.stun = hit/200
 		self.knocked = 1
