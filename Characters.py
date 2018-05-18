@@ -23,6 +23,7 @@ class Char(pygame.sprite.Sprite):
 		self.joystick = joystick
 		self.buttonmap = buttonmap
 		self.AbilTime = 0
+		self.AbilAir = 0
 		self.AbilRun = -1
 		self.Release = 0
 		self.dmg = 0
@@ -48,6 +49,7 @@ class Char(pygame.sprite.Sprite):
 			if self.knocked:
 				self.vspeed *= -1
 			else:
+				self.AbilAir = 0
 				self.currentJumps = self.maxJumps
 				self.y = self.game.ground
 				self.vspeed = 0
@@ -105,7 +107,6 @@ class Char(pygame.sprite.Sprite):
 		self.y -= 1
 
 	def atkEnd(self):
-
 		if not(self.AbilTime == -1):
 			self.AbilTime = 0
 			self.AbilRun = -1
@@ -169,9 +170,9 @@ class Mage(Char):
 	def RunSpecial0(self):
 		if self.Release and not(self.SP0Count):
 			self.SP0GO = 1
-			scale = min(int(self.SP0Timer * 600 + 200),600)
+			scale = min(int(self.SP0Timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale/2))
+			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale-64))
 			self.scale = scale
 		else:
 			self.SP0Timer += self.game.dt
@@ -181,7 +182,7 @@ class Mage(Char):
 				self.game.win.blit(self.explosion[self.SP0Count],self.LocNow)
 				if self.SP0Count <= 8:
 					#Change the spawn location dependant on variable scale
-					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2),4)
+					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
 					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,self.scale/2)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
 				self.SP0Count += 1
@@ -200,13 +201,22 @@ class Mage(Char):
 
 	def special2(self):
 		#Anti-gravity
-		if self.AbilRun+1 == 0:
+		if self.AbilRun+1 == 0 and not(self.AbilAir):
+			self.AbilAir = 1
+			size = 175
 			self.AbilRun = 2
 			self.AbilTime = 0.3
+			self.SP2Count = 0
+			self.explosion = self.game.effects['Old_Explosion'].copy()
+			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(size,size))
+			self.LocNow = (self.x-(size/2),self.y-(size-98))
 	def RunSpecial2(self):
 		#Add Flame effect and hit box around character
-		self.vspeed = -900
+		self.vspeed = -800
 		self.gravityMultiplier = 0
+		if self.SP2Count < len(self.explosion*2):
+			self.game.win.blit(self.explosion[self.SP2Count//2],self.LocNow)
+			self.SP2Count += 1
 
 	def special3(self):
 		#Drop lightning
