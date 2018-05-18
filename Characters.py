@@ -173,7 +173,7 @@ class Mage(Char):
 			self.SP0GO = 1
 			scale = min(int(self.SP0Timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale-64))
+			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale))
 			self.scale = scale
 		else:
 			self.SP0Timer += self.game.dt
@@ -214,7 +214,7 @@ class Mage(Char):
 	def RunSpecial2(self):
 		#Add Flame effect and hit box around character
 		self.vspeed = -800
-		self.gravityMultiplier = 0
+		self.gravityMultiplier = 12
 		if self.SP2Count < len(self.explosion*2):
 			self.game.win.blit(self.explosion[self.SP2Count//2],self.LocNow)
 			self.SP2Count += 1
