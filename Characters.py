@@ -22,6 +22,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
+		self.inStage = 0
 		self.hit_list = [self]
 		self.AbilTime = 0
 		self.AbilAir = 0
@@ -42,7 +43,9 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x, self.y)]
-		self.inStage = (self.x <= 1130 and self.x >= 102)
+		for i in self.grounded:
+			self.inStage = bool(int(self.x) <= (i.rect[0]+i.rect[2]) and int(self.x) >= i.rect[0])
+	
 		if self.grounded and self.inStage:
 			if self.stun <= 0:
 				self.knocked = 0
@@ -53,6 +56,8 @@ class Char(pygame.sprite.Sprite):
 				self.currentJumps = self.maxJumps
 				self.vspeed = 0
 				self.y=self.grounded[0].rect[1]
+				if self.grounded[0].platform and self.gravityMultiplier == 3:
+					self.y += self.grounded[0].rect[3]
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
 		if self.y > 800:
 			self.dmg = 0
