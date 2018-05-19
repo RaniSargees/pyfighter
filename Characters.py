@@ -43,10 +43,12 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x, self.y)]
+		self.touch_ground = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect((self.x-(48/2),self.y-72,48,72))]
+		self.inStage = False
 		for i in self.grounded:
-			self.inStage = bool(int(self.x) <= (i.rect[0]+i.rect[2]) and int(self.x) >= i.rect[0])
+			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 	
-		if self.grounded and self.inStage:
+		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
 			if self.knocked:
@@ -77,9 +79,13 @@ class Char(pygame.sprite.Sprite):
 			self.hit_list = [self]
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
-		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
-			self.x -= self.hspeed * self.game.dt
+		try:
+			if not(self.inStage) and self.touch_ground and not(self.touch_ground[0].platform) and (self.x <= (self.touch_ground[0].rect[0]+self.touch_ground[0].rect[2]) and self.x >= self.touch_ground[0].rect[0]):
+				self.x -= self.hspeed * self.game.dt
+		except:
+			None
 		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
+		
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
 	def jump(self):

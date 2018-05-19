@@ -21,6 +21,7 @@ class Game():
 				Mage(self, x)
 		Ground(self, (140, 500, 1000, 500))
 		Ground(self, (140, 200, 100, 10),1)
+		Ground(self, (1040,200, 100, 10),1)
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		img_folder = os.path.join(game_folder, 'Images')
