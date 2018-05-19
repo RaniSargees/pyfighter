@@ -22,6 +22,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
+		self.hit_list = [self]
 		self.AbilTime = 0
 		self.AbilAir = 0
 		self.AbilRun = -1
@@ -67,6 +68,8 @@ class Char(pygame.sprite.Sprite):
 				exec(['self.RunSpecial0()','self.RunSpecial1()','self.RunSpecial2()','self.RunSpecial3()'][self.AbilRun])
 			else:
 				self.atkEnd()
+		else:
+			self.hit_list = [self]
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
 		if not(self.inStage) and self.grounded and (self.x <= 1130 and self.x >= 102):
@@ -89,7 +92,7 @@ class Char(pygame.sprite.Sprite):
 		elif direction >= 2:
 			pygame.draw.rect(self.game.win,BLUE,(self.x-24,self.y-92+((direction==3)*(72+10)),48,30),4)
 			collisions=[(pygame.Rect((self.x-24,self.y-92+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(20, direction),x[1].damage(20))for x in collisions if x[0] and x[1]!=self]
+		[(x[1].knockBack(6, direction),x[1].damage(5))for x in collisions if x[0] and x[1]!=self]
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -105,7 +108,7 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4) * (60/max(1,self.game.clock.get_fps()))
 		self.currentJumps = max(1, self.currentJumps)
 		#Don't remove the line below. It fixes the sliding bug
-		self.y -= 1
+		self.y -= 5
 
 	def atkEnd(self):
 		if not(self.AbilTime == -1):
@@ -113,7 +116,7 @@ class Char(pygame.sprite.Sprite):
 			self.AbilRun = -1
 
 	def damage(self, hit):
-		self.dmg+=hit/4
+		self.dmg+=hit
 
 	def get_keys(self):
 		if self.stun <= 0:
@@ -187,7 +190,8 @@ class Mage(Char):
 					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
 				self.SP0Count += 1
-				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//50))for x in collisions if x[0] and x[1]!=self]
+				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
 				self.AbilRun = -1
 				self.AbilTime = 0
@@ -201,7 +205,6 @@ class Mage(Char):
 		pass
 
 	def special2(self):
-		#Anti-gravity
 		if self.AbilRun+1 == 0 and not(self.AbilAir):
 			self.AbilAir = 1
 			size = 175
@@ -218,6 +221,13 @@ class Mage(Char):
 		if self.SP2Count < len(self.explosion*2):
 			self.game.win.blit(self.explosion[self.SP2Count//2],self.LocNow)
 			self.SP2Count += 1
+		pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667),4)
+		collisions=[(pygame.Rect((self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[(x[1].knockBack(12, 3),x[1].damage(16))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+		if self.hit_list != [self]:
+			self.AbilAir = False
+		
 
 	def special3(self):
 		#Drop lightning

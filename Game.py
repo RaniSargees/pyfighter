@@ -40,7 +40,7 @@ class Game():
 		while self.playing:
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
-			for x in self.joysticks: #generate buttonpress events for dummy joysticks
+			for x in self.joysticks: #generate button press events for dummy joysticks
 				try:x.update(events)
 				except:pass
 			self.dt = self.clock.tick(FPS) / 1000
