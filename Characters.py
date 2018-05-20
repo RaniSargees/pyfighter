@@ -187,7 +187,7 @@ class Mage(Char):
 			self.SP0GO = 1
 			scale = min(int(self.SP0Timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*(scale+24))+((self.facing==1)*(24)),self.y-(scale))
+			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale/4)))+((self.facing==1)*(24-(scale/4))),self.y-(scale))
 			self.scale = scale
 		else:
 			self.SP0Timer += self.game.dt
