@@ -187,7 +187,7 @@ class Mage(Char):
 			self.SP0GO = 1
 			scale = min(int(self.SP0Timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*scale)+((self.facing==1)*(40)),self.y-(scale))
+			self.LocNow = (self.x-((self.facing==0)*(scale+24))+((self.facing==1)*(24)),self.y-(scale))
 			self.scale = scale
 		else:
 			self.SP0Timer += self.game.dt
@@ -195,6 +195,7 @@ class Mage(Char):
 		if self.SP0GO:
 			if self.SP0Count < self.SP0Len:
 				self.game.win.blit(self.explosion[self.SP0Count],self.LocNow)
+				pygame.draw.rect(self.game.win,GREEN,(self.LocNow[0],self.LocNow[1],self.scale,self.scale),4)
 				if self.SP0Count <= 8:
 					#Change the spawn location dependant on variable scale
 					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
