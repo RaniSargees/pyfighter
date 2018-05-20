@@ -211,9 +211,42 @@ class Mage(Char):
 
 
 	def special1(self,direction):
-		print(1)
+		#sends a ball that explodes on release
+		#Perhaps change to on impact and on repress since holding the key doesn't feel right
+		if not self.AbilRun+1:
+			self.Release = 0
+			self.SP1GO = 0
+			self.SP1Count = 0
+			self.freeze = 1
+			self.AbilRun = 1
+			self.AbilTime = -1
+			self.abil_loc = (self.x-86,self.y-144)
+			self.abil_dir = self.facing
+			self.explosion = self.game.effects['ball_Explosion'].copy()
+			self.SP1Len = len(self.explosion)
 	def RunSpecial1(self):
-		pass
+		if self.Release and not(self.SP1Count):
+			self.SP1GO = 1
+		elif not(self.SP1Count): self.abil_loc = (self.abil_loc[0] + (self.abil_dir-0.5)*20,self.abil_loc[1])
+		if self.SP1GO:
+			self.freeze = 0
+			if self.SP1Count < self.SP1Len*2:
+				self.game.win.blit(self.explosion[self.SP1Count//2],self.abil_loc)
+				if self.SP1Count < 8:
+					pygame.draw.rect(self.game.win,BLUE,(self.abil_loc[0]+50,self.abil_loc[1]+50,100,100),4)
+					collisions=[(pygame.Rect((self.abil_loc[0]+50,self.abil_loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.game.sprites]
+				else: collisions=[]
+				self.SP1Count += 1
+				[(x[1].knockBack((20), self.abil_dir),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+			else:
+				self.AbilRun = -1
+				self.AbilTime = 0
+				self.Release = 0
+		else:
+			self.game.win.blit(self.explosion[self.SP1Count],self.abil_loc)
+			
+			
 
 	def special2(self):
 		if self.AbilRun+1 == 0 and not(self.AbilAir):

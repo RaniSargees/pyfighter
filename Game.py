@@ -31,9 +31,11 @@ class Game():
 			file = os.path.join(effect_folder, fileName)
 			temp = []
 			for i in sorted(os.listdir(file)):
+				if i.endswith(".txt"):
+					key = list(map(int,open(os.path.join(file,i)).readline().split(',')))
 				if i.endswith(".jpg") or i.endswith(".png"):
 					var = (pygame.image.load(os.path.join(file,i)).convert())
-					var.set_colorkey((0,0,0))
+					var.set_colorkey(key)
 					temp.append(var)
 			self.effects[str(fileName)] = temp
 	def run(self):
