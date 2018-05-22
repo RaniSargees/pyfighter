@@ -1,8 +1,8 @@
 import pygame, math, os
-from Characters import *
-from Map import *
-from JoystickWrapper import *
-from Settings import *
+from characters import *
+from map import *
+from joystick_wrapper import *
+from settings import *
 
 class Game():
 	def __init__(self, win, joysticks):
@@ -24,16 +24,16 @@ class Game():
 		Ground(self, (1040,200, 100, 10),1)
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
-		img_folder = os.path.join(game_folder, 'Images')
-		effect_folder = os.path.join(img_folder, 'Effects')
+		img_folder = os.path.join(game_folder, 'images')
+		effect_folder = os.path.join(img_folder, 'effects')
 		self.effects = {}
 		for fileName in os.listdir(effect_folder):
 			file = os.path.join(effect_folder, fileName)
 			temp = []
 			for i in sorted(os.listdir(file)):
-				if i.endswith(".txt"):
+				if i.lower().endswith(".txt"):
 					key = list(map(int,open(os.path.join(file,i)).readline().split(',')))
-				if i.endswith(".jpg") or i.endswith(".png"):
+				if i.lower().endswith(".jpg") or i.lower().endswith(".png"):
 					var = (pygame.image.load(os.path.join(file,i)).convert())
 					var.set_colorkey(key)
 					temp.append(var)

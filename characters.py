@@ -1,5 +1,5 @@
 import pygame, math
-from Settings import *
+from settings import *
 
 class Char(pygame.sprite.Sprite):
 	def __init__(self,game,joystick,buttonmap=[0,1,2,3,4,5]):
@@ -178,7 +178,7 @@ class Mage(Char):
 			self.freeze=1
 			self.AbilRun = 0
 			self.AbilTime = -1
-			self.explosion = self.game.effects['Explosion'].copy()
+			self.explosion = self.game.effects['explosion'].copy()
 			self.SP0Len = len(self.explosion)
 			self.SP0Count = 0
 
@@ -223,7 +223,7 @@ class Mage(Char):
 			self.AbilTime = -1
 			self.abil_loc = (self.x-86,self.y-144)
 			self.abil_dir = self.facing
-			self.explosion = self.game.effects['ball_Explosion'].copy()
+			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.SP1Len = len(self.explosion)
 	def RunSpecial1(self):
 		if self.Release and not(self.SP1Count):
@@ -246,8 +246,8 @@ class Mage(Char):
 				self.Release = 0
 		else:
 			self.game.win.blit(self.explosion[self.SP1Count],self.abil_loc)
-			
-			
+
+
 
 	def special2(self):
 		if self.AbilRun+1 == 0 and not(self.AbilAir):
@@ -256,7 +256,7 @@ class Mage(Char):
 			self.AbilRun = 2
 			self.AbilTime = 0.3
 			self.SP2Count = 0
-			self.explosion = self.game.effects['old_Explosion'].copy()
+			self.explosion = self.game.effects['boost_explosion'].copy()
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.flip(pygame.transform.scale(j,(size,size)),self.facing,1)
 			self.LocNow = (self.x-size/2,self.y-size/2)
 	def RunSpecial2(self):
@@ -272,7 +272,7 @@ class Mage(Char):
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		if self.hit_list != [self]:
 			self.AbilAir = False
-		
+
 
 	def special3(self):
 		#Drop lightning

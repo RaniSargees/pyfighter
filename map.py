@@ -1,5 +1,5 @@
 import pygame
-from Settings import *
+from settings import *
 
 class Ground(pygame.sprite.Sprite):
 	def __init__(self, game, rect, platform = 0):
