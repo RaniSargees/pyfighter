@@ -11,6 +11,7 @@ class Game():
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = pygame.sprite.Group()
+		self.objects = pygame.sprite.Group()
 	def new(self):
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
@@ -53,6 +54,7 @@ class Game():
 					self.playing = 0
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
 			self.win.fill(WHITE)
+			self.objects.update()
 			self.sprites.update(keys, events)
 			self.ground.update()
 			self.draw()

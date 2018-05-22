@@ -43,7 +43,6 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2-1, self.y, self.hitbox[2]-2, 1) and self.y >= (x.rect[1]+x.rect[3])//2]
-		print(self.grounded)
 		self.inStage = False
 		for i in self.grounded: self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 
@@ -73,7 +72,7 @@ class Char(pygame.sprite.Sprite):
 					self.ability_time -= self.game.dt
 				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
 			else: self.atkEnd()
-		else:self.hit_list = [self]
+		else:self.hit_list = [self];self.freeze = 0
 		self.y += self.vspeed * self.game.dt
 		lpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x-self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
 		rpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x+self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
@@ -208,37 +207,14 @@ class Mage(Char):
 		#sends a ball that explodes on release
 		#Perhaps change to on impact and on repress since holding the key doesn't feel right
 		if not self.ability_run+1:
-			self.release = 0
-			self.special_1_go = 0
-			self.special_1_count = 0
 			self.freeze = 1
 			self.ability_run = 1
-			self.ability_time = -1
-			self.ability_location = (self.x-86,self.y-144)
-			self.ability_direction = self.facing
+			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.special_1_len = len(self.explosion)
+			THE_MAGES_FIREBALL_SPECIALBOI_1(self,self.x-86,self.y-144,self.facing)
 	def run_special1(self):
-		if self.release and not(self.special_1_count):
-			self.special_1_go = 1
-		elif not(self.special_1_count): self.ability_location = (self.ability_location[0] + (self.ability_direction-0.5)*20,self.ability_location[1])
-		if self.special_1_go:
-			self.freeze = 0
-			if self.special_1_count < self.special_1_len*2:
-				self.game.win.blit(self.explosion[self.special_1_count//2],self.ability_location)
-				if self.special_1_count < 8:
-					pygame.draw.rect(self.game.win,BLUE,(self.ability_location[0]+50,self.ability_location[1]+50,100,100),4)
-					collisions=[(pygame.Rect((self.ability_location[0]+50,self.ability_location[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.game.sprites]
-				else: collisions=[]
-				self.special_1_count += 1
-				[(x[1].knockBack((20), self.ability_direction),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
-				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
-			else:
-				self.ability_run = -1
-				self.ability_time = 0
-				self.release = 0
-		else:
-			self.game.win.blit(self.explosion[self.special_1_count],self.ability_location)
+		pass
 
 
 
@@ -273,4 +249,38 @@ class Mage(Char):
 	def run_special3(self):
 		pass
 
-
+class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
+	def __init__(self,char,x,y,direction):            
+		pygame.sprite.Sprite.__init__(self,char.game.objects)
+		self.char = char
+		self.loc = (x,y)
+		self.dir = direction
+		self.hitTarget = 0
+		self.count = 0
+		self.go = 0
+		self.explosion = self.char.explosion
+		self.hit_list = [self,char]
+	def update(self):
+		if self.hitTarget and not(self.count):
+			self.go = 1
+		elif not(self.count): 
+			self.loc = (self.loc[0] + (self.dir-0.5)*20,self.loc[1])
+			collisions = [(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
+			self.hitTarget = bool(len([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)]))
+		if self.go:
+			if self.count < self.char.special_1_len*2:
+				self.char.game.win.blit(self.explosion[self.count//2],self.loc)
+				if self.count < 8:
+					pygame.draw.rect(self.char.game.win,BLUE,(self.loc[0]+50,self.loc[1]+50,100,100),4)
+					collisions=[(pygame.Rect((self.loc[0]+50,self.loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
+				else: collisions=[]
+				self.count += 1
+				[(x[1].knockBack((20), self.dir),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+			else:
+				self.kill()
+		else:
+			self.char.game.win.blit(self.explosion[self.count],self.loc)
+		if self.loc[0] < -200 or self.loc[0] > 1280:
+			self.kill()
+		
