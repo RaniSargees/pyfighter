@@ -24,10 +24,10 @@ class Char(pygame.sprite.Sprite):
 		self.buttonmap = buttonmap
 		self.inStage = 0
 		self.hit_list = [self]
-		self.AbilTime = 0
-		self.AbilAir = 0
-		self.AbilRun = -1
-		self.Release = 0
+		self.ability_time = 0
+		self.ability_air = 0
+		self.ability_run = -1
+		self.release = 0
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
@@ -47,14 +47,14 @@ class Char(pygame.sprite.Sprite):
 		self.inStage = False
 		for i in self.grounded:
 			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
-	
+
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
 			if self.knocked:
 				self.vspeed *= -1
 			else:
-				self.AbilAir = 0
+				self.ability_air = 0
 				self.currentJumps = self.maxJumps
 				self.vspeed = 0
 				self.y=self.grounded[0].rect[1]
@@ -68,11 +68,11 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = 0
 			self.hspeed = 0
 		self.get_keys()
-		if self.AbilRun >= 0:
-			if self.AbilTime > 0 or self.AbilTime == -1:
-				if self.AbilTime > 0:
-					self.AbilTime -= self.game.dt
-				exec(['self.RunSpecial0()','self.RunSpecial1()','self.RunSpecial2()','self.RunSpecial3()'][self.AbilRun])
+		if self.ability_run >= 0:
+			if self.ability_time > 0 or self.ability_time == -1:
+				if self.ability_time > 0:
+					self.ability_time -= self.game.dt
+				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
 			else:
 				self.atkEnd()
 		else:
@@ -82,10 +82,8 @@ class Char(pygame.sprite.Sprite):
 		try:
 			if not(self.inStage) and self.touch_ground and not(self.touch_ground[0].platform) and (self.x <= (self.touch_ground[0].rect[0]+self.touch_ground[0].rect[2]) and self.x >= self.touch_ground[0].rect[0]):
 				self.x -= self.hspeed * self.game.dt
-		except:
-			None
+		except:()
 		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
-		
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
 	def jump(self):
@@ -107,7 +105,7 @@ class Char(pygame.sprite.Sprite):
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
-		self.AbilAir=0
+		self.ability_air=0
 		self.gravityMultiplier=1
 		self.stun = hit/200
 		self.knocked = 1
@@ -122,9 +120,9 @@ class Char(pygame.sprite.Sprite):
 		self.y -= 5
 
 	def atkEnd(self):
-		if not(self.AbilTime == -1):
-			self.AbilTime = 0
-			self.AbilRun = -1
+		if not(self.ability_time == -1):
+			self.ability_time = 0
+			self.ability_run = -1
 
 	def damage(self, hit):
 		self.dmg+=hit
@@ -171,18 +169,18 @@ class Mage(Char):
 		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
 
 	def special0(self):
-		if not self.AbilRun+1:
+		if not self.ability_run+1:
 			self.Release = 0
 			self.SP0Timer = 0
 			self.SP0GO = 0
 			self.freeze=1
-			self.AbilRun = 0
-			self.AbilTime = -1
+			self.ability_run = 0
+			self.ability_time = -1
 			self.explosion = self.game.effects['explosion'].copy()
 			self.SP0Len = len(self.explosion)
 			self.SP0Count = 0
 
-	def RunSpecial0(self):
+	def run_special0(self):
 		if self.Release and not(self.SP0Count):
 			self.SP0GO = 1
 			scale = min(int(self.SP0Timer * 400 + 150),400)
@@ -205,8 +203,8 @@ class Mage(Char):
 				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
-				self.AbilRun = -1
-				self.AbilTime = 0
+				self.ability_run = -1
+				self.ability_time = 0
 				self.Release = 0
 
 
@@ -214,18 +212,18 @@ class Mage(Char):
 	def special1(self,direction):
 		#sends a ball that explodes on release
 		#Perhaps change to on impact and on repress since holding the key doesn't feel right
-		if not self.AbilRun+1:
+		if not self.ability_run+1:
 			self.Release = 0
 			self.SP1GO = 0
 			self.SP1Count = 0
 			self.freeze = 1
-			self.AbilRun = 1
-			self.AbilTime = -1
+			self.ability_run = 1
+			self.ability_time = -1
 			self.abil_loc = (self.x-86,self.y-144)
 			self.abil_dir = self.facing
 			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.SP1Len = len(self.explosion)
-	def RunSpecial1(self):
+	def run_special1(self):
 		if self.Release and not(self.SP1Count):
 			self.SP1GO = 1
 		elif not(self.SP1Count): self.abil_loc = (self.abil_loc[0] + (self.abil_dir-0.5)*20,self.abil_loc[1])
@@ -241,8 +239,8 @@ class Mage(Char):
 				[(x[1].knockBack((20), self.abil_dir),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
-				self.AbilRun = -1
-				self.AbilTime = 0
+				self.ability_run = -1
+				self.ability_time = 0
 				self.Release = 0
 		else:
 			self.game.win.blit(self.explosion[self.SP1Count],self.abil_loc)
@@ -250,16 +248,16 @@ class Mage(Char):
 
 
 	def special2(self):
-		if self.AbilRun+1 == 0 and not(self.AbilAir):
-			self.AbilAir = 1
+		if self.ability_run+1 == 0 and not(self.ability_air):
+			self.ability_air = 1
 			size = 175
-			self.AbilRun = 2
-			self.AbilTime = 0.3
+			self.ability_run = 2
+			self.ability_time = 0.3
 			self.SP2Count = 0
 			self.explosion = self.game.effects['boost_explosion'].copy()
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.flip(pygame.transform.scale(j,(size,size)),self.facing,1)
 			self.LocNow = (self.x-size/2,self.y-size/2)
-	def RunSpecial2(self):
+	def run_special2(self):
 		#Add Flame effect and hit box around character
 		self.vspeed = -800
 		self.gravityMultiplier = 12
@@ -271,13 +269,13 @@ class Mage(Char):
 		[(x[1].knockBack(12, 3),x[1].damage(16))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		if self.hit_list != [self]:
-			self.AbilAir = False
+			self.ability_air = False
 
 
 	def special3(self):
 		#Drop lightning
 		print(3)
-	def RunSpecial3(self):
+	def run_special3(self):
 		pass
 
 
