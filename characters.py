@@ -42,8 +42,8 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x, self.y)]
-		self.touch_ground = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox)]
+		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2-1, self.y, self.hitbox[2]-2, 1) and self.y >= (x.rect[1]+x.rect[3])//2]
+		print(self.grounded)
 		self.inStage = False
 		for i in self.grounded: self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 
@@ -75,10 +75,9 @@ class Char(pygame.sprite.Sprite):
 			else: self.atkEnd()
 		else:self.hit_list = [self]
 		self.y += self.vspeed * self.game.dt
-		self.x += self.hspeed * self.game.dt
-		if self.touch_ground and not self.grounded: #if touching a wall basically
-			if not(self.inStage) and not(self.touch_ground[0].platform):
-				self.x -= self.hspeed * self.game.dt
+		lpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x-self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
+		rpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x+self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
+		if(self.hspeed>0 and not rpoint)or(self.hspeed<0 and not lpoint)or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
@@ -126,10 +125,10 @@ class Char(pygame.sprite.Sprite):
 	def get_keys(self):
 		if self.stun <= 0:
 			if  self.joystick.get_axis(0) < -.5:
-				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (self.freeze==0)
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5:
-				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (self.freeze==0)
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
