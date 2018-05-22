@@ -158,7 +158,7 @@ class Char(pygame.sprite.Sprite):
 						else: self.atkHeavy(4)
 				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
 					if e.button == self.buttonmap[1]:
-						self.Release = 1
+						self.release = 1
 
 		else:
 			self.stun -= self.game.dt
@@ -170,42 +170,42 @@ class Mage(Char):
 
 	def special0(self):
 		if not self.ability_run+1:
-			self.Release = 0
-			self.SP0Timer = 0
-			self.SP0GO = 0
+			self.release = 0
+			self.special_0_timer = 0
+			self.special_0_go = 0
 			self.freeze=1
 			self.ability_run = 0
 			self.ability_time = -1
 			self.explosion = self.game.effects['explosion'].copy()
-			self.SP0Len = len(self.explosion)
-			self.SP0Count = 0
+			self.special_0_len = len(self.explosion)
+			self.special_0_count = 0
 
 	def run_special0(self):
-		if self.Release and not(self.SP0Count):
-			self.SP0GO = 1
-			scale = min(int(self.SP0Timer * 400 + 150),400)
+		if self.release and not(self.special_0_count):
+			self.special_0_go = 1
+			scale = min(int(self.special_0_timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
 			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale/4)))+((self.facing==1)*(24-(scale/4))),self.y-(scale))
 			self.scale = scale
 		else:
-			self.SP0Timer += self.game.dt
-			if self.SP0Timer > 1: self.Release=1;
-		if self.SP0GO:
-			if self.SP0Count < self.SP0Len:
-				self.game.win.blit(self.explosion[self.SP0Count],self.LocNow)
+			self.special_0_timer += self.game.dt
+			if self.special_0_timer > 1: self.release=1;
+		if self.special_0_go:
+			if self.special_0_count < self.special_0_len:
+				self.game.win.blit(self.explosion[self.special_0_count],self.LocNow)
 				pygame.draw.rect(self.game.win,GREEN,(self.LocNow[0],self.LocNow[1],self.scale,self.scale),4)
-				if self.SP0Count <= 8:
+				if self.special_0_count <= 8:
 					#Change the spawn location dependant on variable scale
 					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
 					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
-				self.SP0Count += 1
+				self.special_0_count += 1
 				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
 				self.ability_run = -1
 				self.ability_time = 0
-				self.Release = 0
+				self.release = 0
 
 
 
@@ -213,37 +213,37 @@ class Mage(Char):
 		#sends a ball that explodes on release
 		#Perhaps change to on impact and on repress since holding the key doesn't feel right
 		if not self.ability_run+1:
-			self.Release = 0
-			self.SP1GO = 0
-			self.SP1Count = 0
+			self.release = 0
+			self.special_1_go = 0
+			self.special_1_count = 0
 			self.freeze = 1
 			self.ability_run = 1
 			self.ability_time = -1
-			self.abil_loc = (self.x-86,self.y-144)
-			self.abil_dir = self.facing
+			self.ability_location = (self.x-86,self.y-144)
+			self.ability_direction = self.facing
 			self.explosion = self.game.effects['ball_explosion'].copy()
-			self.SP1Len = len(self.explosion)
+			self.special_1_len = len(self.explosion)
 	def run_special1(self):
-		if self.Release and not(self.SP1Count):
-			self.SP1GO = 1
-		elif not(self.SP1Count): self.abil_loc = (self.abil_loc[0] + (self.abil_dir-0.5)*20,self.abil_loc[1])
-		if self.SP1GO:
+		if self.release and not(self.special_1_count):
+			self.special_1_go = 1
+		elif not(self.special_1_count): self.ability_location = (self.ability_location[0] + (self.ability_direction-0.5)*20,self.ability_location[1])
+		if self.special_1_go:
 			self.freeze = 0
-			if self.SP1Count < self.SP1Len*2:
-				self.game.win.blit(self.explosion[self.SP1Count//2],self.abil_loc)
-				if self.SP1Count < 8:
-					pygame.draw.rect(self.game.win,BLUE,(self.abil_loc[0]+50,self.abil_loc[1]+50,100,100),4)
-					collisions=[(pygame.Rect((self.abil_loc[0]+50,self.abil_loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			if self.special_1_count < self.special_1_len*2:
+				self.game.win.blit(self.explosion[self.special_1_count//2],self.ability_location)
+				if self.special_1_count < 8:
+					pygame.draw.rect(self.game.win,BLUE,(self.ability_location[0]+50,self.ability_location[1]+50,100,100),4)
+					collisions=[(pygame.Rect((self.ability_location[0]+50,self.ability_location[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions=[]
-				self.SP1Count += 1
-				[(x[1].knockBack((20), self.abil_dir),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				self.special_1_count += 1
+				[(x[1].knockBack((20), self.ability_direction),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
 				self.ability_run = -1
 				self.ability_time = 0
-				self.Release = 0
+				self.release = 0
 		else:
-			self.game.win.blit(self.explosion[self.SP1Count],self.abil_loc)
+			self.game.win.blit(self.explosion[self.special_1_count],self.ability_location)
 
 
 
@@ -253,7 +253,7 @@ class Mage(Char):
 			size = 175
 			self.ability_run = 2
 			self.ability_time = 0.3
-			self.SP2Count = 0
+			self.special_2_count = 0
 			self.explosion = self.game.effects['boost_explosion'].copy()
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.flip(pygame.transform.scale(j,(size,size)),self.facing,1)
 			self.LocNow = (self.x-size/2,self.y-size/2)
@@ -261,9 +261,9 @@ class Mage(Char):
 		#Add Flame effect and hit box around character
 		self.vspeed = -800
 		self.gravityMultiplier = 12
-		if self.SP2Count < len(self.explosion*2):
-			self.game.win.blit(self.explosion[self.SP2Count//2],self.LocNow)
-			self.SP2Count += 1
+		if self.special_2_count < len(self.explosion*2):
+			self.game.win.blit(self.explosion[self.special_2_count//2],self.LocNow)
+			self.special_2_count += 1
 		pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667),4)
 		collisions=[(pygame.Rect((self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(12, 3),x[1].damage(16))for x in collisions if x[0] and not(x[1] in self.hit_list)]
