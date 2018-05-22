@@ -37,16 +37,15 @@ class Char(pygame.sprite.Sprite):
 		#1 = Right
 		#2 = Up
 		#3 = Down
-		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
+		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
 		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x, self.y)]
-		self.touch_ground = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect((self.x-(48/2),self.y-72,48,72))]
+		self.touch_ground = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox)]
 		self.inStage = False
-		for i in self.grounded:
-			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
+		for i in self.grounded: self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 
 		if self.grounded:
 			if self.stun <= 0:
@@ -73,17 +72,14 @@ class Char(pygame.sprite.Sprite):
 				if self.ability_time > 0:
 					self.ability_time -= self.game.dt
 				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
-			else:
-				self.atkEnd()
-		else:
-			self.hit_list = [self]
+			else: self.atkEnd()
+		else:self.hit_list = [self]
 		self.y += self.vspeed * self.game.dt
 		self.x += self.hspeed * self.game.dt
-		try:
-			if not(self.inStage) and self.touch_ground and not(self.touch_ground[0].platform) and (self.x <= (self.touch_ground[0].rect[0]+self.touch_ground[0].rect[2]) and self.x >= self.touch_ground[0].rect[0]):
+		if self.touch_ground and not self.grounded: #if touching a wall basically
+			if not(self.inStage) and not(self.touch_ground[0].platform):
 				self.x -= self.hspeed * self.game.dt
-		except:()
-		self.hitbox = (self.x+4-24,self.y+4-72,40,64)
+		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
 	def jump(self):
