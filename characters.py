@@ -42,7 +42,7 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2-1, self.y, self.hitbox[2]-2, 1) and self.y >= (x.rect[1]+x.rect[3])//2]
+		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1) and self.y >=(x.rect[1]+x.rect[3])//2]
 		self.inStage = False
 		for i in self.grounded: self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 
@@ -74,9 +74,8 @@ class Char(pygame.sprite.Sprite):
 			else: self.atkEnd()
 		else:self.hit_list = [self];self.freeze = 0
 		self.y += self.vspeed * self.game.dt
-		lpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x-self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
-		rpoint = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).collidepoint(self.x+self.hitbox[2]//2+self.hspeed*self.game.dt, self.y)]))
-		if(self.hspeed>0 and not rpoint)or(self.hspeed<0 and not lpoint)or len(self.grounded):self.x+=self.hspeed*self.game.dt
+		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68)]))
+		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
@@ -124,10 +123,10 @@ class Char(pygame.sprite.Sprite):
 	def get_keys(self):
 		if self.stun <= 0:
 			if  self.joystick.get_axis(0) < -.5:
-				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (self.freeze==0)
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5:
-				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (self.freeze==0)
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
@@ -213,10 +212,7 @@ class Mage(Char):
 			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.special_1_len = len(self.explosion)
 			THE_MAGES_FIREBALL_SPECIALBOI_1(self,self.x-86,self.y-144,self.facing)
-	def run_special1(self):
-		pass
-
-
+	def run_special1(self):pass
 
 	def special2(self):
 		if self.ability_run+1 == 0 and not(self.ability_air):
@@ -239,8 +235,7 @@ class Mage(Char):
 		collisions=[(pygame.Rect((self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(12, 3),x[1].damage(16))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
-		if self.hit_list != [self]:
-			self.ability_air = False
+		if self.hit_list != [self]:self.ability_air = 0
 
 
 	def special3(self):
@@ -250,7 +245,7 @@ class Mage(Char):
 		pass
 
 class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
-	def __init__(self,char,x,y,direction):            
+	def __init__(self,char,x,y,direction):
 		pygame.sprite.Sprite.__init__(self,char.game.objects)
 		self.char = char
 		self.loc = (x,y)
@@ -263,7 +258,7 @@ class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
 	def update(self):
 		if self.hitTarget and not(self.count):
 			self.go = 1
-		elif not(self.count): 
+		elif not(self.count):
 			self.loc = (self.loc[0] + (self.dir-0.5)*20,self.loc[1])
 			collisions = [(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
 			self.hitTarget = bool(len([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)]))
@@ -283,4 +278,4 @@ class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
 			self.char.game.win.blit(self.explosion[self.count],self.loc)
 		if self.loc[0] < -200 or self.loc[0] > 1280:
 			self.kill()
-		
+
