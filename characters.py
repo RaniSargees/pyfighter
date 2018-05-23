@@ -51,12 +51,12 @@ class Char(pygame.sprite.Sprite):
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
-			if self.knocked:
+			if self.knocked and self.grounded[0].platform==0:
 				self.vspeed *= -1
 			else:
 				self.ability_air = 0
 				self.currentJumps = self.maxJumps
-				self.vspeed = 0
+				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
 				if self.grounded[0].platform and self.gravityMultiplier == 3:
 					self.y += self.grounded[0].rect[3]
@@ -213,7 +213,7 @@ class Mage(Char):
 			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.special_1_len = len(self.explosion)
-			THE_MAGES_FIREBALL_SPECIALBOI_1(self,self.x-86,self.y-144,self.facing)
+			fireball(self,self.x-86,self.y-144,self.facing)
 	def run_special1(self):pass
 
 	def special2(self):
@@ -251,7 +251,7 @@ class Mage(Char):
 	def run_special3(self):
 		pass
 
-class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
+class fireball(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,direction):
 		pygame.sprite.Sprite.__init__(self,char.game.objects)
 		self.char = char
@@ -277,7 +277,7 @@ class THE_MAGES_FIREBALL_SPECIALBOI_1(pygame.sprite.Sprite):
 					collisions=[(pygame.Rect((self.loc[0]+50,self.loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
 				else: collisions=[]
 				self.count += 1
-				[(x[1].knockBack((20), self.dir),x[1].damage(15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				[x[1].damage(15)for x in collisions if x[0]and not(x[1]in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
 				self.kill()

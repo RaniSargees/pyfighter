@@ -24,6 +24,7 @@ class Game():
 		Ground(self, (140, 200, 100, 10),1)
 		Ground(self, (1040,200, 100, 10),1)
 		Moving(self, (140, 300, 100, 10),1,10,(140,1040),1)
+		Moving(self, (400, 300, 100, 10),2,2,(140,320),1)
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		img_folder = os.path.join(game_folder, 'images')
