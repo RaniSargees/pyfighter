@@ -239,7 +239,12 @@ class Mage(Char):
 
 
 	def special3(self):
-		#Drop lightning
+		#Drop bomb? *
+		#toss fireball? *
+		#cause aoe explosion from self? ***
+		#bring laser from sky? **
+		#
+		
 		print(3)
 	def run_special3(self):
 		pass
