@@ -1,5 +1,6 @@
 import pygame, math
 from settings import *
+from map import *
 
 class Char(pygame.sprite.Sprite):
 	def __init__(self,game,joystick,buttonmap=[0,1,2,3,4,5]):
@@ -31,7 +32,7 @@ class Char(pygame.sprite.Sprite):
 		self.dmg = 0
 		self.stun = 0
 		self.knocked = 0
-		self.freeze=0
+		self.freeze = 0
 		self.facing = 0
 		#0 = Left
 		#1 = Right
@@ -42,10 +43,11 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1) and self.y >=(x.rect[1]+x.rect[3])//2]
+		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1)]
 		self.inStage = False
-		for i in self.grounded: self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
-
+		for i in self.grounded:
+			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
+			if type(i) is Moving:() #TODO
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
@@ -74,7 +76,7 @@ class Char(pygame.sprite.Sprite):
 			else: self.atkEnd()
 		else:self.hit_list = [self];self.freeze = 0
 		self.y += self.vspeed * self.game.dt
-		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68)]))
+		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68) and not x.platform]))
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
@@ -244,7 +246,7 @@ class Mage(Char):
 		#cause aoe explosion from self? ***
 		#bring laser from sky? **
 		#
-		
+
 		print(3)
 	def run_special3(self):
 		pass
