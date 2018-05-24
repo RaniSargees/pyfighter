@@ -13,7 +13,7 @@ class Ground(pygame.sprite.Sprite):
 		pygame.draw.rect(self.game.win, BLACK, self.rect)
 
 class Moving(Ground):
-	def __init__(self,game,rect,direction,speed,Platform_Range,platfrom = 1):
+	def __init__(self,game,rect,direction,speed,Platform_Range,platform = 1):
 		Ground.__init__(self,game,rect,1)
 		self.range = Platform_Range
 		self.speed = speed

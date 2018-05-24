@@ -23,7 +23,7 @@ class Game():
 		Ground(self, (140, 500, 1000, 500))
 		#Ground(self, (140, 200, 100, 10),1)
 		#Ground(self, (1040,200, 100, 10),1)
-		Moving(self, (0, 300, 400, 10),1,200,(0,880),1)
+		Moving(self, (0, 300, 400, 10),1,200,(0,880))
 		#Moving(self, (400, 300, 300, 10),3,100,(140,320),1)
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
