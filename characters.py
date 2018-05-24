@@ -83,10 +83,15 @@ class Char(pygame.sprite.Sprite):
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
 		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
-		if self.x > RES[0]:
-			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
-		elif self.x < 0:
-			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
+		if self.y < 0:
+			arrowX = max(min(self.x,RES[0]),0)
+			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
+		else:
+			if self.x > RES[0]:
+				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
+			elif self.x < 0:
+				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
+		
 		
 	def jump(self):
 		if self.currentJumps:

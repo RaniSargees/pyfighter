@@ -20,7 +20,6 @@ class Game():
 				Mage(self, x, [0,3,1,2,4,5])
 			else:
 				Mage(self, x)
-
 		#load default map
 		for x in self.maps["default"].open("map").readlines():
 			file = x.decode("UTF-8").strip().split()
