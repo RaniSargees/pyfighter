@@ -7,6 +7,8 @@ class Ground(pygame.sprite.Sprite):
 		self.game = game
 		self.platform = platform
 		pygame.sprite.Sprite.__init__(self, game.ground)
+		self.speed = 0
+		self.dir = 0
 	def update(self):
 		pygame.draw.rect(self.game.win, BLACK, self.rect)
 

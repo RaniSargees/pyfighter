@@ -60,6 +60,8 @@ class Char(pygame.sprite.Sprite):
 				self.y=self.grounded[0].rect[1]
 				if self.grounded[0].platform and self.gravityMultiplier == 3:
 					self.y += self.grounded[0].rect[3]
+				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))
+				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
 		if self.y > 800:
 			self.dmg = 0
