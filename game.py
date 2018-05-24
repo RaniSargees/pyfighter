@@ -22,11 +22,12 @@ class Game():
 				Mage(self, x)
 		#load default map
 		for x in self.maps["default"].open("map").readlines():
-			file = x.decode("UTF-8").strip().split()
-			file = [file[0]]+list(map(int,file[1:-1]))
-			if file[0] == "g": Ground(self, file[1:5])
-			if file[0] == "p": Ground(self, file[1:5], 1)
-			if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9])
+			if x.strip():
+				file = x.decode("UTF-8").strip().split()
+				file = [file[0]]+list(map(int,file[1:-1]))
+				if file[0] == "g": Ground(self, file[1:5])
+				if file[0] == "p": Ground(self, file[1:5], 1)
+				if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9])
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		map_folder = os.path.join(game_folder, 'maps')
