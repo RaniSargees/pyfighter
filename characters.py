@@ -60,8 +60,8 @@ class Char(pygame.sprite.Sprite):
 				self.y=self.grounded[0].rect[1]
 				if self.grounded[0].platform and self.gravityMultiplier == 3:
 					self.y += self.grounded[0].rect[3]
-				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))
-				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)
+				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
+				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
 		if self.y > 800:
 			self.dmg = 0
@@ -190,7 +190,6 @@ class Mage(Char):
 		if self.special_0_go:
 			if self.special_0_count < self.special_0_len:
 				self.game.win.blit(self.explosion[self.special_0_count],self.LocNow)
-				pygame.draw.rect(self.game.win,GREEN,(self.LocNow[0],self.LocNow[1],self.scale,self.scale),4)
 				if self.special_0_count <= 8:
 					#Change the spawn location dependant on variable scale
 					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)

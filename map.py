@@ -26,7 +26,7 @@ class Moving(pygame.sprite.Sprite):
 		#2 = Up
 		#3 = Down
 	def update(self):
-		self.rect = (self.rect[0] + (self.speed * (self.dir==1)) - (self.speed*(self.dir==0)),self.rect[1] - (self.speed*(self.dir==2))+(self.speed*(self.dir==3)),self.rect[2],self.rect[3])
+		self.rect = (self.rect[0] + ((self.speed * (self.dir==1)) - (self.speed*(self.dir==0)))*self.game.dt, self.rect[1] - ((self.speed*(self.dir==2))-(self.speed*(self.dir==3)))*self.game.dt,self.rect[2],self.rect[3])
 		if self.dir > 1:
 			if self.rect[1] >= max(self.range):
 				self.dir = 2
