@@ -1,4 +1,4 @@
-import pygame, math, os
+import pygame, math, os, zipfile
 from characters import *
 from map import *
 from joystick_wrapper import *
@@ -20,16 +20,23 @@ class Game():
 				Mage(self, x, [0,3,1,2,4,5])
 			else:
 				Mage(self, x)
-		Ground(self, (140, 500, 1000, 500))
-		#Ground(self, (140, 200, 100, 10),1)
-		#Ground(self, (1040,200, 100, 10),1)
-		Moving(self, (0, 300, 400, 10),1,200,(0,880),1)
-		#Moving(self, (400, 300, 300, 10),3,100,(140,320),1)
+
+		#load default map
+		for x in self.maps["default"].open("map").readlines():
+			file = x.decode("UTF-8").strip().split()
+			file = [file[0]]+list(map(int,file[1:-1]))
+			if file[0] == "g": Ground(self, file[1:5])
+			if file[0] == "p": Ground(self, file[1:5], 1)
+			if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9])
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
+		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
 		effect_folder = os.path.join(img_folder, 'effects')
 		self.effects = {}
+		self.maps = {}
+		for filename in os.listdir(map_folder):
+			if filename.endswith(".pfmap"):self.maps[filename[:-6]] = zipfile.ZipFile(os.path.join(map_folder, filename))
 		for fileName in os.listdir(effect_folder):
 			file = os.path.join(effect_folder, fileName)
 			temp = []

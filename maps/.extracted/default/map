@@ -1,0 +1,4 @@
+g 140 500 1000 500 ground.png
+p 140 200 100 10 ground.png
+p 1040 200 100 10 ground.png
+m 0 300 400 10 1 200 0 880 ground.png
