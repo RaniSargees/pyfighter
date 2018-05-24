@@ -81,8 +81,13 @@ class Char(pygame.sprite.Sprite):
 		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68) and not x.platform]))
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
-		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, BLACK)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
+		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
+		if self.x > RES[0]:
+			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
+		elif self.x < 0:
+			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
+		
 	def jump(self):
 		if self.currentJumps:
 			self.currentJumps -= 1

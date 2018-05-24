@@ -21,10 +21,10 @@ class Game():
 			else:
 				Mage(self, x)
 		Ground(self, (140, 500, 1000, 500))
-		Ground(self, (140, 200, 100, 10),1)
-		Ground(self, (1040,200, 100, 10),1)
-		Moving(self, (140, 300, 100, 10),1,200,(140,1040),1)
-		Moving(self, (400, 300, 100, 10),3,100,(140,320),1)
+		#Ground(self, (140, 200, 100, 10),1)
+		#Ground(self, (1040,200, 100, 10),1)
+		Moving(self, (0, 300, 400, 10),1,200,(0,880),1)
+		#Moving(self, (400, 300, 300, 10),3,100,(140,320),1)
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		img_folder = os.path.join(game_folder, 'images')
@@ -74,7 +74,7 @@ joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_coun
 for x in joysticks: x.init()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 #win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-win = pygame.display.set_mode((1280,720))
+win = pygame.display.set_mode(RES)
 
 g = Game(win, joysticks)
 g.new()
