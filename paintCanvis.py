@@ -2,10 +2,8 @@ import pygame
 from settings import *
 
 class paintCanvis():
-	def __init__(self,win,psize,rect):
+	def __init__(self,win):
 		self.win = win
-		self.psize = psize
-		self.rect = rect
 		self.color = 1
 		self.brush = 5
 		self.colorList = (WHITE,RED,GREEN,BLUE,YELLOW)
