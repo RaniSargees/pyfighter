@@ -1,96 +1,127 @@
-class grid(): #grid data structure
-	def __init__(self, width, height):		self._2dlist = [[None for y in range(width)] for x in range(height)]
-	def __getitem__(self, pos):			return self._2dlist[pos[1]][pos[0]]
-	def __setitem__(self, pos, val):		self._2dlist[pos[1]][pos[0]]=val
-	def __repr__(self):				return "\n".join([" ".join([str(x) for x in y]) for y in self._2dlist][::-1])
-	def __len__(self):				return len(self._2dlist)*len(self._2dlist[0])
-	def get_width(self):				return len(self._2dlist[0])
-	def get_height(self):				return len(self._2dlist)
+########################GRID##########################
+#			GRID CLASSES BY: RYOTA PARSONS			 #	 
+#													 #	 
+#Function: the grid class takes in the rows and		 #
+#	collums and their origin coordinates and creates #
+#	a grid with the coordinates and the width and	 # 
+#	height. The above mentioned variables are send	 #
+#	back, to be used by other functions methods and	 #
+#	lines of code.									 #
+#													 #
+#Input Specifications: Rows, Collums, Origin Coords, #
+#	Total Height and Width, spacing, and group to be #
+#	put into. (Opitional)							 #
+#													 #
+#			MENU, WORDLIST, AND LETTERGRID			 #
+#													 #
+#Function: Enherits Grid Class. Takes in grid coords #
+#	and applies them to the BTN Class and creates a	 #
+#	grid of buttons.								 #
+#													 #
+#Note: Each class has slightly different functions	 #
+#	and parameters to create grids with different	 #
+#	purposes.										 #
+######################################################
 
-class button_grid(grid): #drawable grid datatype
-	def __init__(self, width, height, rect):
-		self._rect=rect;
-		self._2dlist = [[button((y*rect[2]/width+rect[0],x*rect[3]/height+rect[1],rect[2]/width,rect[3]/height)) for y in range(width)] for x in range(height)]
-		self._surface = pygame.Surface((self._rect[2], self._rect[3]))
-		self._surface.fill((255,255,255))
-	def get_rect(self):				return self._rect
-	def draw(self): #make a list of surfaces then blit them to the main surface
-		blitlist = []
-		for y in range(len(self._2dlist)):
-			for x in range(len(self._2dlist[y])):
-				try:blitlist.append((self._2dlist[y][x].draw(),x,y))
-				except:() #ignore if error in / no .draw() method, abused for optimisation
-		for x in blitlist: self._surface.blit(x[0],(x[1]*(self._rect[2]/self.get_width()),x[2]*(self._rect[3]/self.get_height()))) #blit everything in its place
-		return self._surface
-	def update(self): return[[x.update()for x in y]for y in self._2dlist] #call update method on all contained objects, return array of results
+import pygame
+from BTN import *
+class grid(pygame.sprite.Sprite):
+	def __init__(self,width,height,x,y,Xsize,Ysize,spacing,sprites):
+		#Width&height are num of buttons in each set
+		try:
+			#Attemps to put its self into the passed sprite group.
+			#If no group is passed it will fail by default
+			pygame.sprite.Sprite.__init__(self)
+			sprites.add(self)
+		except:
+			pass
+		self.w = width
+		self.h = height
+		self.Xcord = x
+		self.Ycord = y
+		self.Xsize = Xsize
+		self.Ysize = Ysize
+		self.spacing = spacing
+		self.makegrid()
+	def makegrid(self):
+		#Determine the X, Y coordinate and the size for each item in the grid
+		self.cords = []
+		self.Xint = (self.Xsize + self.spacing) / self.w
+		self.Yint = (self.Ysize + self.spacing) / self.h
+		self.Xbtn = self.Xint - self.spacing
+		self.Ybtn = self.Yint - self.spacing
+		for i in range(self.h):
+			temp = []
+			for j in range(self.w):
+				temp.append((self.Xcord + self.Xint*j,self.Ycord + self.Yint*i))
+			self.cords.append(temp)
 
-class letter_grid(button_grid): #generate drawable grid from letter input
-	def __init__(self, letters, rect):
-		button_grid.__init__(self, len(letters[0]), len(letters), rect)
-		for y in range(len(letters)):
-			for x in range(len(letters[y])):self[x,y].set_text(letters[y][x])
 
-class menu(letter_grid):
-	def __init__(self, items, rect):
-		letter_grid.__init__(self, [[x] for x in items], rect) #calculate font size from max width of words
-		calc = pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"), 10).render("e",1,(0,0,0)).get_width()/10
-		for y in range(len(items)):self[0,y].set_font(pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"),int((self._rect[2]/(max([len(x) for x in items])+2))/calc)))
-	def update(self):
-		states=[x[0].update()for x in self._2dlist] #call update method on all contained objects, return clicked item
-		try:return states.index(1)
-		except:return None
+class Menu(grid):
+	def __init__(self,win,width,height,x,y,Xsize,Ysize,spacing,values,Fn = None, MaxFont = False, setting = 1,highlight = None,group = None, Font = None):
+		grid.__init__(self,width,height,x,y,Xsize,Ysize,spacing,group)
+		self.win = win
+		self.values = values
+		self.MenuList = []
+		if Fn == None:
+			#Change Fn value to satisfy the BTN classes input specifications
+			Fn = ['None' for x in range(self.width*self.height)]
+		for i in range(self.h):
+			for j in range(self.w):
+				#Create all button instances and append them into a list
+				self.MenuList.append(BTN(self.win,(255,255,255),self.values[(i*self.w)+j],self.cords[i][j],(self.Xbtn,self.Ybtn),setting = setting,Fn = Fn[(i*self.w)+j],MaxFont = MaxFont, MouseColor = highlight, Font = Font))
+	def update(self,mDown = False):
+		#v for value. pass mDown as true if the mouse button is down.
+		if mDown:
+			v = mDown + 2
+		else:
+			v = 0
+		#Update all buttons
+		for i in self.MenuList:
+			i.update(v)
 
-class button():
-	def __init__(self, rect, text="", bgcolour=(255,255,255), bordercolour=(0,0,0), textcolour=(0,0,0), hovercolour=(128,128,128), activecolour=(0,128,0), lockcolour=(128,0,128), function=None):
-		self._rect =		rect #store variables in self
-		self._text =		text
-		self._bgcolour =	bgcolour
-		self._bordercolour =	bordercolour
-		self._textcolour =	textcolour
-		self._hovercolour =	hovercolour
-		self._activecolour =	activecolour
-		self._lockcolour =	lockcolour
-		self._function =	function
-		self._state =		0
-		self._previous =	-1
-		self._surface =		pygame.Surface((rect[2], rect[3]))
-		#calculate fontsize
-		calc = pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"), 10).render("e",1,(0,0,0)).get_width()/10
-		self._font=pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"), int((rect[2]/(len(text)+2))/calc))
-	def __repr__(self):				return self._text
-	def set_font(self, font): self._font=font #used to override font size
-	def set_text(self, text): #recalculate font size and change text
-		self._text = text
-		calc = pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"), 10).render("e",1,(0,0,0)).get_width()/10
-		self._font=pygame.font.SysFont(pygame.font.match_font("lucida","mono","couriernew"), int((self._rect[2]/(len(text)+2))/calc))
-	def set_colours(self, bg=None, border=None, text=None, hover=None, active=None, lock=None): #change colours
-		if bg:		self._bgcolour=bg
-		if border:	self._bordercolour=border
-		if text:	self._textcolour=text
-		if hover:	self._hovercolour=hover
-		if active:	self._activecolour=active
-		if lock:	self._lockcolour=lock
-	def set_state(self, state): self._state=state #run this only after updates to force a button state
-	def get_state(self): return self._state
-	def draw(self):
-		0/(self._previous!=self._state) #""optimisation"", forces the button_grid class to skip drawing the button
-		exec({ #change fill colour based on state
-			0:"self._surface.fill(self._bgcolour)",
-			1:"self._surface.fill(self._hovercolour)",
-			2:"self._surface.fill(self._activecolour)",
-			3:"self._surface.fill(self._lockcolour)",
-			4:"self._surface.fill(self._hovercolour)"
-		}[self._state]) #hacky way of doing switch statements in python, because nobody wants 3 elifs
-		pygame.draw.rect(self._surface, self._bordercolour, (0,0,self._rect[2],self._rect[3]), 1) #draw border
-		render = self._font.render(self._text, 1, self._textcolour) #draw text
-		self._surface.blit(render, (self._rect[2]/2-render.get_width()/2, self._rect[3]/2-render.get_height()/2))
-		return self._surface
-	def update(self):
-		self._previous = self._state
-		if pygame.Rect(self._rect).collidepoint(pygame.mouse.get_pos()): self._state=1
-		else: self._state=0
-		if self._state and pygame.mouse.get_pressed()[0]: self._state=2
-		if self._state and pygame.mouse.get_pressed()[2]: self._state=4
-		if self._state!=2 and self._previous==2: return 1
-		if self._state!=4 and self._previous==4: return 2
-		return 0
+
+class WordList(grid):
+	def __init__(self,win,width,height,x,y,Xsize,Ysize,spacing,values,group = None):
+		grid.__init__(self,width,height,x,y,Xsize,Ysize,spacing, group)
+		self.values = values
+		self.win = win
+		self.AnsKey = []
+		for i in range(self.h):
+			for j in range(self.w):
+				#Create all button instances and append them into a list
+				self.AnsKey.append(BTN(self.win,(255,255,255),self.values[(i*self.w)+j],self.cords[i][j],(self.Xbtn,self.Ybtn),setting = 2,Font = 24))
+	def update(self, mDown = False):
+		if mDown:
+			v = mDown + 2
+		else:
+			v = 0
+		#Update all butons
+		for i in self.AnsKey:
+			i.update(v)
+
+
+
+class LetterGrid(grid):
+	def __init__(self,win,width,height,x,y,Xsize,Ysize,spacing,values=None,group = None):
+		grid.__init__(self,width,height,x,y,Xsize,Ysize,spacing, group)
+		self.values = values
+		self.win = win
+		self.LetterBTN = []
+		for i in range(height):
+			for j in range(width):
+				#Create all button instances and append them into a list
+				if self.values != None:
+					value = self.values[i][j]
+				else:
+					value = ' '
+				self.LetterBTN.append(BTN(self.win,(255,255,255),value,self.cords[i][j],(self.Xbtn,self.Ybtn),setting = 0,MouseColor = (255,255,0)))
+	def update(self,mDown = False):
+		if mDown:
+			v = mDown+2
+		else:
+			v = 0
+		#Update all buttons and put all state values of each button into a list
+		self.ReturnBTN = []
+		for i in self.LetterBTN:
+			self.ReturnBTN.append(i.update(v))
