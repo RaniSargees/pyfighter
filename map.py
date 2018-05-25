@@ -2,15 +2,18 @@ import pygame
 from settings import *
 
 class Ground(pygame.sprite.Sprite):
-	def __init__(self, game, rect, platform = 0):
+	def __init__(self, game, rect, platform = 0, texture = None):
 		self.rect = rect
 		self.game = game
 		self.platform = platform
 		pygame.sprite.Sprite.__init__(self, game.ground)
 		self.speed = 0
 		self.dir = 0
+		if texture: self.tex = pygame.transform.scale(texture, self.rect[2:])
+		else: self.tex = None
 	def update(self):
-		pygame.draw.rect(self.game.win, BLACK, self.rect)
+		if self.tex:self.game.win.blit(self.tex, self.rect)
+		else:pygame.draw.rect(self.game.win, BLACK, self.rect)
 
 class Moving(Ground):
 	def __init__(self,game,rect,direction,speed,Platform_Range,platform = 1):
@@ -34,4 +37,4 @@ class Moving(Ground):
 				self.dir = 0
 			elif self.rect[0] <= min(self.range):
 				self.dir = 1
-		pygame.draw.rect(self.game.win, BLACK, self.rect)
+		Ground.update(self)
