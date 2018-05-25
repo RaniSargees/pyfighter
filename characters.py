@@ -59,7 +59,7 @@ class Char(pygame.sprite.Sprite):
 				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
 				if self.grounded[0].platform and self.gravityMultiplier == 3:
-					self.y += self.grounded[0].rect[3]
+					self.y += self.grounded[0].rect[3] + self.grounded[0].speed * self.game.dt * (self.grounded[0].dir > 1)
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
@@ -91,8 +91,7 @@ class Char(pygame.sprite.Sprite):
 				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
 			elif self.x < 0:
 				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
-		
-		
+
 	def jump(self):
 		if self.currentJumps:
 			self.currentJumps -= 1
