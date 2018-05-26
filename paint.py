@@ -16,16 +16,16 @@ class paint():
 	
 	def new(self):
 		self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
-		self.grid = paintCanvis(self.canvas,1)
+		self.grid = paintCanvis(self.canvas,1,5)
 		for i in range(len(COLORS)):
 			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
 		for i in self.ColorBTN:
 			if i.cnum == 1:
 				i.selected = 1
 		
-		self.BrushSize = BTN(self,self.win,0,(710,30,50,40),self.MenuBTN,text = str(self.grid.brush),fn = '')
-		BTN(self,self.win,0,(670,30,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))')
-		BTN(self,self.win,0,(770,30,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))')
+		self.BrushSize = BTN(self,self.win,0,(710,30,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self,self.win,0,(670,30,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self,self.win,0,(770,30,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		
 			
 		
@@ -55,7 +55,7 @@ class paint():
 				if event.type == pygame.KEYUP:
 					if event.key == pygame.K_p:
 						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
-						self.grid = paintCanvis(self.canvas,self.grid.color)
+						self.grid = paintCanvis(self.canvas,self.grid.color,self.grid.brush)
 			self.Mouse = pygame.mouse.get_pos()
 			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
 			pygame.time.delay(10)
@@ -78,9 +78,12 @@ class paint():
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				if self.hold==False and self.click==True:
 					self.click = False
-					for j in self.MenuBTN:
-						j.update(clicked = 0)
-					i.update(clicked = 1)
+					if i.clickable:
+						for j in self.MenuBTN:
+							j.update(clicked = 0)
+						i.update(clicked = 1)
+					else:
+						i.update(mOver=1)
 					exec(i.fn)
 				else:
 					if self.hold == True:
@@ -98,8 +101,8 @@ class paint():
 	def draw(self):
 		self.win.fill(WHITE)
 		pygame.draw.line(self.win,BLACK,(17,17),(663,17),6)
-		pygame.draw.line(self.win,BLACK,(663,17),(663,503),6)
-		pygame.draw.line(self.win,BLACK,(663,503),(17,503),6)
+		pygame.draw.line(self.win,BLACK,(662,17),(662,502),6)
+		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
 		self.win.blit(self.canvas,(self.shift,self.shift))
 

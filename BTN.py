@@ -2,7 +2,7 @@ import pygame
 from settings import *
 
 class BTN(pygame.sprite.Sprite):
-	def __init__(self,game,surface,color,rect,group,clickColor=(0,0,255),text='',fn=None):
+	def __init__(self,game,surface,color,rect,group,clickColor=(0,0,255),text='',fn=None,clickable = True):
 		self.game = game
 		pygame.sprite.Sprite.__init__(self,group)
 		self.win = surface
@@ -10,6 +10,7 @@ class BTN(pygame.sprite.Sprite):
 		self.cnum = color
 		self.outline = clickColor
 		self.rect = pygame.Rect(rect)
+		self.clickable = clickable
 		if text != '':
 			self.charSize = int((self.rect[1]/len(text)))
 			self.font = pygame.font.SysFont('Courier New',self.charSize)
