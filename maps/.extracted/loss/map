@@ -1,0 +1,7 @@
+p 740 200 300 10 ground.png
+p 740 350 300 10 ground.png
+g 740 500 300 100 ground.png
+p 140 200 300 10 ground.png
+p 140 350 300 10 ground.png
+p 240 500 200 10 ground.png
+g 140 500 100 100

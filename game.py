@@ -22,10 +22,10 @@ class Game():
 			else:
 				Mage(self, x)
 		#load default map
-		for x in self.maps["default"].open("map").readlines():
+		for x in self.maps["loss"].open("map").readlines():
 			if x.strip():
 				file = x.decode("UTF-8").strip().split()
-				texture = pygame.image.load(BytesIO(self.maps["default"].read(file[-1])))
+				texture = pygame.image.load(BytesIO(self.maps["loss"].read(file[-1])))
 				file = [file[0]]+list(map(int,file[1:-1]))
 				if file[0] == "g": Ground(self, file[1:5], texture=texture)
 				if file[0] == "p": Ground(self, file[1:5], 1, texture=texture)
