@@ -28,41 +28,44 @@ class paintCanvis():
 		pygame.surfarray.blit_array(self.win,self.save)
 
 	def recursiveFill(self,pos,dir=0):
-		if self.win.get_at(pos) == self.base:
-			self.win.set_at(pos,self.colorList[self.color])
-			if dir == 1:
-				self.recursiveFill([pos[0]+1,pos[1]+1],2)
-				self.recursiveFill([pos[0]+0,pos[1]+1],3)
-				self.recursiveFill([pos[0]-1,pos[1]+1],4)
-				self.recursiveFill([pos[0]-1,pos[1]+0],5)
-				self.recursiveFill([pos[0]-1,pos[1]-1],6)
-				self.recursiveFill([pos[0]+0,pos[1]-1],7)
-				self.recursiveFill([pos[0]+1,pos[1]-1],8)
-				self.recursiveFill([pos[0]+1,pos[1]+0],9)
-			elif dir == 2:
-				self.recursiveFill([pos[0]+1,pos[1]+1],2)
-				self.recursiveFill([pos[0]+0,pos[1]+1],3)
-				self.recursiveFill([pos[0]+1,pos[1]+0],9)
-			elif dir == 3:
-				self.recursiveFill([pos[0]+0,pos[1]+1],3)
-			elif dir == 4:
-				self.recursiveFill([pos[0]+0,pos[1]+1],3)
-				self.recursiveFill([pos[0]-1,pos[1]+1],4)
-				self.recursiveFill([pos[0]-1,pos[1]+0],5)
-			elif dir == 5:
-				self.recursiveFill([pos[0]-1,pos[1]+0],5)
-			elif dir == 6:
-				self.recursiveFill([pos[0]-1,pos[1]+0],5)
-				self.recursiveFill([pos[0]-1,pos[1]-1],6)
-				self.recursiveFill([pos[0]+0,pos[1]-1],7)
-			elif dir == 7:
-				self.recursiveFill([pos[0]+0,pos[1]-1],7)
-			elif dir == 8:
-				self.recursiveFill([pos[0]+0,pos[1]-1],7)
-				self.recursiveFill([pos[0]+1,pos[1]-1],8)
-				self.recursiveFill([pos[0]+1,pos[1]+0],9)
-			elif dir == 9:
-				self.recursiveFill([pos[0]+1,pos[1]+0],9)
-				
-		else:
+		try:
+			if self.win.get_at(pos) == self.base:
+				self.win.set_at(pos,self.colorList[self.color])
+				if dir == 1:
+					self.recursiveFill([pos[0]+1,pos[1]+1],2)
+					self.recursiveFill([pos[0]+0,pos[1]+1],3)
+					self.recursiveFill([pos[0]-1,pos[1]+1],4)
+					self.recursiveFill([pos[0]-1,pos[1]+0],5)
+					self.recursiveFill([pos[0]-1,pos[1]-1],6)
+					self.recursiveFill([pos[0]+0,pos[1]-1],7)
+					self.recursiveFill([pos[0]+1,pos[1]-1],8)
+					self.recursiveFill([pos[0]+1,pos[1]+0],9)
+				elif dir == 2:
+					self.recursiveFill([pos[0]+1,pos[1]+1],2)
+					self.recursiveFill([pos[0]+0,pos[1]+1],3)
+					self.recursiveFill([pos[0]+1,pos[1]+0],9)
+				elif dir == 3:
+					self.recursiveFill([pos[0]+0,pos[1]+1],3)
+				elif dir == 4:
+					self.recursiveFill([pos[0]+0,pos[1]+1],3)
+					self.recursiveFill([pos[0]-1,pos[1]+1],4)
+					self.recursiveFill([pos[0]-1,pos[1]+0],5)
+				elif dir == 5:
+					self.recursiveFill([pos[0]-1,pos[1]+0],5)
+				elif dir == 6:
+					self.recursiveFill([pos[0]-1,pos[1]+0],5)
+					self.recursiveFill([pos[0]-1,pos[1]-1],6)
+					self.recursiveFill([pos[0]+0,pos[1]-1],7)
+				elif dir == 7:
+					self.recursiveFill([pos[0]+0,pos[1]-1],7)
+				elif dir == 8:
+					self.recursiveFill([pos[0]+0,pos[1]-1],7)
+					self.recursiveFill([pos[0]+1,pos[1]-1],8)
+					self.recursiveFill([pos[0]+1,pos[1]+0],9)
+				elif dir == 9:
+					self.recursiveFill([pos[0]+1,pos[1]+0],9)
+					
+			else:
+				return None
+		except:
 			return None
