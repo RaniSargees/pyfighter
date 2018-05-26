@@ -1,17 +1,22 @@
 import pygame
 from random import randint
 from settings import *
-from paintCanvis import *
+from paintCanvas import *
+from BTN import *
 
 
 class paint():
 	def __init__(self,win):
 		self.win = win
+		self.BTN = pygame.sprite.Group()
 		self.shift = 20
 	
 	def new(self):
-		self.canvis = pygame.Surface((640,480),pygame.SRCALPHA,32)
-		self.grid = paintCanvis(self.canvis)
+		self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
+		self.grid = paintCanvis(self.canvas)
+		for i in range(len(COLORS)):
+			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60))
+			
 		self.hold = False
 	
 	def run(self):
@@ -27,6 +32,18 @@ class paint():
 				self.grid.update(self.Mouse,self.Mouse2)
 			else:
 				self.grid.update()
+			for i in self.BTN:
+				if i.rect.collidepoint(pygame.mouse.get_pos()):
+					if self.hold == True:
+						for j in self.BTN:
+							j.update(clicked = 0)
+						i.update(clicked = 1)
+						self.grid.color = i.cnum
+						
+					else:
+						i.update(mOver = 1)
+				else:
+					i.update()
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
@@ -36,8 +53,8 @@ class paint():
 					self.hold = False
 				if event.type == pygame.KEYUP:
 					if event.key == pygame.K_p:
-						self.canvis = pygame.Surface((640,480),pygame.SRCALPHA,32)
-						self.grid = paintCanvis(self.canvis)
+						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
+						self.grid = paintCanvis(self.canvas)
 			self.Mouse = pygame.mouse.get_pos()
 			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
 			pygame.time.delay(10)
@@ -48,7 +65,7 @@ class paint():
 		pygame.draw.line(self.win,BLACK,(663,17),(663,503),6)
 		pygame.draw.line(self.win,BLACK,(663,503),(17,503),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
-		self.win.blit(self.canvis,(self.shift,self.shift))
+		self.win.blit(self.canvas,(self.shift,self.shift))
 
 pygame.init()
 win = pygame.display.set_mode(RES)

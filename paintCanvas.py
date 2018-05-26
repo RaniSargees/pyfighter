@@ -6,7 +6,7 @@ class paintCanvis():
 		self.win = win
 		self.color = 1
 		self.brush = 5
-		self.colorList = (WHITE,RED,GREEN,BLUE,YELLOW)
+		self.colorList = COLORS
 		self.drawList = []
 	
 	def update(self,cord1=None,cord2=None):
