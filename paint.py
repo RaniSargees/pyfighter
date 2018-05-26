@@ -41,7 +41,7 @@ class paint():
 			if self.hold:
 				self.Mouse2 = pygame.mouse.get_pos()
 				self.Mouse2 = (self.Mouse2[0]-self.shift,self.Mouse2[1]-self.shift)
-				self.grid.update(self.Mouse,self.Mouse2)
+				self.grid.update([1,self.Mouse,self.Mouse2])
 			else:
 				self.grid.update()
 			
@@ -56,6 +56,9 @@ class paint():
 					if event.key == pygame.K_p:
 						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
 						self.grid = paintCanvis(self.canvas,self.grid.color,self.grid.brush)
+					if event.key == pygame.K_f:
+						self.grid.update([3,self.Mouse])
+
 			self.Mouse = pygame.mouse.get_pos()
 			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
 			pygame.time.delay(10)
