@@ -56,7 +56,7 @@ class paint():
 					if event.key == pygame.K_p:
 						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
 						self.grid = paintCanvis(self.canvas,self.grid.color,self.grid.brush)
-					if event.key == pygame.K_f:
+					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
 						self.grid.update([3,self.Mouse])
 
 			self.Mouse = pygame.mouse.get_pos()
