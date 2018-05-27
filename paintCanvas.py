@@ -33,13 +33,13 @@ class paintCanvis():
 		pxarray = pygame.PixelArray(self.win)
 		base = self.win.map_rgb(self.base)
 		clr = self.win.map_rgb(self.colorList[self.color])
-		posList = [pos]
-		while len(posList) > 0:
-			testPos = posList.pop()
-			try:
-				if pxarray[testPos] == base:
-					pxarray[testPos] = clr
-					for i in self.sides:
-						posList.append((testPos[0]+i[0],testPos[1]+i[1]))
-			except:()
+		posList = set()
+		posList.add(pos)
+		while len(posList):
+			testPos=posList.pop()
+			try:pxarray[testPos]
+			except:continue
+			if pxarray[testPos] == base:
+				pxarray[testPos] = clr
+				for i in self.sides:posList.add((testPos[0]+i[0],testPos[1]+i[1]))
 		del pxarray
