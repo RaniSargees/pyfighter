@@ -1,7 +1,7 @@
 import pygame,numpy,sys
 from settings import *
 sys.setrecursionlimit(99999999)
-class paintCanvis():
+class paintCanvas():
 	def __init__(self,win,color,brush):
 		self.win = win
 		self.color = color
