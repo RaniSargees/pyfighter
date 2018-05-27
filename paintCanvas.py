@@ -30,13 +30,16 @@ class paintCanvis():
 		pygame.surfarray.blit_array(self.win,self.save)
 
 	def recursiveFill(self,pos):
+		pxarray = pygame.PixelArray(self.win)
+		base = self.win.map_rgb(self.base)
+		clr = self.win.map_rgb(self.colorList[self.color])
 		posList = [pos]
 		while len(posList) > 0:
 			testPos = posList.pop()
 			try:
-				if self.win.get_at(testPos) == self.base:
-					self.win.set_at(testPos,self.colorList[self.color])
+				if pxarray[testPos] == base:
+					pxarray[testPos] = clr
 					for i in self.sides:
 						posList.append((testPos[0]+i[0],testPos[1]+i[1]))
-			except:
-				pass
+			except:()
+		del pxarray
