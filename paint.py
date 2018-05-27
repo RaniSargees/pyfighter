@@ -16,7 +16,7 @@ class paint():
 	
 	def new(self):
 		self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
-		self.grid = paintCanvis(self.canvas,1,5)
+		self.grid = paintCanvas(self.canvas,1,5)
 		for i in range(len(COLORS)):
 			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
 		for i in self.ColorBTN:
@@ -55,7 +55,7 @@ class paint():
 				if event.type == pygame.KEYUP:
 					if event.key == pygame.K_p:
 						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
-						self.grid = paintCanvis(self.canvas,self.grid.color,self.grid.brush)
+						self.grid = paintCanvas(self.canvas,self.grid.color,self.grid.brush)
 					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
 						self.grid.update([3,self.Mouse])
 
