@@ -12,10 +12,10 @@ class BTN(pygame.sprite.Sprite):
 		self.rect = pygame.Rect(rect)
 		self.clickable = clickable
 		if text != '':
-			self.charSize = int((self.rect[1]/len(text)))
+			self.charSize = int((self.rect[2]/len(text)))
 			self.font = pygame.font.SysFont('Courier New',self.charSize)
 			self.text = self.font.render(text,True,BLACK)
-			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[1]/2),self.rect[1]+(self.rect[3]/2)))
+			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[2]/2),self.rect[1]+(self.rect[3]/2)))
 		else:
 			self.text = None
 		self.fn = fn
@@ -25,10 +25,10 @@ class BTN(pygame.sprite.Sprite):
 		pygame.draw.rect(self.win,self.color,self.rect)
 		
 		if newText != None:
-			self.charSize = int((self.rect[1]/len(newText)))
+			self.charSize = int((self.rect[2]/len(newText)))
 			self.font = pygame.font.SysFont('Courier New',self.charSize)
 			self.text = self.font.render(newText,True,BLACK)
-			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[1]/2),self.rect[1]+(self.rect[3]/2)))
+			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[2]/2),self.rect[1]+(self.rect[3]/2)))
 		if self.text != None:
 			self.win.blit(self.text,self.text_rect)
 
