@@ -34,11 +34,13 @@ class paintCanvis():
 		posList = [pos]
 		while len(posList) > 0:
 			testPos = posList.pop()
-			
-			if self.win.get_at(testPos) == self.base:
-				self.win.set_at(testPos,self.colorList[self.color])
-				for i in self.sides:
-					posList.append((testPos[0]+i[0],testPos[1]+i[1]))
+			try:
+				if self.win.get_at(testPos) == self.base:
+					self.win.set_at(testPos,self.colorList[self.color])
+					for i in self.sides:
+						posList.append((testPos[0]+i[0],testPos[1]+i[1]))
+			except:
+				pass
 
 #if self.win.get_at(pos) == self.base:
 #				self.win.set_at(pos,self.colorList[self.color])
