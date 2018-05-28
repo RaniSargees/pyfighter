@@ -15,22 +15,20 @@ class paintCanvas():
 		#List = [type,required info]
 		#types  1 = Line
 		#		2 = Circle
-		#		3 = Fill
 		if list != None:
 			if list[0] == 1:
 				pygame.draw.line(self.win,self.colorList[self.color],list[1],list[2],self.brush)
 			elif list[0] == 2:
 				pygame.draw.circle(self.win,self.colorList[self.color],list[1],self.brush*2)
-			elif list[0] == 3:
-				self.base = self.win.get_at(list[1])
-				self.recursiveFill(list[1])
 		self.save = pygame.surfarray.pixels2d(self.win.copy())
 		pygame.surfarray.blit_array(self.win,self.save)
 
-	def recursiveFill(self,pos):
-		pxarray = pygame.PixelArray(self.win)
-		base = self.win.map_rgb(self.base)
-		clr = self.win.map_rgb(self.colorList[self.color])
+	def recursiveFill(self,pos,win=None):
+		if win == None:
+			win = self.win
+		pxarray = pygame.PixelArray(win)
+		base = win.map_rgb(self.win.get_at(pos))
+		clr = win.map_rgb(self.colorList[self.color])
 		posList = set()
 		posList.add(pos)
 		while len(posList):

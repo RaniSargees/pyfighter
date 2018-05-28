@@ -21,30 +21,43 @@ class paint():
 	
 	def new(self):
 		self.canvas = pygame.Surface((640,480))
+		self.head_rect = (285,80,70,70)
+		self.torso_rect = (250,150,140,180)
+		self.L_arm_rect = (150,180,100,50)
+		self.L_hand_rect = (100,180,50,50)
+		self.R_arm_rect = (390,180,100,50)
+		self.R_hand_rect = (490,180,50,50)
+		self.L_leg_rect = (250,330,50,100)
+		self.L_foot_rect = (250,430,50,50)
+		self.R_leg_rect = (340,330,50,100)
+		self.R_foot_rect = (340,430,50,50)
+		self.body_rects_old = [self.head_rect,self.torso_rect,self.L_arm_rect,self.L_hand_rect,self.R_arm_rect,self.R_hand_rect,self.L_leg_rect,self.L_foot_rect,self.R_leg_rect,self.R_foot_rect]
 		
-		self.head = self.canvas.subsurface((250,50,140,140))
+		self.head = self.canvas.subsurface(self.head_rect)
 		self.head.set_colorkey((192,192,192))
-		self.torso = self.canvas.subsurface((250,190,140,180))
+		self.torso = self.canvas.subsurface(self.torso_rect)
 		self.torso.set_colorkey((192,192,192))
-		self.L_arm = self.canvas.subsurface((200,240,50,50))
+		self.L_arm = self.canvas.subsurface(self.L_arm_rect)
 		self.L_arm.set_colorkey((192,192,192))
-		self.L_hand = self.canvas.subsurface((150,240,50,50))
+		self.L_hand = self.canvas.subsurface(self.L_hand_rect)
 		self.L_hand.set_colorkey((192,192,192))
-		self.R_arm = self.canvas.subsurface((440,240,50,50))
+		self.R_arm = self.canvas.subsurface(self.R_arm_rect)
 		self.R_arm.set_colorkey((192,192,192))
-		self.R_hand = self.canvas.subsurface((490,240,50,50))
+		self.R_hand = self.canvas.subsurface(self.R_hand_rect)
 		self.R_hand.set_colorkey((192,192,192))
-		self.L_leg = self.canvas.subsurface((250,370,50,50))
+		self.L_leg = self.canvas.subsurface(self.L_leg_rect)
 		self.L_leg.set_colorkey((192,192,192))
-		self.L_foot = self.canvas.subsurface((250,420,50,50))
+		self.L_foot = self.canvas.subsurface(self.L_foot_rect)
 		self.L_foot.set_colorkey((192,192,192))
-		self.R_leg = self.canvas.subsurface((340,370,50,50))
+		self.R_leg = self.canvas.subsurface(self.R_leg_rect)
 		self.R_leg.set_colorkey((192,192,192))
-		self.R_foot = self.canvas.subsurface((340,420,50,50))
+		self.R_foot = self.canvas.subsurface(self.R_foot_rect)
 		self.R_foot.set_colorkey((192,192,192))
+		self.body_surf = [self.head,self.torso,self.L_arm,self.L_hand,self.R_arm,self.R_hand,self.L_leg,self.L_foot,self.R_leg,self.R_foot]
+		
+		self.body_rects = [(x[0]+self.shift,x[1]+self.shift,x[2],x[3]) for x in self.body_rects_old]
 		
 		self.grid = paintCanvas(self.canvas,1,5)
-		#self.canvas_Old = [self.grid.save for i in range(100)]
 		self.canvas_Old = []
 		for i in range(len(COLORS)):
 			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
@@ -94,11 +107,16 @@ class paint():
 				if event.type == pygame.KEYUP:
 					self.up = True
 					if event.key == pygame.K_p:
-						self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
-						self.grid = paintCanvas(self.canvas,self.grid.color,self.grid.brush)
+						self.new()
 					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
 						self.canvas_Old.append(self.grid.save)
-						self.grid.update([3,self.Mouse])
+						for h,i in enumerate(self.body_rects_old):
+							tempRect = pygame.Rect(i)
+							if tempRect.collidepoint(self.Mouse):
+								self.grid.recursiveFill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
+								break
+						else:
+							self.grid.recursiveFill(self.Mouse)
 
 			self.Mouse = pygame.mouse.get_pos()
 			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
@@ -149,19 +167,22 @@ class paint():
 		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
 		self.win.blit(self.canvas,(self.shift,self.shift))
-		pygame.draw.rect(self.win,BLACK,(250,20,140,140),2)
-		pygame.draw.rect(self.win,BLACK,(250,160,140,195),2)
-		pygame.draw.rect(self.win,BLACK,(150,200,100,50),2)
-		pygame.draw.rect(self.win,BLACK,(100,200,50,50),2)
-		pygame.draw.rect(self.win,BLACK,(390,200,100,50),2)
-		pygame.draw.rect(self.win,BLACK,(490,200,50,50),2)
-		pygame.draw.rect(self.win,BLACK,(250,355,50,100),2)
-		pygame.draw.rect(self.win,BLACK,(250,455,50,50),2)
-		pygame.draw.rect(self.win,BLACK,(340,355,50,100),2)
-		pygame.draw.rect(self.win,BLACK,(340,455,50,50),2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[0],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[1],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[2],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[3],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[3],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[4],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[5],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[6],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[7],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[8],2)
+		pygame.draw.rect(self.win,BLACK,self.body_rects[9],2)
 		
-		self.win.blit(self.head,(850,30))
-		self.win.blit(self.torso,(850,170))
+		self.win.blit(self.head,(890,30))
+		self.win.blit(self.torso,(855,100))
+		self.win.blit(pygame.transform.rotate(self.L_arm,90),(805,100))
+		self.win.blit(pygame.transform.rotate(self.L_hand,90),(805,200))
 
 pygame.init()
 win = pygame.display.set_mode(RES)
