@@ -20,9 +20,32 @@ class paint():
 		#2 = circle tool
 	
 	def new(self):
-		self.canvas = pygame.Surface((640,480),pygame.SRCALPHA,32)
+		self.canvas = pygame.Surface((640,480))
+		
+		self.head = self.canvas.subsurface((250,50,140,140))
+		self.head.set_colorkey((192,192,192))
+		self.torso = self.canvas.subsurface((250,190,140,180))
+		self.torso.set_colorkey((192,192,192))
+		self.L_arm = self.canvas.subsurface((200,240,50,50))
+		self.L_arm.set_colorkey((192,192,192))
+		self.L_hand = self.canvas.subsurface((150,240,50,50))
+		self.L_hand.set_colorkey((192,192,192))
+		self.R_arm = self.canvas.subsurface((440,240,50,50))
+		self.R_arm.set_colorkey((192,192,192))
+		self.R_hand = self.canvas.subsurface((490,240,50,50))
+		self.R_hand.set_colorkey((192,192,192))
+		self.L_leg = self.canvas.subsurface((250,370,50,50))
+		self.L_leg.set_colorkey((192,192,192))
+		self.L_foot = self.canvas.subsurface((250,420,50,50))
+		self.L_foot.set_colorkey((192,192,192))
+		self.R_leg = self.canvas.subsurface((340,370,50,50))
+		self.R_leg.set_colorkey((192,192,192))
+		self.R_foot = self.canvas.subsurface((340,420,50,50))
+		self.R_foot.set_colorkey((192,192,192))
+		
 		self.grid = paintCanvas(self.canvas,1,5)
-		self.canvas_Old = [self.grid.save for i in range(100)]
+		#self.canvas_Old = [self.grid.save for i in range(100)]
+		self.canvas_Old = []
 		for i in range(len(COLORS)):
 			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
 		for i in self.ColorBTN:
@@ -44,7 +67,9 @@ class paint():
 			self.draw()
 			self.buttons()
 			if self.hold and self.grid.rect.collidepoint(self.Mouse):
-				self.canvas_new = 1
+				if not(self.canvas_new): 
+					self.canvas_Old.append(self.grid.save)
+					self.canvas_new = 1
 				self.Mouse2 = pygame.mouse.get_pos()
 				self.Mouse2 = (self.Mouse2[0]-self.shift,self.Mouse2[1]-self.shift)
 				if self.tool == 1:
@@ -54,7 +79,7 @@ class paint():
 			else:
 				self.grid.update()
 			keys = pygame.key.get_pressed()
-			if keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up:
+			if keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up and self.canvas_Old:
 				self.up = False
 				pygame.surfarray.blit_array(self.grid.win,self.canvas_Old.pop(-1))
 			for event in events:
@@ -64,7 +89,6 @@ class paint():
 					self.hold = True
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if self.canvas_new:
-						self.canvas_Old.append(self.grid.save)
 						self.canvas_new = 0
 					self.hold = False
 				if event.type == pygame.KEYUP:
@@ -125,6 +149,19 @@ class paint():
 		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
 		self.win.blit(self.canvas,(self.shift,self.shift))
+		pygame.draw.rect(self.win,BLACK,(250,20,140,140),2)
+		pygame.draw.rect(self.win,BLACK,(250,160,140,195),2)
+		pygame.draw.rect(self.win,BLACK,(150,200,100,50),2)
+		pygame.draw.rect(self.win,BLACK,(100,200,50,50),2)
+		pygame.draw.rect(self.win,BLACK,(390,200,100,50),2)
+		pygame.draw.rect(self.win,BLACK,(490,200,50,50),2)
+		pygame.draw.rect(self.win,BLACK,(250,355,50,100),2)
+		pygame.draw.rect(self.win,BLACK,(250,455,50,50),2)
+		pygame.draw.rect(self.win,BLACK,(340,355,50,100),2)
+		pygame.draw.rect(self.win,BLACK,(340,455,50,50),2)
+		
+		self.win.blit(self.head,(850,30))
+		self.win.blit(self.torso,(850,170))
 
 pygame.init()
 win = pygame.display.set_mode(RES)
