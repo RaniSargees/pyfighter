@@ -57,7 +57,7 @@ class Char(pygame.sprite.Sprite):
 				self.currentJumps = self.maxJumps
 				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
-				if self.grounded[0].platform and self.gravityMultiplier == 3:
+				if len(self.grounded) and self.gravityMultiplier == 3 and not len([x for x in self.grounded if not x.platform]):
 					self.y += self.grounded[0].rect[3] + self.grounded[0].speed * self.game.dt * (self.grounded[0].dir > 1)
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
@@ -76,7 +76,7 @@ class Char(pygame.sprite.Sprite):
 				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
 			else: self.atkEnd()
 		else:self.hit_list = [self];self.freeze = 0
-		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3], self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
+		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
 		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68) and not x.platform]))
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
