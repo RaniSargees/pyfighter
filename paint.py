@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 from random import randint
 from settings import *
 from paintCanvas import *
@@ -16,6 +16,8 @@ class paint():
 		self.up = True
 		self.canvas_new = 0
 		self.tool = 1
+		self.ani_dir = 0
+		self.animate = 0
 		#1 = brush
 		#2 = circle tool
 	
@@ -178,11 +180,19 @@ class paint():
 		pygame.draw.rect(self.win,BLACK,self.body_rects[7],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[8],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[9],2)
+		self.ani_dir += 2
+		self.animate += math.sin(math.radians(self.ani_dir))*0.1
+		self.win.blit(self.head,(890,30+self.animate))
+		self.win.blit(self.torso,(855,100+self.animate))
+		self.win.blit(pygame.transform.rotate(self.L_arm,90),(805,100+self.animate))
+		self.win.blit(pygame.transform.rotate(self.L_hand,90),(805,200+self.animate))
+		self.win.blit(pygame.transform.rotate(self.R_arm,-90),(995,100+self.animate))
+		self.win.blit(pygame.transform.rotate(self.R_hand,-90),(995,200+self.animate))
+		self.win.blit(self.L_leg,(855,280))
+		self.win.blit(self.L_foot,(855,380))
+		self.win.blit(self.R_leg,(945,280))
+		self.win.blit(self.R_foot,(945,380))
 		
-		self.win.blit(self.head,(890,30))
-		self.win.blit(self.torso,(855,100))
-		self.win.blit(pygame.transform.rotate(self.L_arm,90),(805,100))
-		self.win.blit(pygame.transform.rotate(self.L_hand,90),(805,200))
 
 pygame.init()
 win = pygame.display.set_mode(RES)
