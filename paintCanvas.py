@@ -27,7 +27,7 @@ class paintCanvas():
 		if win == None:
 			win = self.win
 		pxarray = pygame.PixelArray(win)
-		base = win.map_rgb(self.win.get_at(pos))
+		base = win.map_rgb(win.get_at(pos))
 		clr = win.map_rgb(self.colorList[self.color])
 		posList = set()
 		posList.add(pos)
