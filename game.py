@@ -22,7 +22,7 @@ class Game():
 			else:
 				Mage(self, x)
 		#load default map
-		for x in self.maps["loss"].open("map").readlines():
+		for x in self.maps["default"].open("map").readlines():
 			if x.strip():
 				file = x.decode("UTF-8").strip().split()
 				texture = pygame.image.load(BytesIO(self.maps["loss"].read(file[-1])))
