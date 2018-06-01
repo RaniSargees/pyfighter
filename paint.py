@@ -155,8 +155,8 @@ class paint():
 					i.update(mOver = 1)
 			else:
 				i.update()
-		if self.grid.brush > 10:
-			self.grid.brush = 10
+		if self.grid.brush > 20:
+			self.grid.brush = 20
 			self.BrushSize.update(newText=str(self.grid.brush))
 		elif self.grid.brush < 1:
 			self.grid.brush = 1
@@ -182,12 +182,12 @@ class paint():
 		pygame.draw.rect(self.win,BLACK,self.body_rects[9],2)
 		self.ani_dir += 2
 		self.animate += math.sin(math.radians(self.ani_dir))*0.1
-		self.win.blit(self.head,(890,30+self.animate))
-		self.win.blit(self.torso,(855,100+self.animate))
-		self.win.blit(pygame.transform.rotate(self.L_arm,90),(825,130+self.animate))
-		self.win.blit(pygame.transform.rotate(self.L_hand,90),(825,230+self.animate))
-		self.win.blit(pygame.transform.rotate(self.R_arm,-90),(975,130+self.animate))
-		self.win.blit(pygame.transform.rotate(self.R_hand,-90),(975,230+self.animate))
+		self.win.blit(self.head,(890,30+self.animate+1))
+		self.win.blit(self.torso,(855,100+self.animate+1))
+		self.win.blit(pygame.transform.rotate(self.L_arm,90),(825,130+self.animate+1))
+		self.win.blit(pygame.transform.rotate(self.L_hand,90),(825,230+self.animate+1))
+		self.win.blit(pygame.transform.rotate(self.R_arm,-90),(975,130+self.animate+1))
+		self.win.blit(pygame.transform.rotate(self.R_hand,-90),(975,230+self.animate+1))
 		self.win.blit(self.L_leg,(855,280))
 		self.win.blit(self.L_foot,(855,380))
 		self.win.blit(self.R_leg,(945,280))
