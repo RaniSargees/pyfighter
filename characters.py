@@ -109,6 +109,9 @@ class Char(pygame.sprite.Sprite):
 			collisions=[(pygame.Rect((self.x-24,self.y-92+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(6, direction),x[1].damage(5))for x in collisions if x[0] and x[1]!=self]
 
+	def atkHeavy(self,direction):
+		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
+
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
 		self.ability_air=0
@@ -171,8 +174,6 @@ class Char(pygame.sprite.Sprite):
 
 
 class Mage(Char):
-	def atkHeavy(self,direction):
-		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
 
 	def special0(self):
 		if not self.ability_run+1:
@@ -191,7 +192,7 @@ class Mage(Char):
 			self.special_0_go = 1
 			scale = min(int(self.special_0_timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale/4)))+((self.facing==1)*(24-(scale/4))),self.y-(scale))
+			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale/4)))+((self.facing==1)*(24-(scale/4)))+(64*(self.facing*2-1)),self.y-(scale))
 			self.scale = scale
 		else:
 			self.special_0_timer += self.game.dt
@@ -256,9 +257,44 @@ class Mage(Char):
 		#cause aoe explosion from self? ***
 		#bring laser from sky? **
 		#
+		if not self.ability_run+1:
+			self.release = 0
+			self.special_3_timer = 0
+			self.special_3_go = 0
+			self.freeze=1
+			self.ability_run = 3
+			self.ability_time = -1
+			self.explosion = self.game.effects['aoe_explosion'].copy()
+			self.special_3_len = len(self.explosion)
+			self.special_3_count = 0
+
 
 		print(3)
 	def run_special3(self):
+		if self.release and not(self.special_3_count):
+			self.special_3_go = 1
+			scale = min(int(self.special_3_timer * 400 + 150),400)
+			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale*2,scale))
+			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale)))+((self.facing==1)*(24-(scale))),self.y-(scale))
+			self.scale = scale
+		else:
+			self.special_3_timer += self.game.dt
+			if self.special_3_timer > 1: self.release=1;
+		if self.special_3_go:
+			if self.special_3_count < self.special_3_len*2:
+				self.game.win.blit(self.explosion[self.special_3_count//2],self.LocNow)
+				if self.special_3_count <= 8:
+					#Change the spawn location dependant on variable scale
+					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
+					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
+				else: collisions = [];self.freeze=0
+				self.special_3_count += 1
+				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+			else:
+				self.ability_run = -1
+				self.ability_time = 0
+				self.release = 0
 		pass
 
 class fireball(pygame.sprite.Sprite):
