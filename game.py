@@ -17,12 +17,8 @@ class Game():
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
-			try:
-				if "ouya" in x.get_name().lower():
-					Mage(self, x, [0,3,1,2,4,5])
-				else:
-					Mage(self, x)
-			except:()
+			if "ouya" in x.get_name().lower():	Mage(self, x, [0,3,1,2,4,5])
+			else:					Mage(self, x)
 		#load default map
 		for x in self.maps["default"].open("map").readlines():
 			if x.strip():
