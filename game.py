@@ -17,10 +17,12 @@ class Game():
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
-			if "ouya" in x.get_name().lower():
-				Mage(self, x, [0,3,1,2,4,5])
-			else:
-				Mage(self, x)
+			try:
+				if "ouya" in x.get_name().lower():
+					Mage(self, x, [0,3,1,2,4,5])
+				else:
+					Mage(self, x)
+			except:()
 		#load default map
 		for x in self.maps["default"].open("map").readlines():
 			if x.strip():
@@ -81,7 +83,15 @@ pygame.init()
 
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 for x in joysticks: x.init()
+for x in joysticks:
+	try: #incompatible controller detection
+		for i in (0,1): x.get_axis(i) #remove controllers with no thumbstick
+		if "ppjoy" in x.get_name().lower():0/0 #remove faked controllers (steering wheels, flight sticks, etc)
+		if "rvl"   in x.get_name().lower():0/0 #remove wii controllers
+	except:joysticks.pop(joysticks.index(x)).quit()
+	print(x.get_name())
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
+else: joysticks=joysticks[:4]
 #win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
 win = pygame.display.set_mode(RES)
 
