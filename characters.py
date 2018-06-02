@@ -141,8 +141,8 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		self.ability_air=0
 		self.gravityMultiplier=1
-		Knockback_force = (((hit-self.defense/2)**1.2) * ((self.dmg+30)**1.1))/10
-		self.stun = min(Knockback_force/800,1.5)
+		Knockback_force = (((hit)**1.2) * ((self.dmg+30)**1.1))/10
+		self.stun = min(int(Knockback_force/800),1.5)
 		#print(Knockback_force,hit,self.stun)
 		self.knocked = 1
 		if direction < 2:
