@@ -1,4 +1,5 @@
 import pygame, math
+from random import randint
 from settings import *
 from map import *
 
@@ -39,6 +40,11 @@ class Char(pygame.sprite.Sprite):
 		#2 = Up
 		#3 = Down
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
+		
+		#Stats
+		self.defense = 5
+		self.atttack = None
+		self.speed = None
 
 	def update(self,keys,events):
 		self.keys = keys
@@ -51,7 +57,9 @@ class Char(pygame.sprite.Sprite):
 			if self.stun <= 0:
 				self.knocked = 0
 			if self.knocked and self.grounded[0].platform==0:
+				self.hspeed *= 0.1
 				self.vspeed *= -1
+				self.stun = 0
 			else:
 				self.ability_air = 0
 				self.currentJumps = self.maxJumps
@@ -116,14 +124,15 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		self.ability_air=0
 		self.gravityMultiplier=1
-		self.stun = hit/200
+		Knockback_force = ((hit**1.2) * ((self.dmg+30)**1.1))/10
+		self.stun = min(Knockback_force/800,1.5)
+		#print(Knockback_force,hit,self.stun)
 		self.knocked = 1
-		vel = (self.dmg+hit)**1.5
 		if direction < 2:
-			self.hspeed = (direction-0.5)*2*vel*math.cos(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
-			self.vspeed = -vel*math.sin(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
+			self.hspeed = (direction-0.5)*2*Knockback_force*math.cos(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
+			self.vspeed = -Knockback_force*math.sin(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
 		elif direction >= 2:
-			self.vspeed = ((direction==3)-0.5)*2*vel*math.sin(math.pi/4) * (60/max(1,self.game.clock.get_fps()))
+			self.vspeed = ((direction==3)-0.5)*2*Knockback_force * (60/max(1,self.game.clock.get_fps()))
 		self.currentJumps = max(1, self.currentJumps)
 		#Don't remove the line below. It fixes the sliding bug
 		self.y -= 5
@@ -134,7 +143,7 @@ class Char(pygame.sprite.Sprite):
 			self.ability_run = -1
 
 	def damage(self, hit):
-		self.dmg+=hit
+		self.dmg+=(hit*(1/(self.defense)))
 
 	def get_keys(self):
 		if self.stun <= 0:
@@ -269,28 +278,26 @@ class Mage(Char):
 			self.special_3_count = 0
 
 
-		print(3)
 	def run_special3(self):
 		if self.release and not(self.special_3_count):
 			self.special_3_go = 1
-			scale = min(int(self.special_3_timer * 400 + 150),400)
+			scale = min(int(self.special_3_timer * 100 + 100),300)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale*2,scale))
-			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale)))+((self.facing==1)*(24-(scale))),self.y-(scale))
+			self.LocNow = (self.x+(24-scale),self.y-(scale))
 			self.scale = scale
 		else:
 			self.special_3_timer += self.game.dt
-			if self.special_3_timer > 1: self.release=1;
+			if self.special_3_timer > 2: self.release=1;
 		if self.special_3_go:
 			if self.special_3_count < self.special_3_len*2:
 				self.game.win.blit(self.explosion[self.special_3_count//2],self.LocNow)
-				if self.special_3_count <= 8:
-					#Change the spawn location dependant on variable scale
-					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
-					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
-				else: collisions = [];self.freeze=0
+				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4),4)
+				collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				self.special_3_count += 1
-				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
-				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+				random_direction = randint(0,3)
+				if random_direction == 2:
+					random_direction = 3
+				[(x[1].knockBack((self.scale//200), random_direction),x[1].damage(self.scale//100))for x in collisions if x[0]]
 			else:
 				self.ability_run = -1
 				self.ability_time = 0
