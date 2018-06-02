@@ -18,9 +18,9 @@ class Game():
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower():
-				Mage(self, x, [0,3,1,2,4,5])
+				Mage(self, x, 'test',[0,3,1,2,4,5])
 			else:
-				Mage(self, x)
+				Mage(self, x, 'test')
 		#load default map
 		for x in self.maps["default"].open("map").readlines():
 			if x.strip():
@@ -35,11 +35,13 @@ class Game():
 		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
 		effect_folder = os.path.join(img_folder, 'effects')
+		sprites_folder = os.path.join(img_folder, 'sprites')
 		self.effects = {}
+		self.char_sprites = {}
 		self.maps = {}
-		for filename in os.listdir(map_folder):
+		for filename in os.listdir(map_folder): #Load Map
 			if filename.endswith(".pfmap"):self.maps[filename[:-6]] = zipfile.ZipFile(os.path.join(map_folder, filename))
-		for fileName in os.listdir(effect_folder):
+		for fileName in os.listdir(effect_folder): #Load effects
 			file = os.path.join(effect_folder, fileName)
 			temp = []
 			for i in sorted(os.listdir(file)):
@@ -50,6 +52,39 @@ class Game():
 					var.set_colorkey(key)
 					temp.append(var)
 			self.effects[str(fileName)] = temp
+		for fileName in os.listdir(sprites_folder): #Load Character sprites
+			sprite_image = pygame.image.load(os.path.join(sprites_folder,fileName)).convert()
+			head_rect = (285,80,70,70)
+			torso_rect = (250,150,140,180)
+			L_arm_rect = (150,180,100,50)
+			L_hand_rect = (100,180,50,50)
+			R_arm_rect = (390,180,100,50)
+			R_hand_rect = (490,180,50,50)
+			L_leg_rect = (250,330,50,100)
+			L_foot_rect = (250,430,50,50)
+			R_leg_rect = (340,330,50,100)
+			R_foot_rect = (340,430,50,50)
+			head = pygame.transform.scale(sprite_image.subsurface(head_rect),(int(70*(0.3)),int(70*0.3)))
+			head.set_colorkey((192,192,192))
+			torso = pygame.transform.scale(sprite_image.subsurface(torso_rect),(int(140*(0.3)),int(180*0.3)))
+			torso.set_colorkey((192,192,192))
+			L_arm = pygame.transform.scale(sprite_image.subsurface(L_arm_rect),(int(100*(0.3)),int(50*0.3)))
+			L_arm.set_colorkey((192,192,192))
+			L_hand = pygame.transform.scale(sprite_image.subsurface(L_hand_rect),(int(50*(0.3)),int(50*0.3)))
+			L_hand.set_colorkey((192,192,192))
+			R_arm = pygame.transform.scale(sprite_image.subsurface(R_arm_rect),(int(100*(0.3)),int(50*0.3)))
+			R_arm.set_colorkey((192,192,192))
+			R_hand = pygame.transform.scale(sprite_image.subsurface(R_hand_rect),(int(50*(0.3)),int(50*0.3)))
+			R_hand.set_colorkey((192,192,192))
+			L_leg = pygame.transform.scale(sprite_image.subsurface(L_leg_rect),(int(50*(0.3)),int(100*0.3)))
+			L_leg.set_colorkey((192,192,192))
+			L_foot = pygame.transform.scale(sprite_image.subsurface(L_foot_rect),(int(50*(0.3)),int(50*0.3)))
+			L_foot.set_colorkey((192,192,192))
+			R_leg = pygame.transform.scale(sprite_image.subsurface(R_leg_rect),(int(50*(0.3)),int(100*0.3)))
+			R_leg.set_colorkey((192,192,192))
+			R_foot = pygame.transform.scale(sprite_image.subsurface(R_foot_rect),(int(50*(0.3)),int(50*0.3)))
+			R_foot.set_colorkey((192,192,192))
+			self.char_sprites[str(fileName).strip('.png')] = [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot]
 	def run(self):
 		self.playing = 1
 		while self.playing:

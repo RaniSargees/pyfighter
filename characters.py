@@ -4,10 +4,11 @@ from settings import *
 from map import *
 
 class Char(pygame.sprite.Sprite):
-	def __init__(self,game,joystick,buttonmap=[0,1,2,3,4,5]):
+	def __init__(self,game,joystick,char,buttonmap=[0,1,2,3,4,5]):
 		self.groups = game.sprites
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
+		self.sprite_image = self.game.char_sprites[char]
 		self.x = 200
 		self.y = 200
 		self.maxMoveSpeed = 400
@@ -89,8 +90,24 @@ class Char(pygame.sprite.Sprite):
 		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68) and not x.platform]))
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y+4-72,40,68)
-		pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
-		pygame.draw.rect(self.game.win, BLACK, self.hitbox)
+		#Draw Character
+		#pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
+		self.game.win.blit(self.sprite_image[0],(self.x-10.5,self.y-120))
+		self.game.win.blit(self.sprite_image[1],(self.x-21,self.y-99))
+		#self.game.win.blit(pygame.transform.rotate(self.sprite_image[2],90),(825,130))
+		#self.game.win.blit(pygame.transform.rotate(self.sprite_image[3],90),(825,230))
+		#self.game.win.blit(pygame.transform.rotate(self.sprite_image[4],-90),(975,130))
+		#self.game.win.blit(pygame.transform.rotate(self.sprite_image[5],-90),(975,230))
+		self.game.win.blit(self.sprite_image[2],(self.x-51,self.y-99))
+		self.game.win.blit(self.sprite_image[3],(self.x-66,self.y-99))
+		self.game.win.blit(self.sprite_image[4],(self.x+21,self.y-99))
+		self.game.win.blit(self.sprite_image[5],(self.x+51,self.y-99))
+		self.game.win.blit(self.sprite_image[6],(self.x-21,self.y-45))
+		self.game.win.blit(self.sprite_image[7],(self.x-21,self.y-15))
+		self.game.win.blit(self.sprite_image[8],(self.x+6,self.y-45))
+		self.game.win.blit(self.sprite_image[9],(self.x+6,self.y-15))
+		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
+		#######
 		if self.y < 0:
 			arrowX = max(min(self.x,RES[0]),0)
 			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
@@ -124,7 +141,7 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		self.ability_air=0
 		self.gravityMultiplier=1
-		Knockback_force = ((hit**1.2) * ((self.dmg+30)**1.1))/10
+		Knockback_force = (((hit-self.defense/2)**1.2) * ((self.dmg+30)**1.1))/10
 		self.stun = min(Knockback_force/800,1.5)
 		#print(Knockback_force,hit,self.stun)
 		self.knocked = 1
@@ -143,7 +160,7 @@ class Char(pygame.sprite.Sprite):
 			self.ability_run = -1
 
 	def damage(self, hit):
-		self.dmg+=(hit*(1/(self.defense)))
+		self.dmg+=(hit*(1 - self.defense/20))
 
 	def get_keys(self):
 		if self.stun <= 0:

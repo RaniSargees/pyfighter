@@ -97,6 +97,8 @@ class paint():
 			if keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up and self.canvas_Old:
 				self.up = False
 				pygame.surfarray.blit_array(self.grid.win,self.canvas_Old.pop(-1))
+			if keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up:
+				pygame.image.save(self.canvas,"Char.png")
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
