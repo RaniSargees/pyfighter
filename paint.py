@@ -15,9 +15,11 @@ class paint():
 		self.hold = False
 		self.up = True
 		self.canvas_new = 0
-		self.tool = 1
+		self.undo = 0
+		self.save = 0
 		self.ani_dir = 0
 		self.animate = 0
+		self.tool = 1
 		#1 = brush
 		#2 = circle tool
 
@@ -71,8 +73,11 @@ class paint():
 		BTN(self,self.win,0,(670,30,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		BTN(self,self.win,0,(770,30,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		#Tools
-		BTN(self,self.win,0,(680,80,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
-		BTN(self,self.win,0,(680,190,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
+		BTN(self,self.win,0,(685,80,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
+		BTN(self,self.win,0,(685,190,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
+		BTN(self,self.win,0,(685,300,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
+		BTN(self,self.win,0,(685,410,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
+		BTN(self,self.win,0,(685,520,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
 	def run(self):
 		self.playing = 1
 		self.Mouse = pygame.mouse.get_pos()
@@ -91,13 +96,21 @@ class paint():
 					self.grid.update([1,self.Mouse,self.Mouse2])
 				elif self.tool == 2:
 					self.grid.update([2,self.Mouse])
+				elif self.tool == 3:
+					for h,i in enumerate(self.body_rects_old):
+						tempRect = pygame.Rect(i)
+						if tempRect.collidepoint(self.Mouse):
+							self.grid.flood_fill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
+							break
 			else:
 				self.grid.update()
 			keys = pygame.key.get_pressed()
-			if keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up and self.canvas_Old:
+			if (keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.undo == 1 and self.canvas_Old:
 				self.up = False
-				pygame.surfarray.blit_array(self.grid.win,self.canvas_Old.pop(-1))
-			if keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up:
+				self.undo = 0
+				self.grid.win.blit(self.canvas_Old.pop(-1),(0,0))
+			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
+				self.save = 0
 				pygame.image.save(self.canvas,"Char.png")
 			for event in events:
 				if event.type == pygame.QUIT:
