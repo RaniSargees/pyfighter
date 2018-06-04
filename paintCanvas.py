@@ -9,7 +9,7 @@ class paintCanvas():
 		self.rect = pygame.Rect(20,20,640,480)
 		self.drawList = []
 		self.win.fill((192,192,192))
-		self.save = pygame.surfarray.pixels2d(self.win.copy())
+		self.save = self.win.copy()
 
 	def update(self,list = None):
 		#List = [type,required info]
@@ -20,8 +20,7 @@ class paintCanvas():
 				pygame.draw.line(self.win,self.colorList[self.color],list[1],list[2],self.brush)
 			elif list[0] == 2:
 				pygame.draw.circle(self.win,self.colorList[self.color],list[1],self.brush*2)
-		self.save = pygame.surfarray.pixels2d(self.win.copy())
-		pygame.surfarray.blit_array(self.win,self.save)
+		self.save = self.win.copy()
 
 	def flood_fill(self,pos,win=None):
 		if win == None:
