@@ -6,24 +6,25 @@ from joystick_wrapper import *
 from settings import *
 
 class Game():
-	def __init__(self, win, joysticks):
+	def __init__(self, win, joysticks, map="default"):
 		self.joysticks = joysticks
 		self.win = win
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = pygame.sprite.Group()
 		self.objects = pygame.sprite.Group()
+		self.map = map
 	def new(self):
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
 			else: Mage(self, x, 'test')
-		#load default map
-		for x in self.maps["default"].open("map").readlines():
+		#load map
+		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():
 				file = x.decode("UTF-8").strip().split()
-				texture = pygame.image.load(BytesIO(self.maps["loss"].read(file[-1])))
+				texture = pygame.image.load(BytesIO(self.maps[self.map].read(file[-1])))
 				file = [file[0]]+list(map(int,file[1:-1]))
 				if file[0] == "g": Ground(self, file[1:5], texture=texture)
 				if file[0] == "p": Ground(self, file[1:5], 1, texture=texture)
@@ -51,7 +52,7 @@ class Game():
 					temp.append(var)
 			self.effects[str(fileName)] = temp
 		for fileName in os.listdir(sprites_folder): #Load Character sprites
-			sprite_image = pygame.image.load(os.path.join(sprites_folder,fileName)).convert()
+			sprite_image = pygame.image.load(os.path.join(sprites_folder,fileName)).convert_alpha()
 			head_rect = (285,80,70,70)
 			torso_rect = (250,150,140,180)
 			L_arm_rect = (150,180,100,50)
@@ -125,7 +126,7 @@ else: joysticks=joysticks[:4]
 #win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
 win = pygame.display.set_mode(RES)
 
-g = Game(win, joysticks)
+g = Game(win, joysticks, "loss")
 g.new()
 g.run()
 pygame.quit()

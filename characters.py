@@ -41,7 +41,7 @@ class Char(pygame.sprite.Sprite):
 		#2 = Up
 		#3 = Down
 		self.hitbox = (self.x+4-24,self.y+4-120,40,120)
-		
+
 		#Stats
 		self.defense = 5
 		self.atttack = None
@@ -71,41 +71,11 @@ class Char(pygame.sprite.Sprite):
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
-		if self.y > 1000:
+		if self.y > 1000 or self.y < -500 or self.x > 2080 or self.x < -800:
 			self.dmg = 0
 			self.stun = 0
 			self.ability_run = 0
-			self.freeze = 0 
-			self.ability_time = 0
-			self.x = 200+(self.joystick.get_id()*200)
-			self.y = 200
-			self.vspeed = 0
-			self.hspeed = 0
-		elif self.y < -500:
-			self.dmg = 0
-			self.stun = 0
-			self.ability_run = 0
-			self.freeze = 0 
-			self.ability_time = 0
-			self.x = 200+(self.joystick.get_id()*200)
-			self.y = 200
-			self.vspeed = 0
-			self.hspeed = 0
-		elif self.x > 2080:
-			self.dmg = 0
-			self.stun = 0
-			self.ability_run = 0
-			self.freeze = 0 
-			self.ability_time = 0
-			self.x = 200+(self.joystick.get_id()*200)
-			self.y = 200
-			self.vspeed = 0
-			self.hspeed = 0
-		elif self.x < -800:
-			self.dmg = 0
-			self.stun = 0
-			self.ability_run = 0
-			self.freeze = 0 
+			self.freeze = 0
 			self.ability_time = 0
 			self.x = 200+(self.joystick.get_id()*200)
 			self.y = 200
@@ -125,6 +95,7 @@ class Char(pygame.sprite.Sprite):
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x+4-24,self.y-120,40,120)
 		#Draw Character
+		character_surface = pygame.surface.Surface((128, 256))
 		#pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		self.game.win.blit(self.sprite_image[0],(self.x-10.5,self.y-120))
 		self.game.win.blit(self.sprite_image[1],(self.x-21,self.y-99))
