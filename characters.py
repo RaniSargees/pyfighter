@@ -147,7 +147,7 @@ class Char(pygame.sprite.Sprite):
 		self.ability_air=0
 		self.gravityMultiplier=1
 		Knockback_force = (((hit)**1.2) * ((self.dmg+30)**1.1))/10
-		self.stun = min(int(Knockback_force/800),1.5)
+		self.stun = min(int(Knockback_force/4000),1.5)
 		#print(Knockback_force,hit,self.stun)
 		self.knocked = 1
 		if direction < 2:
@@ -316,10 +316,7 @@ class Mage(Char):
 				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4),4)
 				collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				self.special_3_count += 1
-				random_direction = randint(0,3)
-				if random_direction == 2:
-					random_direction = 3
-				[(x[1].knockBack((self.scale//200), random_direction),x[1].damage(self.scale//100))for x in collisions if x[0]]
+				[(exec("x[1].knockBack((self.scale//20), x[1].x>(self.LocNow[0]+self.scale))"*(x[1]!=self)),x[1].damage(self.scale//100))for x in collisions if x[0]]
 			else:
 				self.ability_run = -1
 				self.ability_time = 0
