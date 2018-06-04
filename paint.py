@@ -3,6 +3,7 @@ from random import randint
 from settings import *
 from paintCanvas import *
 from BTN import *
+from text_box import *
 
 
 class paint():
@@ -10,6 +11,7 @@ class paint():
 		self.win = win
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
+		self.Misc = pygame.sprite.Group()
 		self.shift = 20
 		self.click = False
 		self.hold = False
@@ -17,6 +19,7 @@ class paint():
 		self.canvas_new = 0
 		self.undo = 0
 		self.save = 0
+		self.boxUpdate = 0
 		self.ani_dir = 0
 		self.animate = 0
 		self.tool = 1
@@ -69,15 +72,19 @@ class paint():
 			if i.cnum == 1:
 				i.selected = 1
 		#Brush Size
-		self.BrushSize = BTN(self,self.win,0,(710,30,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
-		BTN(self,self.win,0,(670,30,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
-		BTN(self,self.win,0,(770,30,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		self.BrushSize = BTN(self,self.win,0,(710,60,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self,self.win,0,(670,60,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self,self.win,0,(770,60,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		#Tools
-		BTN(self,self.win,0,(685,80,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
-		BTN(self,self.win,0,(685,190,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
-		BTN(self,self.win,0,(685,300,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
-		BTN(self,self.win,0,(685,410,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
-		BTN(self,self.win,0,(685,520,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
+		BTN(self,self.win,0,(685,110,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
+		BTN(self,self.win,0,(685,220,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
+		BTN(self,self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
+		BTN(self,self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
+		BTN(self,self.win,0,(685,560,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
+		#Text box
+		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
+		
+		
 	def run(self):
 		self.playing = 1
 		self.Mouse = pygame.mouse.get_pos()
@@ -86,6 +93,10 @@ class paint():
 			events = pygame.event.get()
 			self.draw()
 			self.buttons()
+			if self.boxUpdate:
+				self.box.update(1,events)
+			else:
+				self.box.update(0)
 			if self.hold and self.grid.rect.collidepoint(self.Mouse):
 				if not(self.canvas_new):
 					self.canvas_Old.append(self.grid.save)
@@ -116,6 +127,10 @@ class paint():
 				if event.type == pygame.QUIT:
 					self.playing = 0
 				if event.type == pygame.MOUSEBUTTONDOWN:
+					if self.box.rect.collidepoint(pygame.mouse.get_pos()):
+						self.boxUpdate = 1
+					else:
+						self.boxUpdate = 0
 					self.hold = True
 				elif event.type == pygame.MOUSEBUTTONUP:
 					if self.canvas_new:
@@ -125,6 +140,8 @@ class paint():
 					self.up = True
 					if event.key == pygame.K_p:
 						self.new()
+					if event.key == pygame.K_RETURN:
+						self.boxUpdate = 0
 					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
 						self.canvas_Old.append(self.grid.save)
 						for h,i in enumerate(self.body_rects_old):
