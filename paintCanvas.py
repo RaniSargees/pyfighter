@@ -23,12 +23,13 @@ class paintCanvas():
 		self.save = pygame.surfarray.pixels2d(self.win.copy())
 		pygame.surfarray.blit_array(self.win,self.save)
 
-	def recursiveFill(self,pos,win=None):
+	def flood_fill(self,pos,win=None):
 		if win == None:
 			win = self.win
 		pxarray = pygame.PixelArray(win)
 		base = win.map_rgb(win.get_at(pos))
 		clr = win.map_rgb(self.colorList[self.color])
+		if base==clr:return
 		posList = set()
 		posList.add(pos)
 		while len(posList):

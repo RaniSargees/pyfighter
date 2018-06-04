@@ -20,7 +20,7 @@ class paint():
 		self.animate = 0
 		#1 = brush
 		#2 = circle tool
-	
+
 	def new(self):
 		self.canvas = pygame.Surface((640,480))
 		self.head_rect = (285,80,70,70)
@@ -34,7 +34,7 @@ class paint():
 		self.R_leg_rect = (340,330,50,100)
 		self.R_foot_rect = (340,430,50,50)
 		self.body_rects_old = [self.head_rect,self.torso_rect,self.L_arm_rect,self.L_hand_rect,self.R_arm_rect,self.R_hand_rect,self.L_leg_rect,self.L_foot_rect,self.R_leg_rect,self.R_foot_rect]
-		
+
 		self.head = self.canvas.subsurface(self.head_rect)
 		self.head.set_colorkey((192,192,192))
 		self.torso = self.canvas.subsurface(self.torso_rect)
@@ -56,9 +56,9 @@ class paint():
 		self.R_foot = self.canvas.subsurface(self.R_foot_rect)
 		self.R_foot.set_colorkey((192,192,192))
 		self.body_surf = [self.head,self.torso,self.L_arm,self.L_hand,self.R_arm,self.R_hand,self.L_leg,self.L_foot,self.R_leg,self.R_foot]
-		
+
 		self.body_rects = [(x[0]+self.shift,x[1]+self.shift,x[2],x[3]) for x in self.body_rects_old]
-		
+
 		self.grid = paintCanvas(self.canvas,1,5)
 		self.canvas_Old = []
 		for i in range(len(COLORS)):
@@ -82,7 +82,7 @@ class paint():
 			self.draw()
 			self.buttons()
 			if self.hold and self.grid.rect.collidepoint(self.Mouse):
-				if not(self.canvas_new): 
+				if not(self.canvas_new):
 					self.canvas_Old.append(self.grid.save)
 					self.canvas_new = 1
 				self.Mouse2 = pygame.mouse.get_pos()
@@ -117,10 +117,10 @@ class paint():
 						for h,i in enumerate(self.body_rects_old):
 							tempRect = pygame.Rect(i)
 							if tempRect.collidepoint(self.Mouse):
-								self.grid.recursiveFill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
+								self.grid.flood_fill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
 								break
-						else:
-							self.grid.recursiveFill(self.Mouse)
+#						else:
+#							self.grid.recursiveFill(self.Mouse)
 
 			self.Mouse = pygame.mouse.get_pos()
 			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
@@ -194,7 +194,7 @@ class paint():
 		self.win.blit(self.L_foot,(855,380))
 		self.win.blit(self.R_leg,(945,280))
 		self.win.blit(self.R_foot,(945,380))
-		
+
 
 pygame.init()
 win = pygame.display.set_mode(RES)
