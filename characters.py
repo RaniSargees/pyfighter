@@ -40,7 +40,9 @@ class Char(pygame.sprite.Sprite):
 		#1 = Right
 		#2 = Up
 		#3 = Down
-		self.hitbox = (self.x+4-24,self.y+4-120,40,120)
+		self.width = 40
+		self.height = 120
+		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
 
 		#Stats
 		self.defense = 5
@@ -71,7 +73,7 @@ class Char(pygame.sprite.Sprite):
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
-		if self.y > 1000 or self.y < -500 or self.x > 2080 or self.x < -800:
+		if self.y > 1000 or self.y < -500 or self.x > 2080 or self.x < -800: #respawn on death
 			self.dmg = 0
 			self.stun = 0
 			self.ability_run = 0
@@ -91,9 +93,11 @@ class Char(pygame.sprite.Sprite):
 		else:self.hit_list = [self];self.freeze = 0
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
-		hit = bool(len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.y+4-72, 40, 68) and not x.platform]))
+		hit=len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.hitbox[1]+self.vspeed*self.game.dt, self.width, self.height) and not x.platform])
 		if not hit or len(self.grounded):self.x+=self.hspeed*self.game.dt
-		self.hitbox = (self.x+4-24,self.y-120,40,120)
+		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
+#		self.hitbox = (self.x+4-24,self.y-120,40,120)
+
 		#Draw Character
 		character_surface = pygame.surface.Surface((128, 256))
 		#pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
@@ -113,7 +117,7 @@ class Char(pygame.sprite.Sprite):
 		self.game.win.blit(self.sprite_image[9],(self.x+6,self.y-15))
 		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 		#######
-		if self.y < 0:
+		if self.y < 0: #draw offscreen arrows
 			arrowX = max(min(self.x,RES[0]),0)
 			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
 		else:
@@ -132,11 +136,11 @@ class Char(pygame.sprite.Sprite):
 		if direction == 4:
 			direction = self.facing
 		if direction < 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-48+((direction==1)*(48+20)), self.y-72, 20, 72),4)
-			collisions=[(pygame.Rect((self.x-48+((direction==1)*(48+20)),self.y-72,20,72)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+20)), self.y-self.height, 20, self.height),4)
+			collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+20)),self.y-self.height,20,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		elif direction >= 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-24,self.y-92+((direction==3)*(72+10)),48,30),4)
-			collisions=[(pygame.Rect((self.x-24,self.y-92+((direction==3)*(72+10)),48,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,self.y-(self.height+30)+((direction==3)*(self.height+30)),self.width,30),4)
+			collisions=[(pygame.Rect((self.x-self.width//2,self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(6, direction),x[1].damage(5))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
@@ -223,7 +227,7 @@ class Mage(Char):
 			self.special_0_go = 1
 			scale = min(int(self.special_0_timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
-			self.LocNow = (self.x-((self.facing==0)*(scale+24-(scale/4)))+((self.facing==1)*(24-(scale/4)))+(64*(self.facing*2-1)),self.y-(scale))
+			self.LocNow = (self.x-((self.facing==0)*(scale+self.width//2-(scale/4)))+((self.facing==1)*(self.width//2-(scale/4)))+(64*(self.facing*2-1)),self.y-(scale))
 			self.scale = scale
 		else:
 			self.special_0_timer += self.game.dt
@@ -305,7 +309,7 @@ class Mage(Char):
 			self.special_3_go = 1
 			scale = min(int(self.special_3_timer * 100 + 100),300)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale*2,scale))
-			self.LocNow = (self.x+(24-scale),self.y-(scale))
+			self.LocNow = (self.x+(self.width//2-scale),self.y-(scale))
 			self.scale = scale
 		else:
 			self.special_3_timer += self.game.dt
