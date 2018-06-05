@@ -80,7 +80,7 @@ class paint():
 		BTN(self,self.win,0,(685,220,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
 		BTN(self,self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
 		BTN(self,self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
-		BTN(self,self.win,0,(685,560,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
+		BTN(self,self.win,0,(685,550,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		
