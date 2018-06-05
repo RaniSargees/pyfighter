@@ -52,7 +52,7 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = [x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1)]
+		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1)], key=lambda x:x.platform)
 		self.inStage = False
 		for i in self.grounded:
 			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
