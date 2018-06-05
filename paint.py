@@ -67,20 +67,20 @@ class paint():
 		self.grid = paintCanvas(self.canvas,1,5)
 		self.canvas_Old = []
 		for i in range(len(COLORS)):
-			BTN(self,self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
+			BTN(self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
 		for i in self.ColorBTN:
 			if i.cnum == 1:
 				i.selected = 1
 		#Brush Size
-		self.BrushSize = BTN(self,self.win,0,(710,60,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
-		BTN(self,self.win,0,(670,60,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
-		BTN(self,self.win,0,(770,60,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		self.BrushSize = BTN(self.win,0,(710,60,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self.win,0,(670,60,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
+		BTN(self.win,0,(770,60,30,40),self.MenuBTN,text = '>',fn = 'self.grid.brush+=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		#Tools
-		BTN(self,self.win,0,(685,110,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
-		BTN(self,self.win,0,(685,220,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
-		BTN(self,self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
-		BTN(self,self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
-		BTN(self,self.win,0,(685,550,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
+		BTN(self.win,0,(685,110,100,100),self.MenuBTN,text = 'Brush',fn = 'self.tool = 1')
+		BTN(self.win,0,(685,220,100,100),self.MenuBTN,text = 'Circle', fn = 'self.tool = 2')
+		BTN(self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
+		BTN(self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
+		BTN(self.win,0,(685,550,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		
@@ -122,7 +122,9 @@ class paint():
 				self.grid.win.blit(self.canvas_Old.pop(-1),(0,0))
 			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
 				self.save = 0
+				#Change to save in a given directory instead of in current location
 				pygame.image.save(self.canvas,"Char.png")
+				
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
@@ -225,10 +227,10 @@ class paint():
 		self.win.blit(self.R_leg,(945,280))
 		self.win.blit(self.R_foot,(945,380))
 
-
-pygame.init()
-win = pygame.display.set_mode(RES)
-d = paint(win)
-d.new()
-d.run()
-pygame.quit()
+if __name__ == "__main__":
+	pygame.init()
+	win = pygame.display.set_mode(RES)
+	d = paint(win)
+	d.new()
+	d.run()
+	pygame.quit()

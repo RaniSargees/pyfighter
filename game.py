@@ -6,7 +6,7 @@ from joystick_wrapper import *
 from settings import *
 
 class Game():
-	def __init__(self, win, joysticks, map="default"):
+	def __init__(self, win, joysticks, map="default", charList = []):
 		self.joysticks = joysticks
 		self.win = win
 		self.clock = pygame.time.Clock()
@@ -110,24 +110,23 @@ class Game():
 			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, GREEN, BLUE, WHITE)[j.joystick.get_id()]),((200*i)+50,650))
 		pygame.display.update()
 
+if __name__ == "__main__":
+	pygame.init()
 
-pygame.init()
+	joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+	for x in joysticks: x.init()
+	for x in joysticks[:]:
+		try: #incompatible controller detection
+			for i in (0,1): x.get_axis(i) #remove controllers with no thumbstick
+			if "ppjoy" in x.get_name().lower():0/0 #remove faked controllers (steering wheels, flight sticks, etc)
+			if "rvl"   in x.get_name().lower():0/0 #remove wii controllers
+		except:joysticks.pop(joysticks.index(x)).quit()
+	if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
+	else: joysticks=joysticks[:4]
+	win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
 
-joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
-for x in joysticks: x.init()
-for x in joysticks[:]:
-	try: #incompatible controller detection
-		for i in (0,1): x.get_axis(i) #remove controllers with no thumbstick
-		if "ppjoy" in x.get_name().lower():0/0 #remove faked controllers (steering wheels, flight sticks, etc)
-		if "rvl"   in x.get_name().lower():0/0 #remove wii controllers
-	except:joysticks.pop(joysticks.index(x)).quit()
-if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
-else: joysticks=joysticks[:4]
-win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-#win = pygame.display.set_mode(RES)
-
-g = Game(win, joysticks, "default")
-g.new()
-g.run()
-pygame.quit()
+	g = Game(win, joysticks, "default")
+	g.new()
+	g.run()
+	pygame.quit()
 

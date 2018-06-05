@@ -2,14 +2,14 @@ import pygame
 from settings import *
 
 class BTN(pygame.sprite.Sprite):
-	def __init__(self,game,surface,color,rect,group,clickColor=(0,0,255),text='',fn=None,clickable = True):
-		self.game = game
+	def __init__(self,surface,color,rect,group,clickColor=(0,0,255),text='',fn=None,clickable = True,thickness = 1):
 		pygame.sprite.Sprite.__init__(self,group)
 		self.win = surface
 		self.color = COLORS[color]
 		self.cnum = color
 		self.outline = clickColor
 		self.rect = pygame.Rect(rect)
+		self.thickness = thickness
 		self.clickable = clickable
 		if text != '':
 			self.charSize = int((self.rect[2]/len(text)))
@@ -35,9 +35,9 @@ class BTN(pygame.sprite.Sprite):
 		if clicked != -1:
 			self.selected = clicked
 		if mOver or self.selected == 1:
-			pygame.draw.rect(self.win,self.outline,self.rect,3)
+			pygame.draw.rect(self.win,self.outline,self.rect,self.thickness*3)
 		else:
-			pygame.draw.rect(self.win,BLACK,self.rect,1)
+			pygame.draw.rect(self.win,BLACK,self.rect,self.thickness)
 		
 		
 		
