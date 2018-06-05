@@ -18,7 +18,7 @@ class Text_Box(pygame.sprite.Sprite):
 		else:
 			self.title = 0
 		self.textLine = 0
-		
+
 	def update(self,clicked,events=[]):
 		pygame.draw.rect(self.win,BLACK,self.rect,1)
 		pygame.draw.rect(self.win,BLACK,(self.rect[0]+(self.rect[2]/24),self.rect[1]+(self.rect[3]/12),self.rect[2]-(self.rect[2]/12),self.rect[3]-(self.rect[3]/6)),1)

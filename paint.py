@@ -138,17 +138,17 @@ class paint():
 					self.hold = False
 				if event.type == pygame.KEYUP:
 					self.up = True
-					if event.key == pygame.K_p:
-						self.new()
+#					if event.key == pygame.K_p:
+#						self.new()
 					if event.key == pygame.K_RETURN:
 						self.boxUpdate = 0
-					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
-						self.canvas_Old.append(self.grid.save)
-						for h,i in enumerate(self.body_rects_old):
-							tempRect = pygame.Rect(i)
-							if tempRect.collidepoint(self.Mouse):
-								self.grid.flood_fill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
-								break
+#					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
+#						self.canvas_Old.append(self.grid.save)
+#						for h,i in enumerate(self.body_rects_old):
+#							tempRect = pygame.Rect(i)
+#							if tempRect.collidepoint(self.Mouse):
+#								self.grid.flood_fill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
+#								break
 #						else:
 #							self.grid.recursiveFill(self.Mouse)
 

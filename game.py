@@ -99,9 +99,9 @@ class Game():
 					self.playing = 0
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
 			self.win.fill(WHITE)
-			self.objects.update()
 			self.sprites.update(keys, events)
 			self.ground.update()
+			self.objects.update()
 			self.draw()
 
 	def draw(self):
@@ -123,10 +123,10 @@ for x in joysticks[:]:
 	except:joysticks.pop(joysticks.index(x)).quit()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 else: joysticks=joysticks[:4]
-#win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-win = pygame.display.set_mode(RES)
+win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#win = pygame.display.set_mode(RES)
 
-g = Game(win, joysticks, "loss")
+g = Game(win, joysticks, "default")
 g.new()
 g.run()
 pygame.quit()
