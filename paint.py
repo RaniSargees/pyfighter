@@ -116,7 +116,7 @@ class paint():
 			else:
 				self.grid.update()
 			keys = pygame.key.get_pressed()
-			if (keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.undo == 1 and self.canvas_Old:
+			if ((keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.undo == 1) and self.canvas_Old:
 				self.up = False
 				self.undo = 0
 				self.grid.win.blit(self.canvas_Old.pop(-1),(0,0))
