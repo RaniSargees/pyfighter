@@ -145,7 +145,8 @@ class Char(pygame.sprite.Sprite):
 		[(x[1].knockBack(6, direction),x[1].damage(5))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
-		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
+		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
+		except:()
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -210,7 +211,6 @@ class Char(pygame.sprite.Sprite):
 
 
 class Mage(Char):
-
 	def special0(self):
 		if not self.ability_run+1:
 			self.release = 0
@@ -259,8 +259,9 @@ class Mage(Char):
 			self.ability_run = 1
 			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
+			self.fire = self.game.effects["flaming_turds"].copy()
 			self.special_1_len = len(self.explosion)
-			fireball(self,self.x-86,self.y-144,self.facing)
+			rainbow_poop(self,self.x-86,self.y-144,self.facing)
 	def run_special1(self):pass
 
 	def special2(self):
@@ -327,5 +328,13 @@ class Mage(Char):
 				self.ability_time = 0
 				self.release = 0
 		pass
-
-
+class друг(Char):
+	def special1(self,direction):
+		#sends a ball that explodes on release
+		#Perhaps change to on impact and on repress since holding the key doesn't feel right
+		if not ability_run+1:
+			self.freeze = 0
+			self.ability_time = 0
+			self.fire = self.game.effects['rainbow_turds'].copy()
+			self.special_1_len = len(self.explosion)
+			rainbow_poop(self,self.x-86,self.y-144,self.facing)
