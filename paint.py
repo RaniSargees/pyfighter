@@ -1,4 +1,4 @@
-import pygame, math
+import pygame, math, os
 from random import randint
 from settings import *
 from paintCanvas import *
@@ -7,7 +7,7 @@ from text_box import *
 
 
 class paint():
-	def __init__(self,win):
+	def __init__(self,win,directory=None):
 		self.win = win
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
@@ -21,11 +21,17 @@ class paint():
 		self.save = 0
 		self.running = 1
 		self.boxUpdate = 0
+		self.directory = directory
 		self.ani_dir = 0
 		self.animate = 0
 		self.tool = 1
 		#1 = brush
 		#2 = circle tool
+		self.Class = 0
+		#Boom boi, Sword kid, Pew Pew Kiddi, That one kid who likes to punch stuff, that one guy who shat out skittles durring class
+		#    0			1			2							3										4
+		self.stats = [5,5,5]
+		#[atk,def,speed]
 
 	def new(self):
 		self.canvas = pygame.Surface((640,480))
@@ -125,7 +131,15 @@ class paint():
 			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
 				self.save = 0
 				#Change to save in a given directory instead of in current location
-				pygame.image.save(self.canvas,"Char.png")
+				#if not os.path.exists(
+				self.Savedirectory = (self.directory+'\\'+str(self.box.text))
+				if not os.path.exists(self.Savedirectory):
+					os.makedirs(self.Savedirectory)
+				pygame.image.save(self.canvas,self.Savedirectory+'\\'+"Char.png")
+				f = open(self.Savedirectory+'\\'+'data.txt',"w+")
+				f.write(str([self.Class,self.stats]))
+				f.close()
+				os.rename(self.Savedirectory+'\\'+'data.txt',self.Savedirectory+'\\'+"!data.trash")
 				
 			for event in events:
 				if event.type == pygame.QUIT:

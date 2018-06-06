@@ -42,7 +42,7 @@ class GUI():
 		game_folder = os.path.dirname(__file__)
 		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
-		sprites_folder = os.path.join(img_folder, 'sprites')
+		self.sprites_folder = os.path.join(img_folder, 'sprites')
 		bg_folder = os.path.join(img_folder,'backgrounds')
 		self.char_sprites = {}
 		self.maps = {}
@@ -53,8 +53,8 @@ class GUI():
 		for x in self.maps:
 			self.covers[x] = pygame.image.load(BytesIO(self.maps[x].read("cover.png")))
 			
-		for fileName in os.listdir(sprites_folder): #Load Character Faces
-			sprite_image = pygame.image.load(os.path.join(sprites_folder,fileName)).convert_alpha()
+		for fileName in os.listdir(self.sprites_folder): #Load Character Faces
+			sprite_image = pygame.image.load(os.path.join(self.sprites_folder,fileName)).convert_alpha()
 			head_rect = (285,80,70,70)
 			head = pygame.transform.scale(sprite_image.subsurface(head_rect),(int(70*(0.3)),int(70*0.3)))
 			head.set_colorkey((192,192,192))
@@ -93,7 +93,7 @@ class GUI():
 			self.win.blit(i[0],i[1])
 			
 	def run_paint(self):
-		p = paint(self.win)
+		p = paint(self.win,self.sprites_folder)
 		p.new()
 		p.run()
 		self.playing = p.running
