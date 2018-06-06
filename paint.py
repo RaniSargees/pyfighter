@@ -19,6 +19,7 @@ class paint():
 		self.canvas_new = 0
 		self.undo = 0
 		self.save = 0
+		self.running = 1
 		self.boxUpdate = 0
 		self.ani_dir = 0
 		self.animate = 0
@@ -81,6 +82,7 @@ class paint():
 		BTN(self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
 		BTN(self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
 		BTN(self.win,0,(685,550,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
+		BTN(self.win,0,(1100,100,100,100,),self.MenuBTN,text = 'Finish', fn = 'self.playing = 0')
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		
@@ -128,6 +130,7 @@ class paint():
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
+					self.running = 0
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if self.box.rect.collidepoint(pygame.mouse.get_pos()):
 						self.boxUpdate = 1

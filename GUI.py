@@ -12,6 +12,7 @@ class GUI():
 		self.joysticks = joysticks
 		self.bg = None
 		self.img = []
+		self.mDown = 0
 		self.pos = (0,0)
 		#Location Index:
 		#	0, Main Menu
@@ -20,7 +21,7 @@ class GUI():
 		#	3, Options
 
 	def new(self,location=0):
-		self.buttons = pygame.sprite.Group()
+		self.MenuBTN = pygame.sprite.Group()
 		self.image = []
 		if location == 0: #Main Menu
 			self.load_data()
@@ -31,8 +32,8 @@ class GUI():
 			self.text_rect = self.text.get_rect(center=(640,180))
 			self.img.append([self.text,self.text_rect])
 			#Buttons
-			BTN(self.win,0,(100,300,600,200),self.buttons,text='PLAY',fn='self.new(1)',thickness = 4)
-			BTN(self.win,0,(800,300,300,200),self.buttons,text='CREATE')
+			BTN(self.win,0,(100,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2)
+			BTN(self.win,0,(800,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2)
 			
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
@@ -49,7 +50,6 @@ class GUI():
 		
 		for filename in os.listdir(map_folder): #Load Map
 			if filename.endswith(".pfmap"):self.maps[filename[:-6]] = zipfile.ZipFile(os.path.join(map_folder, filename))
-		
 		for x in self.maps:
 			self.covers[x] = pygame.image.load(BytesIO(self.maps[x].read("cover.png")))
 			
@@ -60,7 +60,7 @@ class GUI():
 			head.set_colorkey((192,192,192))
 			self.char_sprites[str(fileName).strip('.png')] = head
 		
-		for fileName in os.listdir(bg_folder):
+		for fileName in os.listdir(bg_folder): #Load BG image
 			if fileName == 'menu.png' or fileName == 'menu.jpg':
 				self.bg = pygame.transform.scale(pygame.image.load(os.path.join(bg_folder,fileName)).convert_alpha(),RES)
 		
@@ -68,16 +68,35 @@ class GUI():
 		self.playing = 1
 		while self.playing:
 			events = pygame.event.get()
+			for event in events:
+				if event.type == pygame.QUIT:
+					self.playing = 0
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					self.mDown = 1
+				else:
+					self.mDown = 0
 			self.draw()
+			self.buttons()
 			pygame.display.update()
 			
-			
+	def buttons(self):
+		for i in self.MenuBTN:
+			if i.rect.collidepoint(pygame.mouse.get_pos()):
+				i.update(mOver=1)
+				if self.mDown:
+					exec(i.fn)
+			else:
+				i.update()
 	
 	def draw(self):
 		for i in self.img:
 			self.win.blit(i[0],i[1])
-		self.buttons.update()
 			
+	def run_paint(self):
+		p = paint(self.win)
+		p.new()
+		p.run()
+		self.playing = p.running
 	
 	
 	
