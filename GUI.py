@@ -34,10 +34,10 @@ class GUI():
 			#Buttons
 			BTN(self.win,0,(100,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2)
 			BTN(self.win,0,(800,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2)
-			
+
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
-	
+
 	def load_data(self):
 		game_folder = os.path.dirname(__file__)
 		map_folder = os.path.join(game_folder, 'maps')
@@ -47,26 +47,28 @@ class GUI():
 		self.char_sprites = {}
 		self.maps = {}
 		self.covers = {}
-		
+
 		for filename in os.listdir(map_folder): #Load Map
 			if filename.endswith(".pfmap"):self.maps[filename[:-6]] = zipfile.ZipFile(os.path.join(map_folder, filename))
 		for x in self.maps:
 			self.covers[x] = pygame.image.load(BytesIO(self.maps[x].read("cover.png")))
-			
+
 		for fileName in os.listdir(self.sprites_folder): #Load Character Faces
 			sprite_image = pygame.image.load(os.path.join(self.sprites_folder,fileName)).convert_alpha()
 			head_rect = (285,80,70,70)
 			head = pygame.transform.scale(sprite_image.subsurface(head_rect),(int(70*(0.3)),int(70*0.3)))
 			head.set_colorkey((192,192,192))
 			self.char_sprites[str(fileName).strip('.png')] = head
-		
+
 		for fileName in os.listdir(bg_folder): #Load BG image
 			if fileName == 'menu.png' or fileName == 'menu.jpg':
 				self.bg = pygame.transform.scale(pygame.image.load(os.path.join(bg_folder,fileName)).convert_alpha(),RES)
-		
+
 	def run(self):
 		self.playing = 1
 		while self.playing:
+			try:[x.update() for x in self.joysticks]
+			except:()
 			events = pygame.event.get()
 			for event in events:
 				if event.type == pygame.QUIT:
@@ -78,7 +80,7 @@ class GUI():
 			self.draw()
 			self.buttons()
 			pygame.display.update()
-			
+
 	def buttons(self):
 		for i in self.MenuBTN:
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
@@ -87,19 +89,17 @@ class GUI():
 					exec(i.fn)
 			else:
 				i.update()
-	
+
 	def draw(self):
 		for i in self.img:
 			self.win.blit(i[0],i[1])
-			
+
 	def run_paint(self):
 		p = paint(self.win,self.sprites_folder)
 		p.new()
 		p.run()
 		self.playing = p.running
-	
-	
-	
+
 
 pygame.init()
 
@@ -120,16 +120,3 @@ g = GUI(win,joysticks)
 g.new(0)
 g.run()
 pygame.quit()
-
-
-
-
-
-
-
-
-
-
-
-
-
