@@ -53,12 +53,17 @@ class GUI():
 		for x in self.maps:
 			self.covers[x] = pygame.image.load(BytesIO(self.maps[x].read("cover.png")))
 
-		for fileName in os.listdir(self.sprites_folder): #Load Character Faces
-			sprite_image = pygame.image.load(os.path.join(self.sprites_folder,fileName)).convert_alpha()
-			head_rect = (285,80,70,70)
-			head = pygame.transform.scale(sprite_image.subsurface(head_rect),(int(70*(0.3)),int(70*0.3)))
-			head.set_colorkey((192,192,192))
-			self.char_sprites[str(fileName).strip('.png')] = head
+		for fileName in os.listdir(self.sprites_folder): #Load Character sprites
+			file = os.path.join(self.sprites_folder, fileName)
+			for i in sorted(os.listdir(file)):
+				if i.lower().endswith(".png") or i.lower().endswith(".jpg"):
+					sprite_image = pygame.image.load(os.path.join(file,i)).convert_alpha()
+					head_rect = (285,80,70,70)
+					head = pygame.transform.scale(sprite_image.subsurface(head_rect),(int(70*(0.3)),int(70*0.3)))
+					head.set_colorkey((192,192,192))
+					self.char_sprites[str(fileName).strip('.png')] = [head,self.sprite_data]
+				elif i.lower().endswith(".trash"):
+					self.sprite_data = open(os.path.join(file,i)).readline()
 
 		for fileName in os.listdir(bg_folder): #Load BG image
 			if fileName == 'menu.png' or fileName == 'menu.jpg':
