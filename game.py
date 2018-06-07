@@ -19,7 +19,7 @@ class Game():
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
-			else: Mage(self, x, 'test')
+			else: друг(self, x, 'test')
 		#load map
 		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():
@@ -89,7 +89,6 @@ class Game():
 					self.char_sprites[str(fileName).strip('.png')] = [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,self.sprite_data]
 				elif i.lower().endswith(".trash"):
 					self.sprite_data = open(os.path.join(file,i)).readline()
-					
 	def run(self):
 		self.playing = 1
 		while self.playing:
@@ -105,9 +104,9 @@ class Game():
 					self.playing = 0
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
 			self.win.fill(WHITE)
+			self.objects.update()
 			self.sprites.update(keys, events)
 			self.ground.update()
-			self.objects.update()
 			self.draw()
 
 	def draw(self):
@@ -129,7 +128,8 @@ if __name__ == "__main__":
 		except:joysticks.pop(joysticks.index(x)).quit()
 	if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 	else: joysticks=joysticks[:4]
-	win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#	win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+	win = pygame.display.set_mode((1280,720))
 
 	g = Game(win, joysticks, "default")
 	g.new()

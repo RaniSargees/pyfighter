@@ -39,18 +39,20 @@ class fireball(pygame.sprite.Sprite):
 			self.kill()
 
 class rainbow_poop(pygame.sprite.Sprite):
-	def __init__(self, char, x, y, direction):
+	def __init__(self, char, x, y, direction, yspeed = -5, xspeed = 2):
 		pygame.sprite.Sprite.__init__(self, char.game.objects)
 		self.char = char
-		self.loc = (x,y)
+		self.xspeed= xspeed
+		self.x = x-24
+		self.y = y-24
 		self.dir = direction
 		self.hit_list = [self,char]
-		hue = random()*360
-		self.image = char.fire
 		self.frame = 0
+		self.image = [pygame.transform.scale(x, (48,48)) for x in self.char.fire]
+		hue = random()*360
+		self.yspeed = yspeed
 		for x in self.image:
 			pxarray = pygame.PixelArray(x)
-			print([int(255*x) for x in hls_to_rgb(hue, .7, .8)])
 			pxarray.replace((255,  0, 0), tuple([int(255*x) for x in hls_to_rgb(hue, .5,  1)]))
 			pxarray.replace((169,  1, 1), tuple([int(255*x) for x in hls_to_rgb(hue, .4, .8)]))
 			pxarray.replace((255,112,17), tuple([int(255*x) for x in hls_to_rgb(hue, .6, .7)]))
@@ -58,4 +60,8 @@ class rainbow_poop(pygame.sprite.Sprite):
 			del pxarray
 
 	def update(self):
-		self.char.game.win.blit(self.image[self.frame],self.loc)
+		self.char.game.win.blit(self.image[self.frame],(self.x, self.y))
+		self.x += (self.dir*2-1) * self.xspeed * 800 * self.char.game.dt
+		self.y += self.yspeed
+		self.yspeed += 1
+
