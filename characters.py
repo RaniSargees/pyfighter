@@ -175,11 +175,12 @@ class Char(pygame.sprite.Sprite):
 
 	def get_keys(self):
 		if self.stun <= 0:
+			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2)-1)*-1)
 			if  self.joystick.get_axis(0) < -.5:
-				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
+				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 0
 			elif self.joystick.get_axis(0) > .5:
-				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * (abs((self.freeze==0)-0.2)+0.2)
+				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
@@ -255,7 +256,7 @@ class Mage(Char):
 		#sends a ball that explodes on release
 		#Perhaps change to on impact and on repress since holding the key doesn't feel right
 		if not self.ability_run+1:
-			self.freeze = 1
+			self.freeze = 2
 			self.ability_run = 1
 			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
@@ -334,7 +335,7 @@ class друг(Char):
 		if not self.ability_run+1:
 			self.ability_run = 1
 			self.release = 0
-			self.freeze = 1
+			self.freeze = 2
 			self.ability_time = -1
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.special_1_len = len(self.fire)

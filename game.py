@@ -20,6 +20,9 @@ class Game():
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
 			else: друг(self, x, 'test')
+			#Classes:
+			#	Mage
+			#	друг
 		#load map
 		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():
