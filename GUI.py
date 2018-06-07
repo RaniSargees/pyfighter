@@ -14,6 +14,7 @@ class GUI():
 		self.img = []
 		self.mDown = 0
 		self.pos = (0,0)
+		self.BTN_list = []
 		#Location Index:
 		#	0, Main Menu
 		#	1, Character Select
@@ -21,22 +22,47 @@ class GUI():
 		#	3, Options
 
 	def new(self,location=0):
+		self.load_data()
 		self.MenuBTN = pygame.sprite.Group()
-		self.image = []
+		self.img = []
+		self.img.append([self.bg,(0,0)]) #Background image
 		if location == 0: #Main Menu
-			self.load_data()
-			self.img.append([self.bg,(0,0)]) #Background image
 			#Title Text
 			self.font = pygame.font.SysFont('Comic Sans MS',144)
 			self.text = self.font.render('PYFIGHTER',True,BLACK)
 			self.text_rect = self.text.get_rect(center=(640,180))
 			self.img.append([self.text,self.text_rect])
 			#Buttons
-			BTN(self.win,0,(100,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2)
-			BTN(self.win,0,(800,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2)
-
+			self.BTN_list = [[BTN(self.win,0,(140,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2),
+							BTN(self.win,0,(840,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2)],
+							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='OPTIONS',fn='self.new(3)',thickness = 2),
+							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2)]]
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
+		
+		if location == 1:
+			self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
+			self.font_L = pygame.font.SysFont('Comic Sans MS',32)
+			self.font_M = pygame.font.SysFont('Comic Sans MS',16)
+			self.font_S = pygame.font.SysFont('Comic Sans MS',8)
+			#Title Text
+			self.text = self.font_LL.render('Choose your character',True,BLACK)
+			self.text_rect = self.text.get_rect(center=(640,50))
+			self.img.append([self.text,self.text_rect])
+			#Player Boxes
+			for i in self.joysticks:
+				pass
+				#Put user select box here.
+				#Selected chars stats, sprite, class etc.
+			temp = []
+			for j,k in enumerate(sorted(self.char_sprites)):
+				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',image = pygame.transform.scale(self.char_sprites[k][0],(100,100))))
+				if j%12 == 0 and j != 0:
+					self.BTN_list.append(temp)
+					temp = []
+			if temp != []:
+				self.BTN_list.append(temp)
+				temp = []
 
 	def load_data(self):
 		game_folder = os.path.dirname(__file__)
