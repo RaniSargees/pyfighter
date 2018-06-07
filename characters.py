@@ -53,7 +53,7 @@ class Char(pygame.sprite.Sprite):
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
-		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 1)], key=lambda x:x.platform)
+		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
 		self.inStage = False
 		for i in self.grounded:
 			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
@@ -116,7 +116,7 @@ class Char(pygame.sprite.Sprite):
 		self.game.win.blit(self.sprite_image[7],(self.x-21,self.y-15))
 		self.game.win.blit(self.sprite_image[8],(self.x+6,self.y-45))
 		self.game.win.blit(self.sprite_image[9],(self.x+6,self.y-15))
-		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
+#		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 		#######
 		if self.y < 0: #draw offscreen arrows
 			arrowX = max(min(self.x,RES[0]),0)
@@ -146,7 +146,7 @@ class Char(pygame.sprite.Sprite):
 
 	def atkHeavy(self,direction):
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
-		except:()
+		except Exception as e:print(e)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -259,9 +259,8 @@ class Mage(Char):
 			self.ability_run = 1
 			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
-			self.fire = self.game.effects["flaming_turds"].copy()
 			self.special_1_len = len(self.explosion)
-			rainbow_poop(self,self.x-86,self.y-144,self.facing)
+			fireball(self,self.x-86,self.y-144,self.facing)
 	def run_special1(self):pass
 
 	def special2(self):
@@ -332,9 +331,15 @@ class друг(Char):
 	def special1(self,direction):
 		#sends a ball that explodes on release
 		#Perhaps change to on impact and on repress since holding the key doesn't feel right
-		if not ability_run+1:
-			self.freeze = 0
-			self.ability_time = 0
-			self.fire = self.game.effects['rainbow_turds'].copy()
-			self.special_1_len = len(self.explosion)
-			rainbow_poop(self,self.x-86,self.y-144,self.facing)
+		if not self.ability_run+1:
+			self.ability_run = 1
+			self.release = 0
+			self.freeze = 1
+			self.ability_time = -1
+			self.fire = self.game.effects['flaming_turds'].copy()
+			self.special_1_len = len(self.fire)
+			self.ability_count = -20
+	def run_special1(self):
+		if self.release or (self.ability_count>10): self.ability_run=-1;self.release=0
+		self.ability_count += 1
+		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
