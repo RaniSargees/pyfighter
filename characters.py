@@ -340,6 +340,6 @@ class друг(Char):
 			self.special_1_len = len(self.fire)
 			self.ability_count = -20
 	def run_special1(self):
-		if self.release or (self.ability_count>10): self.ability_run=-1;self.release=0
-		self.ability_count += 1
+		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
+		self.ability_count += 0.1
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)

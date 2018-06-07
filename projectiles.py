@@ -64,4 +64,7 @@ class rainbow_poop(pygame.sprite.Sprite):
 		self.x += (self.dir*2-1) * self.xspeed * 800 * self.char.game.dt
 		self.y += self.yspeed
 		self.yspeed += 1
+		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000:
+			print('kill')
+			self.kill()
 
