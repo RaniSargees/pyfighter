@@ -100,7 +100,7 @@ class Char(pygame.sprite.Sprite):
 #		self.hitbox = (self.x+4-24,self.y-120,40,120)
 
 		#Draw Character
-		character_surface = pygame.surface.Surface((128, 256))
+		character_surface = pygame.surface.Surface((256, 256))
 		#pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		self.game.win.blit(self.sprite_image[0],(self.x-10.5,self.y-120))
 		self.game.win.blit(self.sprite_image[1],(self.x-21,self.y-99))
@@ -183,7 +183,7 @@ class Char(pygame.sprite.Sprite):
 				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
-				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
+				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (bool(not self.grounded)*.15 + bool(self.grounded)) * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
 				else: self.hspeed = 0
 			self.gravityMultiplier = (self.joystick.get_axis(1) >.9)*2 + 1
 			if self.joystick.get_button(self.buttonmap[0]) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
@@ -339,8 +339,8 @@ class друг(Char):
 			self.ability_time = -1
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.special_1_len = len(self.fire)
-			self.ability_count = -20
+			self.ability_count = -8
 	def run_special1(self):
 		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
-		self.ability_count += 0.1
+		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
