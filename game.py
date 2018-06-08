@@ -115,7 +115,7 @@ class Game():
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
 		for i,j in enumerate(self.sprites):
-			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, GREEN, BLUE, WHITE)[j.joystick.get_id()]),((200*i)+50,650))
+			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(RED, BLUE, YELLOW, GREEN)[j.joystick.get_id()]),((200*i)+50,650))
 		pygame.display.update()
 
 if __name__ == "__main__":
