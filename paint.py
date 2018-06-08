@@ -88,7 +88,7 @@ class paint():
 		BTN(self.win,0,(685,330,100,100),self.MenuBTN,text = 'Fill', fn = 'self.tool = 3')
 		BTN(self.win,0,(685,440,100,100),self.MenuBTN,text = 'Undo', fn = 'self.undo = 1',clickable = False)
 		BTN(self.win,0,(685,550,100,100),self.MenuBTN,text = 'Save', fn = 'self.save = 1',clickable = False)
-		BTN(self.win,0,(1100,100,100,100,),self.MenuBTN,text = 'Finish', fn = 'self.playing = 0')
+		BTN(self.win,0,(1000,10,250,50),self.MenuBTN,text = 'Return to Main Menu', fn = 'self.playing = 0')
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		

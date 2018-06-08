@@ -53,10 +53,10 @@ class GUI():
 			for h,i in enumerate(self.joysticks):
 				surf = pygame.Surface((200,300))
 				pygame.draw.rect(surf,(RED, BLUE, YELLOW, GREEN)[i.get_id()],(0,0,200,300))
-				surf.blit(self.font_L.render('PLAYER '+str(h+2),True,BLACK),(5,140))
+				surf.blit(self.font_L.render('PLAYER '+str(h+1),True,BLACK),(5,140))
 				pygame.draw.rect(surf,BLACK,(0,0,200,300),2)
 				pygame.draw.rect(surf,GRAEY,(5,5,140,140))
-				self.img.append([surf,(96+(200*h),400)])
+				self.img.append([surf,((96*(h+1))+(200*h),400)])
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
 			temp = []
