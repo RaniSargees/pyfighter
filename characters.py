@@ -122,14 +122,24 @@ class Char(pygame.sprite.Sprite):
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
 		#######
-		if self.y < 0: #draw offscreen arrows
-			arrowX = max(min(self.x,RES[0]),0)
-			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
-		else:
+		if (self.x < 0 or self.x > RES[0]) and self.y>0: #draw offscreen arrows
 			if self.x > RES[0]:
 				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
+				pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(RES[0]-28,int(self.y)), 20)
+				self.game.win.blit(self.sprite_image[0], (RES[0]-38, self.y-10))
 			elif self.x < 0:
 				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
+				pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(28,int(self.y)), 20)
+				self.game.win.blit(self.sprite_image[0], (18, self.y-10))
+		elif self.y<0:
+			arrowX = int(max(min(self.x,RES[0]-20),20))
+			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
+			pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(arrowX,28), 20)
+			self.game.win.blit(self.sprite_image[0], (arrowX-10, 20))
+		elif self.x < 0:
+			pass
+		elif self.x > RES[0]:
+			pass
 
 	def jump(self):
 		if self.currentJumps:
