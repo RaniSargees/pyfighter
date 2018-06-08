@@ -117,7 +117,10 @@ class Char(pygame.sprite.Sprite):
 		character_surface.blit(self.sprite_image[8],(128+6,256-45))
 		character_surface.blit(self.sprite_image[9],(128+6,256-15))
 #		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
-		self.game.win.blit(character_surface,(self.x-128,self.y-256))
+
+		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
+		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
+
 		#######
 		if self.y < 0: #draw offscreen arrows
 			arrowX = max(min(self.x,RES[0]),0)
@@ -147,7 +150,7 @@ class Char(pygame.sprite.Sprite):
 
 	def atkHeavy(self,direction):
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
-		except Exception as e:print(e)
+		except:()
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -155,7 +158,6 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier=1
 		Knockback_force = (((hit)**1.2) * ((self.dmg+30)**1.1))/10
 		self.stun = min(int(Knockback_force/4000),1.5)
-		#print(Knockback_force,hit,self.stun)
 		self.knocked = 1
 		if direction < 2:
 			self.hspeed = (direction-0.5)*2*Knockback_force*math.cos(math.pi/6) * (60/max(1,self.game.clock.get_fps()))
