@@ -56,6 +56,15 @@ class GUI():
 				surf.blit(self.font_L.render('PLAYER '+str(h+1),True,BLACK),(5,140))
 				pygame.draw.rect(surf,BLACK,(0,0,200,300),2)
 				pygame.draw.rect(surf,GRAEY,(5,5,140,140))
+				pygame.draw.rect(surf,GRAEY,(30,185,150,20))
+				pygame.draw.rect(surf,GRAEY,(30,225,150,20))
+				pygame.draw.rect(surf,GRAEY,(30,265,150,20))
+				pygame.draw.circle(surf,GRAY,(20,195),15)
+				pygame.draw.circle(surf,BLACK,(20,195),15,1)
+				pygame.draw.circle(surf,GRAY,(20,235),15)
+				pygame.draw.circle(surf,BLACK,(20,235),15,1)
+				pygame.draw.circle(surf,GRAY,(20,275),15)
+				pygame.draw.circle(surf,BLACK,(20,275),15,1)
 				self.img.append([surf,((96*(h+1))+(200*h),400)])
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
@@ -123,6 +132,10 @@ class GUI():
 				i.update(mOver=1)
 				if self.mDown:
 					exec(i.fn)
+					if i.clickable:
+						for j in self.MenuBTN:
+							j.update(clicked = 0)
+						i.update(clicked = 1)
 			else:
 				i.update()
 
