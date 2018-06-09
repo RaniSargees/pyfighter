@@ -20,15 +20,18 @@ class GUI():
 		#	1, Character Select
 		#	2, Map Select
 		#	3, Options
-		self.pointer = []
-		self.pointerUpdate = []
-		self.joystick_button = []
-		self.joystick_selected = []
+		self.pointer = [] #Where the joystick is current pointing to 
+		self.pointerUpdate = [] #Prevents pointer from changing rapidly (Must let axis go before pointer can be moved again)
+		self.joystick_button = []#The button that is pressed (default to -1)
+		self.joystick_selected = []#If the joystick has selected something lock it
+		self.char_selected = []#The character currently selected by the joycon
 		for x in joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
 			self.joystick_selected.append(0)
+			self.char_selected.append(None)
+		self.char_selected.append(None)
 
 	def new(self,location=0):
 		self.load_data()
@@ -36,11 +39,14 @@ class GUI():
 		self.pointerUpdate = []
 		self.joystick_button = []
 		self.joystick_selected = []
+		self.char_selected = []
 		for x in self.joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
 			self.joystick_selected.append(0)
+			self.char_selected.append(None)
+		self.char_selected.append(None)
 		self.MenuBTN = pygame.sprite.Group()
 		self.img = []
 		self.BTN_list = []
@@ -94,13 +100,11 @@ class GUI():
 			for j,k in enumerate(sorted(self.char_sprites)):
 				if j%12 == 0 and j != 0:
 					self.BTN_list.append(temp)
-					print(temp)
 					temp = []
-				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',image = pygame.transform.scale(self.char_sprites[k][0],(100,100))))
+				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_selected[x] = self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(100,100))))
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
-			#print(self.BTN_list)
 
 	def load_data(self):
 		game_folder = os.path.dirname(__file__)
@@ -193,6 +197,7 @@ class GUI():
 			if y == 1:
 				self.joystick_selected[self.joysticks[x].get_id()] = 0
 				button.update(clicked = 0)
+				self.char_selected[x] = None
 					
 
 	def buttons(self):
@@ -200,6 +205,7 @@ class GUI():
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				i.update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 				if self.mDown:
+					x = -1
 					exec(i.fn)
 					if i.clickable:
 						for j in self.MenuBTN:
@@ -214,8 +220,11 @@ class GUI():
 			self.BTN_list[y][x].update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[i])
 
 	def draw(self):
-		for i in self.img:
+		for i in self.img: #Prints all images in the self.img list
 			self.win.blit(i[0],i[1])
+		for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
+			if j != None:
+				self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
 
 	def run_paint(self):
 		p = paint(self.win,self.sprites_folder,self.icons)
