@@ -33,10 +33,10 @@ class GUI():
 			self.text_rect = self.text.get_rect(center=(640,180))
 			self.img.append([self.text,self.text_rect])
 			#Buttons
-			self.BTN_list = [[BTN(self.win,0,(140,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2),
-							BTN(self.win,0,(840,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2)],
-							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='OPTIONS',fn='self.new(3)',thickness = 2),
-							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2)]]
+			self.BTN_list = [[BTN(self.win,0,(140,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2,clickable = False),
+							BTN(self.win,0,(840,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2,clickable = False)],
+							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='OPTIONS',fn='self.new(3)',thickness = 2,clickable = False),
+							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2,clickable = False)]]
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
 		
@@ -65,9 +65,9 @@ class GUI():
 				pygame.draw.circle(surf,BLACK,(20,235),15,1)
 				pygame.draw.circle(surf,GRAY,(20,275),15)
 				pygame.draw.circle(surf,BLACK,(20,275),15,1)
-				surf.blit(self.icons['attack'],(12,187))
-				surf.blit(self.icons['defense'],(12,227))
-				surf.blit(self.icons['speed'],(12,267))
+				surf.blit(pygame.transform.scale(self.icons['attack'].copy(),(16,16)),(12,187))
+				surf.blit(pygame.transform.scale(self.icons['defense'].copy(),(16,16)),(12,227))
+				surf.blit(pygame.transform.scale(self.icons['speed'].copy(),(16,16)),(12,267))
 				self.img.append([surf,((96*(h+1))+(200*h),400)])
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
@@ -115,7 +115,7 @@ class GUI():
 				self.bg = pygame.transform.scale(pygame.image.load(os.path.join(bg_folder,fileName)).convert_alpha(),RES)
 		
 		for fileName in os.listdir(icon_folder):
-			self.icons[fileName[:-4]] = pygame.transform.scale(pygame.image.load(os.path.join(icon_folder,fileName)).convert_alpha(),(16,16))
+			self.icons[fileName[:-4]] = pygame.image.load(os.path.join(icon_folder,fileName)).convert_alpha()
 			self.icons[fileName[:-4]].set_colorkey((255,255,255))
 
 	def run(self):
@@ -153,7 +153,7 @@ class GUI():
 			self.win.blit(i[0],i[1])
 
 	def run_paint(self):
-		p = paint(self.win,self.sprites_folder)
+		p = paint(self.win,self.sprites_folder,self.icons)
 		p.new()
 		p.run()
 		self.playing = p.running

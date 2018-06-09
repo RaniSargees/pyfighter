@@ -16,6 +16,7 @@ class paint():
 		self.click = False
 		self.hold = False
 		self.up = True
+		self.icons = img_lst
 		self.canvas_new = 0
 		self.undo = 0
 		self.save = 0
@@ -33,7 +34,9 @@ class paint():
 		self.Class = 0
 		#Boom boi, Sword kid, Pew Pew Kiddi, That one kid who likes to punch stuff, that one guy who shat out skittles durring class
 		#    0			1			2							3										4
-		self.stats = [5,5,5]
+		self.attack = 1
+		self.defense = 1
+		self.speed = 1
 		#[atk,def,speed]
 
 	def new(self):
@@ -94,7 +97,35 @@ class paint():
 		BTN(self.win,0,(1000,10,250,50),self.MenuBTN,text = 'Return to Main Menu', fn = 'self.playing = 0')
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
+		#Stats
+		self.font = self.font = pygame.font.SysFont('Courier New',24)
+		BTN(self.win,4,(850,555,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack-=1')
+		BTN(self.win,4,(1165,555,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack+=(1*(self.attack+self.defense+self.speed < 18))')
+		BTN(self.win,4,(850,605,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense-=1')
+		BTN(self.win,4,(1165,605,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense+=(1*(self.attack+self.defense+self.speed < 18))')
+		BTN(self.win,4,(850,655,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed-=1')
+		BTN(self.win,4,(1165,655,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed+=(1*(self.attack+self.defense+self.speed < 18))')
 		
+		
+		
+		self.surf = pygame.Surface((280,150),pygame.SRCALPHA,32)
+		pygame.draw.rect(self.surf,GRAEY,(25,5,250,30))
+		pygame.draw.rect(self.surf,BLACK,(25,5,250,30),1)
+		pygame.draw.rect(self.surf,GRAEY,(25,55,250,30))
+		pygame.draw.rect(self.surf,BLACK,(25,55,250,30),1)
+		pygame.draw.rect(self.surf,GRAEY,(25,105,250,30))
+		pygame.draw.rect(self.surf,BLACK,(25,105,250,30),1)
+		pygame.draw.circle(self.surf,GRAY,(25,20),20)
+		pygame.draw.circle(self.surf,BLACK,(25,20),20,1)
+		pygame.draw.circle(self.surf,GRAY,(25,70),20)
+		pygame.draw.circle(self.surf,BLACK,(25,70),20,1)
+		pygame.draw.circle(self.surf,GRAY,(25,120),20)
+		pygame.draw.circle(self.surf,BLACK,(25,120),20,1)
+		try:
+			self.surf.blit(pygame.transform.scale(self.icons['attack'].copy(),(20,20)),(15,10))
+			self.surf.blit(pygame.transform.scale(self.icons['defense'].copy(),(20,20)),(15,60))
+			self.surf.blit(pygame.transform.scale(self.icons['speed'].copy(),(20,20)),(15,110))
+		except: pass
 		
 	def run(self):
 		self.playing = 1
@@ -144,7 +175,7 @@ class paint():
 						os.makedirs(self.Savedirectory)
 					pygame.image.save(self.canvas,self.Savedirectory+'\\'+"Char.png")
 					f = open(self.Savedirectory+'\\'+'data.txt',"w+")
-					f.write(str([self.Class,self.stats]))
+					f.write(str([self.Class,[self.attack,self.defense,self.speed]]))
 					f.close()
 					os.rename(self.Savedirectory+'\\'+'data.txt',self.Savedirectory+'\\'+"!data.trash")
 					self.good = 1
@@ -187,6 +218,7 @@ class paint():
 			pygame.display.update()
 
 	def buttons(self):
+		#Button updates
 		for i in self.ColorBTN:
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				if self.hold:
@@ -224,11 +256,13 @@ class paint():
 			self.BrushSize.update(newText=str(self.grid.brush))
 
 	def draw(self):
+		#Canvas
 		pygame.draw.line(self.win,BLACK,(17,17),(663,17),6)
 		pygame.draw.line(self.win,BLACK,(662,17),(662,502),6)
 		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
 		self.win.blit(self.canvas,(self.shift,self.shift))
+		#Body parts
 		pygame.draw.rect(self.win,BLACK,self.body_rects[0],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[1],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[2],2)
@@ -240,7 +274,7 @@ class paint():
 		pygame.draw.rect(self.win,BLACK,self.body_rects[7],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[8],2)
 		pygame.draw.rect(self.win,BLACK,self.body_rects[9],2)
-		self.ani_dir += 2
+		self.ani_dir += 2 #Animation delay
 		self.animate += math.sin(math.radians(self.ani_dir))*0.1
 		self.win.blit(self.head,(890,30+self.animate+1))
 		self.win.blit(self.torso,(855,100+self.animate+1))
@@ -252,6 +286,31 @@ class paint():
 		self.win.blit(self.L_foot,(855,380))
 		self.win.blit(self.R_leg,(945,280))
 		self.win.blit(self.R_foot,(945,380))
+		
+		#Stat select
+		self.win.blit(self.surf,(880,550))
+		self.attack = min(max(1,self.attack),11)
+		self.defense = min(max(1,self.defense),11)
+		self.speed = min(max(1,self.speed),11)
+		#Remainder text
+		text = self.font.render('Points Remaining:'+str(18-(self.attack+self.defense+self.speed)),True,BLACK)
+		self.win.blit(text,text.get_rect(center=(1020,530)))
+		#Stat box
+		for i in range(self.attack):
+			pygame.draw.rect(self.win,(0,255,0),(930+(i*20),557,20,26))
+			
+		for j in range(self.defense):
+			pygame.draw.rect(self.win,(0,255,0),(930+(j*20),607,20,26))
+			
+		for k in range(self.speed):
+			pygame.draw.rect(self.win,(0,255,0),(930+(k*20),657,20,26))
+		
+		for l in range(11):
+			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),557,20,26),2)
+			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),607,20,26),2)
+			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),657,20,26),2)
+		
+		#Popup when saving
 		if self.popUp:
 			if not(self.popUp_durration):
 				self.popUp_alpha = 255
