@@ -101,7 +101,7 @@ class Char(pygame.sprite.Sprite):
 
 		#Draw Character
 		character_surface = pygame.surface.Surface((256, 256),pygame.SRCALPHA,32)
-		#pygame.draw.rect(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
+		#pygame.draw.rect(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		character_surface.blit(self.sprite_image[0],(128-10.5,256-120))
 		character_surface.blit(self.sprite_image[1],(128-21,256-99))
 		#character_surface.blit(pygame.transform.rotate(self.sprite_image[2],90),(825,130))
@@ -124,17 +124,17 @@ class Char(pygame.sprite.Sprite):
 		#######
 		if (self.x < 0 or self.x > RES[0]) and self.y>0: #draw offscreen arrows
 			if self.x > RES[0]:
-				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
-				pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(RES[0]-28,int(self.y)), 20)
+				pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
+				pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(RES[0]-28,int(self.y)), 20)
 				self.game.win.blit(self.sprite_image[0], (RES[0]-38, self.y-10))
 			elif self.x < 0:
-				pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
-				pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(28,int(self.y)), 20)
+				pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
+				pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(28,int(self.y)), 20)
 				self.game.win.blit(self.sprite_image[0], (18, self.y-10))
 		elif self.y<0:
 			arrowX = int(max(min(self.x,RES[0]-20),20))
-			pygame.draw.polygon(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
-			pygame.draw.circle(self.game.win,(RED, GREEN, BLUE, YELLOW)[self.joystick.get_id()],(arrowX,28), 20)
+			pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
+			pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(arrowX,28), 20)
 			self.game.win.blit(self.sprite_image[0], (arrowX-10, 20))
 		elif self.x < 0:
 			pass

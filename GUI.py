@@ -20,11 +20,17 @@ class GUI():
 		#	1, Character Select
 		#	2, Map Select
 		#	3, Options
+		self.pointer = []
+		self.pointerUpdate = []
+		for x in joysticks:
+			self.pointer.append([0,0])
+			self.pointerUpdate.append(0)
 
 	def new(self,location=0):
 		self.load_data()
 		self.MenuBTN = pygame.sprite.Group()
 		self.img = []
+		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
 		if location == 0: #Main Menu
 			#Title Text
@@ -52,7 +58,7 @@ class GUI():
 			#Player Boxes
 			for h,i in enumerate(self.joysticks):
 				surf = pygame.Surface((200,300))
-				pygame.draw.rect(surf,(RED, BLUE, YELLOW, GREEN)[i.get_id()],(0,0,200,300))
+				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i.get_id()],(0,0,200,300))
 				surf.blit(self.font_L.render('PLAYER '+str(h+1),True,BLACK),(5,140))
 				pygame.draw.rect(surf,BLACK,(0,0,200,300),2)
 				pygame.draw.rect(surf,GRAEY,(5,5,140,140))
@@ -73,13 +79,15 @@ class GUI():
 				#Selected chars stats, sprite, class etc.
 			temp = []
 			for j,k in enumerate(sorted(self.char_sprites)):
-				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',image = pygame.transform.scale(self.char_sprites[k][0],(100,100))))
 				if j%12 == 0 and j != 0:
 					self.BTN_list.append(temp)
+					print(temp)
 					temp = []
+				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',image = pygame.transform.scale(self.char_sprites[k][0],(100,100))))
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
+			#print(self.BTN_list)
 
 	def load_data(self):
 		game_folder = os.path.dirname(__file__)
@@ -121,9 +129,9 @@ class GUI():
 	def run(self):
 		self.playing = 1
 		while self.playing:
+			events = pygame.event.get()
 			try:[x.update() for x in self.joysticks]
 			except:()
-			events = pygame.event.get()
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
@@ -131,9 +139,33 @@ class GUI():
 					self.mDown = 1
 				else:
 					self.mDown = 0
+			self.pointers()
 			self.draw()
 			self.buttons()
 			pygame.display.update()
+	
+	def pointers(self):
+		for x in self.joysticks:
+			if not(self.pointerUpdate[x.get_id()]):
+				y = x.get_id()
+				if x.get_axis(0) < -.7:
+					self.pointerUpdate[x.get_id()] = 1
+					self.pointer[y] = [max(self.pointer[y][0]-1,0),self.pointer[y][1]]
+				elif x.get_axis(0) > .7:
+					self.pointerUpdate[x.get_id()] = 1
+					self.pointer[y] = [min(self.pointer[y][0]+1,len(self.BTN_list[self.pointer[y][1]])-1),self.pointer[y][1]]
+				if x.get_axis(1) > .7:
+					self.pointerUpdate[x.get_id()] = 1
+					self.pointer[y] = [self.pointer[y][0],min(self.pointer[y][1]+1,len(self.BTN_list)-1)]
+					self.pointer[y] = [max(min(self.pointer[y][0],len(self.BTN_list[self.pointer[y][1]])-1),0),self.pointer[y][1]]
+				elif x.get_axis(1) < -.7:
+					self.pointerUpdate[x.get_id()] = 1
+					self.pointer[y] = [self.pointer[y][0],max(self.pointer[y][1]-1,0)]
+					self.pointer[y] = [max(min(self.pointer[y][0],len(self.BTN_list[self.pointer[y][1]])-1),0),self.pointer[y][1]]
+			elif abs(x.get_axis(0)) < .7 and abs(x.get_axis(1)) < .7:
+				self.pointerUpdate[x.get_id()] = 0
+		
+					
 
 	def buttons(self):
 		for i in self.MenuBTN:
@@ -147,6 +179,11 @@ class GUI():
 						i.update(clicked = 1)
 			else:
 				i.update()
+		
+		for i,j in enumerate(self.pointer):
+			x = j[0]
+			y = j[1]
+			self.BTN_list[y][x].update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[i])
 
 	def draw(self):
 		for i in self.img:
