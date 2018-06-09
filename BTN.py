@@ -11,6 +11,7 @@ class BTN(pygame.sprite.Sprite):
 		self.rect = pygame.Rect(rect)
 		self.thickness = thickness
 		self.clickable = clickable
+		self.hColor = None
 		self.circle = circle
 		if allign == 'center':
 			self.allignment = 0
@@ -32,6 +33,8 @@ class BTN(pygame.sprite.Sprite):
 		self.selected = 0
 	
 	def update(self,mOver = 0,clicked = -1,newText = None, hColor = None):
+		if mOver or clicked+1:
+			self.hColor = hColor
 		if self.image != None:
 			self.win.blit(self.image,(self.rect[0],self.rect[1]))
 		else:
@@ -49,11 +52,11 @@ class BTN(pygame.sprite.Sprite):
 		if clicked != -1:
 			self.selected = clicked
 		if mOver or self.selected == 1:
-			if hColor != None:
+			if self.hColor != None:
 				if self.circle:
-					pygame.draw.circle(self.win,hColor,(self.rect[0]+(self.rect[2]//2),self.rect[1]+(self.rect[3]//2)),(self.rect[2]//2),(self.thickness*3))
+					pygame.draw.circle(self.win,self.hColor,(self.rect[0]+(self.rect[2]//2),self.rect[1]+(self.rect[3]//2)),(self.rect[2]//2),(self.thickness*3))
 				else:
-					pygame.draw.rect(self.win,hColor,self.rect,self.thickness*3)
+					pygame.draw.rect(self.win,self.hColor,self.rect,self.thickness*3)
 			else:
 				if self.circle:
 					pygame.draw.circle(self.win,self.outline,(self.rect[0]+(self.rect[2]//2),self.rect[1]+(self.rect[3]//2)),(self.rect[2]//2),(self.thickness*3))

@@ -22,12 +22,25 @@ class GUI():
 		#	3, Options
 		self.pointer = []
 		self.pointerUpdate = []
-		for x in joysticks:
+		self.joystick_button = []
+		self.joystick_selected = []
+		for x in joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
+			self.joystick_button.append(-1)
+			self.joystick_selected.append(0)
 
 	def new(self,location=0):
 		self.load_data()
+		self.pointer = []
+		self.pointerUpdate = []
+		self.joystick_button = []
+		self.joystick_selected = []
+		for x in self.joysticks[:-1]:
+			self.pointer.append([0,0])
+			self.pointerUpdate.append(0)
+			self.joystick_button.append(-1)
+			self.joystick_selected.append(0)
 		self.MenuBTN = pygame.sprite.Group()
 		self.img = []
 		self.BTN_list = []
@@ -130,9 +143,12 @@ class GUI():
 		self.playing = 1
 		while self.playing:
 			events = pygame.event.get()
-			try:[x.update() for x in self.joysticks]
+			try:[x.update(events) for x in self.joysticks]
 			except:()
 			for event in events:
+				if event.type == pygame.JOYBUTTONDOWN:
+					try:self.joystick_button[event.joy] = event.button
+					except: pass
 				if event.type == pygame.QUIT:
 					self.playing = 0
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -145,8 +161,8 @@ class GUI():
 			pygame.display.update()
 	
 	def pointers(self):
-		for x in self.joysticks:
-			if not(self.pointerUpdate[x.get_id()]):
+		for x in self.joysticks[:-1]:
+			if not(self.pointerUpdate[x.get_id()]) and not(self.joystick_selected[x.get_id()]):
 				y = x.get_id()
 				if x.get_axis(0) < -.7:
 					self.pointerUpdate[x.get_id()] = 1
@@ -162,21 +178,33 @@ class GUI():
 					self.pointerUpdate[x.get_id()] = 1
 					self.pointer[y] = [self.pointer[y][0],max(self.pointer[y][1]-1,0)]
 					self.pointer[y] = [max(min(self.pointer[y][0],len(self.BTN_list[self.pointer[y][1]])-1),0),self.pointer[y][1]]
+			
 			elif abs(x.get_axis(0)) < .7 and abs(x.get_axis(1)) < .7:
 				self.pointerUpdate[x.get_id()] = 0
 		
+		for x,y in enumerate(self.joystick_button):
+			button = self.BTN_list[self.pointer[x][1]][self.pointer[x][0]]
+			self.joystick_button[x] = -1
+			if y == 0:
+				exec(button.fn)
+				if button.clickable:
+					self.joystick_selected[self.joysticks[x].get_id()] = 1
+					button.update(clicked =1,hColor = (BLUE,RED,YELLOW,GREEN)[self.joysticks[x].get_id()])
+			if y == 1:
+				self.joystick_selected[self.joysticks[x].get_id()] = 0
+				button.update(clicked = 0)
 					
 
 	def buttons(self):
 		for i in self.MenuBTN:
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
-				i.update(mOver=1)
+				i.update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 				if self.mDown:
 					exec(i.fn)
 					if i.clickable:
 						for j in self.MenuBTN:
 							j.update(clicked = 0)
-						i.update(clicked = 1)
+						i.update(clicked = 1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 			else:
 				i.update()
 		
