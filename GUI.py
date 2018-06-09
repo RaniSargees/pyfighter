@@ -65,6 +65,9 @@ class GUI():
 				pygame.draw.circle(surf,BLACK,(20,235),15,1)
 				pygame.draw.circle(surf,GRAY,(20,275),15)
 				pygame.draw.circle(surf,BLACK,(20,275),15,1)
+				surf.blit(self.icons['attack'],(12,187))
+				surf.blit(self.icons['defense'],(12,227))
+				surf.blit(self.icons['speed'],(12,267))
 				self.img.append([surf,((96*(h+1))+(200*h),400)])
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
@@ -84,9 +87,11 @@ class GUI():
 		img_folder = os.path.join(game_folder, 'images')
 		self.sprites_folder = os.path.join(img_folder, 'sprites')
 		bg_folder = os.path.join(img_folder,'backgrounds')
+		icon_folder = os.path.join(img_folder,'icon')
 		self.char_sprites = {}
 		self.maps = {}
 		self.covers = {}
+		self.icons = {}
 
 		for filename in os.listdir(map_folder): #Load Map
 			if filename.endswith(".pfmap"):self.maps[filename[:-6]] = zipfile.ZipFile(os.path.join(map_folder, filename))
@@ -108,6 +113,10 @@ class GUI():
 		for fileName in os.listdir(bg_folder): #Load BG image
 			if fileName == 'menu.png' or fileName == 'menu.jpg':
 				self.bg = pygame.transform.scale(pygame.image.load(os.path.join(bg_folder,fileName)).convert_alpha(),RES)
+		
+		for fileName in os.listdir(icon_folder):
+			self.icons[fileName[:-4]] = pygame.transform.scale(pygame.image.load(os.path.join(icon_folder,fileName)).convert_alpha(),(16,16))
+			self.icons[fileName[:-4]].set_colorkey((255,255,255))
 
 	def run(self):
 		self.playing = 1

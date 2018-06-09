@@ -7,7 +7,7 @@ from text_box import *
 
 
 class paint():
-	def __init__(self,win,directory=None):
+	def __init__(self,win,directory=None,img_lst = []):
 		self.win = win
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
