@@ -87,7 +87,10 @@ class paint():
 		self.grid = paintCanvas(self.canvas,1,5)
 		self.canvas_Old = []
 		for i in range(len(COLORS)):
-			BTN(self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
+			if i == 17 and self.icons != []:
+				BTN(self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN,image = pygame.transform.scale(self.icons['eraser'].copy(),(60,60)))
+			else:
+				BTN(self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN)
 		for i in self.ColorBTN:
 			if i.cnum == 1:
 				i.selected = 1
@@ -105,12 +108,12 @@ class paint():
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		#Stats
-		BTN(self.win,4,(850,555,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack-=1')
-		BTN(self.win,4,(1165,555,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack+=(1*(self.attack+self.defense+self.speed < 18))')
-		BTN(self.win,4,(850,605,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense-=1')
-		BTN(self.win,4,(1165,605,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense+=(1*(self.attack+self.defense+self.speed < 18))')
-		BTN(self.win,4,(850,655,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed-=1')
-		BTN(self.win,4,(1165,655,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed+=(1*(self.attack+self.defense+self.speed < 18))')
+		BTN(self.win,12,(850,555,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack-=1')
+		BTN(self.win,12,(1165,555,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack+=(1*(self.attack+self.defense+self.speed < 18))')
+		BTN(self.win,12,(850,605,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense-=1')
+		BTN(self.win,12,(1165,605,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense+=(1*(self.attack+self.defense+self.speed < 18))')
+		BTN(self.win,12,(850,655,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed-=1')
+		BTN(self.win,12,(1165,655,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed+=(1*(self.attack+self.defense+self.speed < 18))')
 		#Classes
 		BTN(self.win,0,(1050,200,90,90),self.Classes,text='Mage',fn='self.Class = 0')
 		BTN(self.win,0,(1150,200,90,90),self.Classes,text='друг',fn='self.Class = 1')
