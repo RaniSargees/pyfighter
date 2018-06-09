@@ -39,7 +39,7 @@ class BTN(pygame.sprite.Sprite):
 			self.charSize = int((self.rect[2]/len(newText)))
 			self.font = pygame.font.SysFont('Courier New',self.charSize)
 			self.text = self.font.render(newText,True,BLACK)
-			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[2]/2),self.rect[1]+((self.rect[3]/2)*self.allignment)))
+			self.text_rect = self.text.get_rect(center=(self.rect[0]+(self.rect[2]/2),self.rect[1]+(self.rect[3]/2)+(self.allignment*(self.rect[3]/2-(self.charSize/2)))))
 		if self.text != None:
 			self.win.blit(self.text,self.text_rect)
 

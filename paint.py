@@ -135,7 +135,10 @@ class paint():
 			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
 				self.save = 0
 				self.popUp = 1
+				self.popUp_durration = 0
 				try:
+					if self.box.text == '':
+						0/0
 					self.Savedirectory = (self.directory+'\\'+str(self.box.text))
 					if not os.path.exists(self.Savedirectory):
 						os.makedirs(self.Savedirectory)
