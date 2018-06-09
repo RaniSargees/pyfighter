@@ -24,6 +24,9 @@ class paint():
 		self.directory = directory
 		self.ani_dir = 0
 		self.animate = 0
+		self.popUp = 0
+		self.popUp_durration = 0
+		self.good = 0
 		self.tool = 1
 		#1 = brush
 		#2 = circle tool
@@ -99,8 +102,9 @@ class paint():
 		self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
 		while self.playing:
 			events = pygame.event.get()
-			self.draw()
+			self.win.fill(WHITE)
 			self.buttons()
+			self.draw()
 			if self.boxUpdate:
 				self.box.update(1,events)
 			else:
@@ -130,16 +134,19 @@ class paint():
 				self.grid.win.blit(self.canvas_Old.pop(-1),(0,0))
 			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
 				self.save = 0
-				#Change to save in a given directory instead of in current location
-				#if not os.path.exists(
-				self.Savedirectory = (self.directory+'\\'+str(self.box.text))
-				if not os.path.exists(self.Savedirectory):
-					os.makedirs(self.Savedirectory)
-				pygame.image.save(self.canvas,self.Savedirectory+'\\'+"Char.png")
-				f = open(self.Savedirectory+'\\'+'data.txt',"w+")
-				f.write(str([self.Class,self.stats]))
-				f.close()
-				os.rename(self.Savedirectory+'\\'+'data.txt',self.Savedirectory+'\\'+"!data.trash")
+				self.popUp = 1
+				try:
+					self.Savedirectory = (self.directory+'\\'+str(self.box.text))
+					if not os.path.exists(self.Savedirectory):
+						os.makedirs(self.Savedirectory)
+					pygame.image.save(self.canvas,self.Savedirectory+'\\'+"Char.png")
+					f = open(self.Savedirectory+'\\'+'data.txt',"w+")
+					f.write(str([self.Class,self.stats]))
+					f.close()
+					os.rename(self.Savedirectory+'\\'+'data.txt',self.Savedirectory+'\\'+"!data.trash")
+					self.good = 1
+				except:
+					self.good = 0
 				
 			for event in events:
 				if event.type == pygame.QUIT:
@@ -214,7 +221,6 @@ class paint():
 			self.BrushSize.update(newText=str(self.grid.brush))
 
 	def draw(self):
-		self.win.fill(WHITE)
 		pygame.draw.line(self.win,BLACK,(17,17),(663,17),6)
 		pygame.draw.line(self.win,BLACK,(662,17),(662,502),6)
 		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
@@ -243,6 +249,30 @@ class paint():
 		self.win.blit(self.L_foot,(855,380))
 		self.win.blit(self.R_leg,(945,280))
 		self.win.blit(self.R_foot,(945,380))
+		if self.popUp:
+			if not(self.popUp_durration):
+				self.popUp_alpha = 255
+				self.popUp_surf = pygame.Surface((1280,60))
+				self.font = pygame.font.SysFont('Courier New',48)
+				if self.good:
+					self.popUp_surf.fill((0,255,0))
+					self.text = self.font.render('Character has been sucessfully created',True,WHITE)
+				else:
+					self.popUp_surf.fill((255,0,0))
+					self.text = self.font.render('Error: Please fill in Character Name',True,WHITE)
+				self.text_rect = self.text.get_rect(center=(640,30))
+				self.popUp_surf.blit(self.text,self.text_rect)
+				self.popUp_durration = 3
+				self.time = pygame.time.Clock()
+			self.time.tick()
+			self.popUp_alpha -= (self.time.get_time()/1000)*(255/self.popUp_durration)
+			self.popUp_surf.set_alpha(self.popUp_alpha)
+			if self.popUp_alpha > 0:
+				self.win.blit(self.popUp_surf,(0,330))
+			else:
+				self.popUp = 0
+				self.popUp_durration = 0
+				
 
 if __name__ == "__main__":
 	pygame.init()
