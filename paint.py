@@ -12,6 +12,7 @@ class paint():
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
 		self.Misc = pygame.sprite.Group()
+		self.Classes = pygame.sprite.Group()
 		self.shift = 20
 		self.click = False
 		self.hold = False
@@ -38,6 +39,12 @@ class paint():
 		self.defense = 1
 		self.speed = 1
 		#[atk,def,speed]
+		
+		#Fonts
+		self.font = pygame.font.SysFont('Courier New',48)
+		self.font_M = pygame.font.SysFont('Courier New',36)
+		self.font_S = pygame.font.SysFont('Courier New',24)
+		self.font_SS = pygame.font.SysFont('Courier New',16)
 
 	def new(self):
 		self.canvas = pygame.Surface((640,480))
@@ -98,14 +105,17 @@ class paint():
 		#Text box
 		self.box = Text_Box(self.win,(670,20,130,30),title = 'Character Name')
 		#Stats
-		self.font = self.font = pygame.font.SysFont('Courier New',24)
 		BTN(self.win,4,(850,555,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack-=1')
 		BTN(self.win,4,(1165,555,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.attack+=(1*(self.attack+self.defense+self.speed < 18))')
 		BTN(self.win,4,(850,605,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense-=1')
 		BTN(self.win,4,(1165,605,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.defense+=(1*(self.attack+self.defense+self.speed < 18))')
 		BTN(self.win,4,(850,655,30,30),self.MenuBTN,text= '-',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed-=1')
 		BTN(self.win,4,(1165,655,30,30),self.MenuBTN,text= '+',clickColor = (0,0,0), circle =1,clickable = False,fn='self.speed+=(1*(self.attack+self.defense+self.speed < 18))')
-		
+		#Classes
+		BTN(self.win,0,(1050,200,90,90),self.Classes,text='Mage',fn='self.Class = 0')
+		BTN(self.win,0,(1150,200,90,90),self.Classes,text='друг',fn='self.Class = 1')
+		BTN(self.win,0,(1050,300,90,90),self.Classes,text='Sword',fn='self.Class = 2')
+		BTN(self.win,0,(1150,300,90,90),self.Classes,text='Guns',fn='self.Class = 3')
 		
 		
 		self.surf = pygame.Surface((280,150),pygame.SRCALPHA,32)
@@ -219,6 +229,23 @@ class paint():
 
 	def buttons(self):
 		#Button updates
+		for i in self.Classes:
+			if i.rect.collidepoint(pygame.mouse.get_pos()):
+				if self.hold==False and self.click==True:
+					self.click = False
+					if i.clickable:
+						for j in self.Classes:
+							j.update(clicked = 0)
+						i.update(clicked = 1)
+					else:
+						i.update(mOver=1)
+					exec(i.fn)
+				else:
+					if self.hold == True:
+						self.click = True
+					i.update(mOver = 1)
+			else:
+				i.update()
 		for i in self.ColorBTN:
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				if self.hold:
@@ -292,18 +319,24 @@ class paint():
 		self.attack = min(max(1,self.attack),11)
 		self.defense = min(max(1,self.defense),11)
 		self.speed = min(max(1,self.speed),11)
-		#Remainder text
-		text = self.font.render('Points Remaining:'+str(18-(self.attack+self.defense+self.speed)),True,BLACK)
+		#Texts
+		text = self.font_S.render('Points Remaining:'+str(18-(self.attack+self.defense+self.speed)),True,BLACK)
+		text2 = self.font_S.render('Select a Class',True,BLACK)
+		text3 = self.font_M.render('Choose your Stats',True,BLACK)
 		self.win.blit(text,text.get_rect(center=(1020,530)))
+		self.win.blit(text2,text2.get_rect(center=(1145,180)))
+		self.win.blit(text3,text3.get_rect(center=(1020,490)))
+		pygame.draw.line(self.win,BLACK,(1050,188),(1240,188),1)
+		pygame.draw.line(self.win,BLACK,(1050,190),(1240,190),1)
 		#Stat box
 		for i in range(self.attack):
-			pygame.draw.rect(self.win,(0,255,0),(930+(i*20),557,20,26))
+			pygame.draw.rect(self.win,GREEN,(930+(i*20),557,20,26))
 			
 		for j in range(self.defense):
-			pygame.draw.rect(self.win,(0,255,0),(930+(j*20),607,20,26))
+			pygame.draw.rect(self.win,GREEN,(930+(j*20),607,20,26))
 			
 		for k in range(self.speed):
-			pygame.draw.rect(self.win,(0,255,0),(930+(k*20),657,20,26))
+			pygame.draw.rect(self.win,GREEN,(930+(k*20),657,20,26))
 		
 		for l in range(11):
 			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),557,20,26),2)
@@ -315,7 +348,6 @@ class paint():
 			if not(self.popUp_durration):
 				self.popUp_alpha = 255
 				self.popUp_surf = pygame.Surface((1280,60))
-				self.font = pygame.font.SysFont('Courier New',48)
 				if self.good:
 					self.popUp_surf.fill((0,255,0))
 					self.text = self.font.render('Character has been sucessfully created',True,WHITE)
