@@ -67,7 +67,7 @@ class rainbow_poop(pygame.sprite.Sprite):
 		self.y += self.yspeed
 		self.yspeed += 1
 		collisions=[(pygame.Rect(x.hitbox).collidepoint(self.x+24, self.y+24), x)for x in self.char.game.sprites]
-		collisions=[x[1].damage(x[0]) for x in collisions[:]if x[1]not in self.hit_list and x[0]]
+		collisions=[x[1].damage(1/2) for x in collisions[:]if x[1]not in self.hit_list and x[0]]
 		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000 or len(collisions):
 			self.kill()
 		elif  [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]:

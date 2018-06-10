@@ -19,6 +19,7 @@ class Game():
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		for x in self.joysticks:
 			if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
+			elif "xbox" in x.get_name().lower(): Mage(self, x, 'test')
 			else: друг(self, x, 'test')
 			#Classes:
 			#	Mage
