@@ -160,7 +160,7 @@ class Char(pygame.sprite.Sprite):
 
 	def atkHeavy(self,direction):
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
-		except:()
+		except Exception as e:print(e)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
@@ -341,22 +341,33 @@ class Mage(Char):
 				self.ability_time = 0
 				self.release = 0
 		pass
+
 class друг(Char):
-	def special1(self,direction):
-		#sends a ball that explodes on release
-		#Perhaps change to on impact and on repress since holding the key doesn't feel right
+	def special0(self):
 		if not self.ability_run+1:
-			self.ability_run = 1
+			self.ability_run = 0
 			self.release = 0
 			self.freeze = 2
 			self.ability_time = -1
 			self.fire = self.game.effects['flaming_turds'].copy()
-			self.special_1_len = len(self.fire)
+			self.special_0_len = len(self.fire)
 			self.ability_count = -8
-	def run_special1(self):
+	def run_special0(self):
 		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
+
+
+	def special1(self, dir):
+		if not self.ability_run+1:
+			self.freeze=2
+			self.fire = self.game.effects['flaming_turds'].copy()
+			self.ability_run = 1
+			self.ability_time = 0.3
+	def run_special1(self):
+		self.hspeed = 1200*(self.facing*2-1)
+		self.gravityMultiplier = 0
+		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
 
 
 	def special2(self):
@@ -365,8 +376,8 @@ class друг(Char):
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.ability_run = 2
 			self.ability_time = 0.3
-			self.special_2_count = 0
 	def run_special2(self):
 		self.vspeed = -800
 		self.gravityMultiplier = 12
 		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."]
+
