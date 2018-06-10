@@ -1,5 +1,5 @@
 import pygame, math
-from random import randint
+from random import randint, uniform
 from settings import *
 from map import *
 from projectiles import *
@@ -49,7 +49,7 @@ class Char(pygame.sprite.Sprite):
 		self.defense = 5
 		self.atttack = None
 		self.speed = None
-
+	def __repr__(self):return"ID"+str(self.joystick.get_id())
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
@@ -189,10 +189,10 @@ class Char(pygame.sprite.Sprite):
 	def get_keys(self):
 		if self.stun <= 0:
 			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2)-1)*-1)
-			if  self.joystick.get_axis(0) < -.5:
+			if  self.joystick.get_axis(0) < -.5 and self.freeze!=2:
 				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 0
-			elif self.joystick.get_axis(0) > .5:
+			elif self.joystick.get_axis(0) > .5 and self.freeze!=2:
 				self.hspeed = min(self.hspeed+self.moveSpeed*(60/max(1,self.game.clock.get_fps())), self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 1
 			elif self.hspeed and not(self.knocked):
@@ -357,3 +357,16 @@ class друг(Char):
 		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
+
+
+	def special2(self):
+		if self.ability_run+1 == 0 and not(self.ability_air):
+			self.ability_air = 1
+			self.fire = self.game.effects['flaming_turds'].copy()
+			self.ability_run = 2
+			self.ability_time = 0.3
+			self.special_2_count = 0
+	def run_special2(self):
+		self.vspeed = -800
+		self.gravityMultiplier = 12
+		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."]

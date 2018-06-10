@@ -39,16 +39,18 @@ class fireball(pygame.sprite.Sprite):
 			self.kill()
 
 class rainbow_poop(pygame.sprite.Sprite):
-	def __init__(self, char, x, y, direction, yspeed = -5, xspeed = 2):
+	def __init__(self, char, x, y, direction, yspeed = -5, xspeed = 2, bounce = 0):
 		pygame.sprite.Sprite.__init__(self, char.game.objects)
 		self.char = char
 		self.xspeed= xspeed
 		self.x = x-24
 		self.y = y-24
+		self.bounce = bounce
 		self.dir = direction
 		self.hit_list = [self,char]
 		self.frame = 0
 		self.image = [pygame.transform.scale(x, (48,48)) for x in self.char.fire]
+		if self.dir-1:self.image=[pygame.transform.flip(x, 1,0) for x in self.image]
 		hue = random()*360
 		self.yspeed = yspeed
 		for x in self.image:
@@ -64,6 +66,11 @@ class rainbow_poop(pygame.sprite.Sprite):
 		self.x += (self.dir*2-1) * self.xspeed * 800 * self.char.game.dt
 		self.y += self.yspeed
 		self.yspeed += 1
-		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000 or [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]:
+		collisions=[(pygame.Rect(x.hitbox).collidepoint(self.x+24, self.y+24), x)for x in self.char.game.sprites]
+		collisions=[x[1].damage(x[0]) for x in collisions[:]if x[1]not in self.hit_list and x[0]]
+		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000 or len(collisions):
 			self.kill()
+		elif  [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]:
+			if not self.bounce:self.kill()
+			else:self.bounce-=1;self.yspeed*=-.8;self.xspeed*=.8
 
