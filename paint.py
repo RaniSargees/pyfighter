@@ -33,8 +33,8 @@ class paint():
 		#1 = brush
 		#2 = circle tool
 		self.Class = 0
-		#Boom boi, Sword kid, Pew Pew Kiddi, That one kid who likes to punch stuff, that one guy who shat out skittles durring class
-		#    0			1			2							3										4
+		#Boom boi, that one guy who shat out skittles durring class, sword swinger, gun spammer
+		#    0							1									2			3
 		self.attack = 1
 		self.defense = 1
 		self.speed = 1

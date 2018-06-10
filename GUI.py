@@ -34,6 +34,7 @@ class GUI():
 		self.char_selected.append(None)
 
 	def new(self,location=0):
+		self.location = location
 		self.load_data()
 		self.pointer = []
 		self.pointerUpdate = []
@@ -51,7 +52,7 @@ class GUI():
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
-		if location == 0: #Main Menu
+		if self.location == 0: #Main Menu
 			#Title Text
 			self.font = pygame.font.SysFont('Comic Sans MS',144)
 			self.text = self.font.render('PYFIGHTER',True,BLACK)
@@ -65,7 +66,7 @@ class GUI():
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
 		
-		if location == 1:
+		if self.location == 1:
 			self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
 			self.font_L = pygame.font.SysFont('Comic Sans MS',32)
 			self.font_M = pygame.font.SysFont('Comic Sans MS',16)
@@ -81,9 +82,9 @@ class GUI():
 				surf.blit(self.font_L.render('PLAYER '+str(h+1),True,BLACK),(5,140))
 				pygame.draw.rect(surf,BLACK,(0,0,200,300),2)
 				pygame.draw.rect(surf,GRAEY,(5,5,140,140))
-				pygame.draw.rect(surf,GRAEY,(30,185,150,20))
-				pygame.draw.rect(surf,GRAEY,(30,225,150,20))
-				pygame.draw.rect(surf,GRAEY,(30,265,150,20))
+				pygame.draw.rect(surf,GRAEY,(35,185,154,20))
+				pygame.draw.rect(surf,GRAEY,(35,225,154,20))
+				pygame.draw.rect(surf,GRAEY,(35,265,154,20))
 				pygame.draw.circle(surf,GRAY,(20,195),15)
 				pygame.draw.circle(surf,BLACK,(20,195),15,1)
 				pygame.draw.circle(surf,GRAY,(20,235),15)
@@ -222,9 +223,27 @@ class GUI():
 	def draw(self):
 		for i in self.img: #Prints all images in the self.img list
 			self.win.blit(i[0],i[1])
-		for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
-			if j != None:
-				self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
+		if self.location == 1:
+			for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
+				if j != None:
+					self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
+					stats = list(map(int,j[1].replace('[','').replace(']','').split(',')))
+					class_name = pygame.transform.rotate(self.font_L.render(('Mage','друг','Knight','Shooter')[stats[0]],True,BLACK),90)
+					class_name_rect = class_name.get_rect(center=(173+(96*(i+1))+(200*i),472))
+					self.win.blit(class_name,class_name_rect)
+					for k in range(stats[1]):
+						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*k),585,14,20))
+					
+					for l in range(stats[2]):
+						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*l),625,14,20))
+					
+					for m in range(stats[3]):
+						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*m),665,14,20))
+				
+				for n in range(11):
+					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
+					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
+					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
 
 	def run_paint(self):
 		p = paint(self.win,self.sprites_folder,self.icons)
