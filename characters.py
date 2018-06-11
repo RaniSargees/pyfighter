@@ -360,7 +360,6 @@ class друг(Char):
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
 
-
 	def special1(self, dir):
 		if not (self.ability_run+1 or self.ability_air_side):
 			self.ability_air_side = 1
@@ -373,6 +372,9 @@ class друг(Char):
 		self.vspeed = 0
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
+		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[x[1].knockBack(7*self.attack, self.facing)for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 
 
 	def special2(self):
