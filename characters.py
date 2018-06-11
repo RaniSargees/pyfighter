@@ -30,6 +30,7 @@ class Char(pygame.sprite.Sprite):
 		self.hit_list = [self]
 		self.ability_time = 0
 		self.ability_air = 0
+		self.ability_air_side = 0
 		self.ability_run = -1
 		self.release = 0
 		self.dmg = 0
@@ -66,6 +67,7 @@ class Char(pygame.sprite.Sprite):
 				self.stun = 0
 			else:
 				self.ability_air = 0
+				self.ability_air_side = 0
 				self.currentJumps = self.maxJumps
 				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
@@ -359,18 +361,21 @@ class друг(Char):
 
 
 	def special1(self, dir):
-		if not self.ability_run+1:
+		if not (self.ability_run+1 or self.ability_air_side):
+			self.ability_air_side = 1
 			self.freeze=2
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
 		self.hspeed = 1200*(self.facing*2-1)
+		self.vspeed = 0
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
 
 
 	def special2(self):
+		self.ability_air_side = 0
 		if self.ability_run+1 == 0 and not(self.ability_air):
 			self.ability_air = 1
 			self.fire = self.game.effects['flaming_turds'].copy()
