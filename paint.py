@@ -39,7 +39,7 @@ class paint():
 		self.defense = 1
 		self.speed = 1
 		#[atk,def,speed]
-		
+
 		#Fonts
 		self.font = pygame.font.SysFont('Courier New',48)
 		self.font_M = pygame.font.SysFont('Courier New',36)
@@ -119,8 +119,8 @@ class paint():
 		BTN(self.win,0,(1150,200,90,90),self.Classes,text='друг',fn='self.Class = 1')
 		BTN(self.win,0,(1050,300,90,90),self.Classes,text='Sword',fn='self.Class = 2')
 		BTN(self.win,0,(1150,300,90,90),self.Classes,text='Guns',fn='self.Class = 3')
-		
-		
+
+
 		self.surf = pygame.Surface((280,150),pygame.SRCALPHA,32)
 		pygame.draw.rect(self.surf,GRAEY,(25,5,250,30))
 		pygame.draw.rect(self.surf,BLACK,(25,5,250,30),1)
@@ -139,7 +139,7 @@ class paint():
 			self.surf.blit(pygame.transform.scale(self.icons['defense'].copy(),(20,20)),(15,60))
 			self.surf.blit(pygame.transform.scale(self.icons['speed'].copy(),(20,20)),(15,110))
 		except: pass
-		
+
 	def run(self):
 		self.playing = 1
 		self.Mouse = pygame.mouse.get_pos()
@@ -183,18 +183,18 @@ class paint():
 				try:
 					if self.box.text == '':
 						0/0
-					self.Savedirectory = (self.directory+'\\'+str(self.box.text))
+					self.Savedirectory = (self.directory+'/'+str(self.box.text))
 					if not os.path.exists(self.Savedirectory):
 						os.makedirs(self.Savedirectory)
-					pygame.image.save(self.canvas,self.Savedirectory+'\\'+"Char.png")
-					f = open(self.Savedirectory+'\\'+'data.txt',"w+")
+					pygame.image.save(self.canvas,self.Savedirectory+'/'+"Char.png")
+					f = open(self.Savedirectory+'/'+'data.txt',"w+")
 					f.write(str([self.Class,[self.attack,self.defense,self.speed]]))
 					f.close()
-					os.rename(self.Savedirectory+'\\'+'data.txt',self.Savedirectory+'\\'+"!data.trash")
+					os.rename(self.Savedirectory+'/'+'data.txt',self.Savedirectory+'/'+"!data.trash")
 					self.good = 1
 				except:
 					self.good = 0
-				
+
 			for event in events:
 				if event.type == pygame.QUIT:
 					self.playing = 0
@@ -316,7 +316,7 @@ class paint():
 		self.win.blit(self.L_foot,(855,380))
 		self.win.blit(self.R_leg,(945,280))
 		self.win.blit(self.R_foot,(945,380))
-		
+
 		#Stat select
 		self.win.blit(self.surf,(880,550))
 		self.attack = min(max(1,self.attack),11)
@@ -334,18 +334,17 @@ class paint():
 		#Stat box
 		for i in range(self.attack):
 			pygame.draw.rect(self.win,GREEN,(930+(i*20),557,20,26))
-			
+
 		for j in range(self.defense):
 			pygame.draw.rect(self.win,GREEN,(930+(j*20),607,20,26))
-			
+
 		for k in range(self.speed):
 			pygame.draw.rect(self.win,GREEN,(930+(k*20),657,20,26))
-		
+
 		for l in range(11):
 			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),557,20,26),2)
 			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),607,20,26),2)
 			pygame.draw.rect(self.win,(0,0,0),(930+(l*20),657,20,26),2)
-		
 		#Popup when saving
 		if self.popUp:
 			if not(self.popUp_durration):
@@ -369,7 +368,7 @@ class paint():
 			else:
 				self.popUp = 0
 				self.popUp_durration = 0
-				
+
 
 if __name__ == "__main__":
 	pygame.init()
