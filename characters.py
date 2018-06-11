@@ -102,6 +102,9 @@ class Char(pygame.sprite.Sprite):
 #		self.hitbox = (self.x+4-24,self.y-120,40,120)
 
 		#Draw Character
+		
+		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
+		
 		character_surface = pygame.surface.Surface((256, 256),pygame.SRCALPHA,32)
 		#pygame.draw.rect(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		character_surface.blit(self.sprite_image[0],(128-10.5,256-120))
