@@ -9,10 +9,11 @@ class Char(pygame.sprite.Sprite):
 		self.groups = game.sprites
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
-		self.sprite_image = self.game.char_sprites[char]
+		self.sprite_image = self.game.char_sprites[char][:-1]
+		stats = eval(str(self.game.char_sprites[char][-1]))[-1]
 		self.x = 200
 		self.y = 200
-		self.maxMoveSpeed = 400
+		self.maxMoveSpeed = (stats[-1]/5)*200+200
 		self.moveSpeed = 60
 		self.jumpSpeed = -500
 		self.jumpBonusSpeed = -30
@@ -47,9 +48,8 @@ class Char(pygame.sprite.Sprite):
 		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
 
 		#Stats
-		self.defense = 5
-		self.atttack = None
-		self.speed = None
+		self.defense = stats[-2]
+		self.attack = 1+(stats[0]/22)
 	def __repr__(self):return"ID"+str(self.joystick.get_id())
 	def update(self,keys,events):
 		self.keys = keys
@@ -102,9 +102,7 @@ class Char(pygame.sprite.Sprite):
 #		self.hitbox = (self.x+4-24,self.y-120,40,120)
 
 		#Draw Character
-		
 		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		
 		character_surface = pygame.surface.Surface((256, 256),pygame.SRCALPHA,32)
 		#pygame.draw.rect(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		character_surface.blit(self.sprite_image[0],(128-10.5,256-120))
@@ -160,9 +158,9 @@ class Char(pygame.sprite.Sprite):
 			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+20)), self.y-self.height, 20, self.height),4)
 			collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+20)),self.y-self.height,20,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		elif direction >= 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,self.y-(self.height+30)+((direction==3)*(self.height+30)),self.width,30),4)
-			collisions=[(pygame.Rect((self.x-self.width//2,self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(6, direction),x[1].damage(5))for x in collisions if x[0] and x[1]!=self]
+			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30),4)
+			collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
@@ -172,7 +170,7 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		self.ability_air=0
 		self.gravityMultiplier=1
-		Knockback_force = (((hit)**1.2) * ((self.dmg+30)**1.1))/10
+		Knockback_force = ((((hit)**1.2) * ((self.dmg+30)**1.1))/10)*(1.5-((self.defense-1)/10))
 		self.stun = min(int(Knockback_force/4000),1.5)
 		self.knocked = 1
 		if direction < 2:
@@ -209,7 +207,7 @@ class Char(pygame.sprite.Sprite):
 				self.vspeed += self.jumpBonusSpeed * (60/max(1,self.game.clock.get_fps()))
 				self.jumpBonus += 1
 			for e in self.events:
-				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60,self.facing) #testing only, remove later
+				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60*self.attack,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
 					if e.button == self.buttonmap[0]: self.jump()
 					if e.button == self.buttonmap[2]:
@@ -262,7 +260,7 @@ class Mage(Char):
 					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
 				self.special_0_count += 1
-				[(x[1].knockBack((self.scale//10), self.facing),x[1].damage(self.scale//10))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+				[(x[1].knockBack((self.scale//10)*self.attack, self.facing),x[1].damage(self.scale//10 * self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
 				self.ability_run = -1
@@ -302,7 +300,7 @@ class Mage(Char):
 			self.special_2_count += 1
 		pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667),4)
 		collisions=[(pygame.Rect((self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(12, 3),x[1].damage(16))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		[(x[1].knockBack(12*self.attack, 3),x[1].damage(16 * self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		if self.hit_list != [self]:self.ability_air = 0
 
@@ -341,7 +339,7 @@ class Mage(Char):
 				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4),4)
 				collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				self.special_3_count += 1
-				[(exec("x[1].knockBack((self.scale//20), x[1].x>(self.LocNow[0]+self.scale))"*(x[1]!=self)),x[1].damage(self.scale//100))for x in collisions if x[0]]
+				[(exec("x[1].knockBack((self.scale//20)*self.attack, x[1].x>(self.LocNow[0]+self.scale))"*(x[1]!=self)),x[1].damage(self.scale//100 * self.attack))for x in collisions if x[0]]
 			else:
 				self.ability_run = -1
 				self.ability_time = 0
@@ -363,7 +361,6 @@ class друг(Char):
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
 
-
 	def special1(self, dir):
 		if not (self.ability_run+1 or self.ability_air_side):
 			self.ability_air_side = 1
@@ -376,6 +373,9 @@ class друг(Char):
 		self.vspeed = 0
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
+		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[x[1].knockBack(7*self.attack, self.facing)for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 
 
 	def special2(self):
