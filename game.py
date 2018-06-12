@@ -44,6 +44,8 @@ class Game():
 				if file[0] == "g": Ground(self, file[1:5], texture=texture)
 				if file[0] == "p": Ground(self, file[1:5], 1, texture=texture)
 				if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9], texture=texture)
+		pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
+		pygame.mixer.music.play()
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		map_folder = os.path.join(game_folder, 'maps')
@@ -116,8 +118,8 @@ class Game():
 			#Events
 			for event in events:
 				if event.type == pygame.QUIT:
-					self.playing = 0
-				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0
+					self.playing = 0;pygame.mixer.stop();pygame.mixer.music.stop()
+				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0;pygame.mixer.stop();pygame.mixer.music.stop()
 			self.win.fill(WHITE)
 			self.objects.update()
 			self.sprites.update(keys, events)
