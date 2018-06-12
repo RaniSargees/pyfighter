@@ -97,7 +97,7 @@ class GUI():
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
 			temp = []
-			for j,k in enumerate(sorted(self.char_sprites)):
+			for j,k in enumerate(sorted(self.char_sprites, key=lambda k:k.lower())):
 				if j%12 == 0 and j != 0: #Change if there is more than 24chars (Make image/buttons smaller)
 					self.BTN_list.append(temp)
 					temp = []
