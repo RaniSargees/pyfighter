@@ -301,6 +301,7 @@ class GUI():
 		g.new()
 		g.run()
 		self.running = g.playing
+		self.new(1)
 
 	def new_joystick(self):
 		joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
