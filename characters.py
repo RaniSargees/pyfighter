@@ -103,7 +103,8 @@ class Char(pygame.sprite.Sprite):
 
 		#Draw Character
 		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		character_surface = pygame.surface.Surface((256, 256),pygame.SRCALPHA,32)
+		character_surface = pygame.surface.Surface((256, 256))
+		character_surface.fill((192,192,192))
 		#pygame.draw.rect(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
 		character_surface.blit(self.sprite_image[0],(128-10.5,256-120))
 		character_surface.blit(self.sprite_image[1],(128-21,256-99))
