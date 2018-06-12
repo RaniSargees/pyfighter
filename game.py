@@ -9,6 +9,7 @@ class Game():
 	def __init__(self, win, joysticks, map="default", charList = []):
 		self.joysticks = joysticks
 		self.win = win
+		self.charList = charList
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = pygame.sprite.Group()
@@ -17,13 +18,23 @@ class Game():
 	def new(self):
 		self.loadData()
 		self.TempFont = pygame.font.SysFont("monospace", 36)
-		for x in self.joysticks:
-			if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
-			elif "xbox" in x.get_name().lower(): Mage(self, x, 'test')
-			else: друг(self, x, 'test')
-			#Classes:
-			#	Mage
-			#	друг
+		if self.charList == []:
+			for x in self.joysticks:
+				if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
+				elif "xbox" in x.get_name().lower(): Mage(self, x, 'test')
+				else: друг(self, x, 'test')
+				#Classes:
+				#	Mage
+				#	друг
+		else:
+			print(self.charList)
+			for x,y in enumerate(self.charList):
+				#x is num
+				#y is values
+				if "ouya" in self.joysticks[x].get_name().lower():
+					exec(str(['Mage','друг'][y[0]])+'(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
+				else:
+					exec(str(['Mage','друг'][y[0]])+'(self,self.joysticks[x],y[1])')
 		#load map
 		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():

@@ -1,4 +1,4 @@
-import pygame, os, zipfile
+import pygame, os, zipfile, math
 from paint import *
 from game import *
 from settings import *
@@ -13,8 +13,11 @@ class GUI():
 		self.bg = None
 		self.img = []
 		self.mDown = 0
-		self.pos = (0,0)
+		self.fade = 1
+		self.fade_dir = 0
+		self.map_pos = 0
 		self.BTN_list = []
+		self.action = 0
 		#Location Index:
 		#	0, Main Menu
 		#	1, Character Select
@@ -24,35 +27,27 @@ class GUI():
 		self.pointerUpdate = [] #Prevents pointer from changing rapidly (Must let axis go before pointer can be moved again)
 		self.joystick_button = []#The button that is pressed (default to -1)
 		self.joystick_selected = []#If the joystick has selected something lock it
-		self.char_selected = []#The character currently selected by the joycon
+		self.char_selected = []#The character currently selected by the controller
+		self.char_name = []#Name of the character selected (the name used to load the character in)
 		for x in joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
 			self.joystick_selected.append(0)
 			self.char_selected.append(None)
+			self.char_name.append(None)
 		self.char_selected.append(None)
+		self.char_name.append(None)
 
 	def new(self,location=0):
 		self.location = location
 		self.load_data()
-		self.pointer = []
-		self.pointerUpdate = []
-		self.joystick_button = []
-		self.joystick_selected = []
-		self.char_selected = []
-		for x in self.joysticks[:-1]:
-			self.pointer.append([0,0])
-			self.pointerUpdate.append(0)
-			self.joystick_button.append(-1)
-			self.joystick_selected.append(0)
-			self.char_selected.append(None)
-		self.char_selected.append(None)
 		self.MenuBTN = pygame.sprite.Group()
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
 		if self.location == 0: #Main Menu
+			self.reset_pointers()
 			#Title Text
 			self.font = pygame.font.SysFont('Comic Sans MS',144)
 			self.text = self.font.render('PYFIGHTER',True,BLACK)
@@ -66,11 +61,15 @@ class GUI():
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
 		
-		if self.location == 1:
+		if self.location == 1: #Character Select screen
+			self.reset_pointers()
+			self.font_LLL = pygame.font.SysFont('Comic Sans MS',72)
 			self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
 			self.font_L = pygame.font.SysFont('Comic Sans MS',32)
 			self.font_M = pygame.font.SysFont('Comic Sans MS',16)
 			self.font_S = pygame.font.SysFont('Comic Sans MS',8)
+			#Back Button
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
 			#Title Text
 			self.text = self.font_LL.render('Choose your character',True,BLACK)
 			self.text_rect = self.text.get_rect(center=(640,50))
@@ -99,13 +98,37 @@ class GUI():
 				#Selected chars stats, sprite, class etc.
 			temp = []
 			for j,k in enumerate(sorted(self.char_sprites)):
-				if j%12 == 0 and j != 0:
+				if j%12 == 0 and j != 0: #Change if there is more than 24chars (Make image/buttons smaller)
 					self.BTN_list.append(temp)
 					temp = []
-				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_selected[x] = self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(100,100))))
+				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_name[x],self.char_selected[x] = [self.char_sprites["'+str(k)+'"][1],"'+str(k)+'"],self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(100,100))))
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
+		if self.location == 2: #Map select screen
+			self.reset_pointers()
+			self.text = self.font_LLL.render('Select your map',True,BLACK)
+			self.img.append([self.text,self.text.get_rect(center=(640,40))])
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)],
+							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),
+							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],
+							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
+			
+			
+	
+	def reset_pointers(self):
+		self.pointer = []
+		self.pointerUpdate = []
+		self.joystick_button = []
+		self.joystick_selected = []
+		self.char_selected = []
+		for x in self.joysticks[:-1]:
+			self.pointer.append([0,0])
+			self.pointerUpdate.append(0)
+			self.joystick_button.append(-1)
+			self.joystick_selected.append(0)
+			self.char_selected.append(None)
+		self.char_selected.append(None)
 
 	def load_data(self):
 		game_folder = os.path.dirname(__file__)
@@ -150,6 +173,8 @@ class GUI():
 			events = pygame.event.get()
 			try:[x.update(events) for x in self.joysticks]
 			except:()
+			#User events
+			self.mDown = 0
 			for event in events:
 				if event.type == pygame.JOYBUTTONDOWN:
 					try:self.joystick_button[event.joy] = event.button
@@ -158,11 +183,11 @@ class GUI():
 					self.playing = 0
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					self.mDown = 1
-				else:
-					self.mDown = 0
-			self.pointers()
 			self.draw()
-			self.buttons()
+			if self.BTN_list != []:
+				self.pointers()
+				self.buttons()
+			pygame.time.delay(10)
 			pygame.display.update()
 	
 	def pointers(self):
@@ -214,7 +239,6 @@ class GUI():
 						i.update(clicked = 1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 			else:
 				i.update()
-		
 		for i,j in enumerate(self.pointer):
 			x = j[0]
 			y = j[1]
@@ -224,6 +248,7 @@ class GUI():
 		for i in self.img: #Prints all images in the self.img list
 			self.win.blit(i[0],i[1])
 		if self.location == 1:
+			#print(self.action)
 			for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
 				if j != None:
 					self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
@@ -244,12 +269,52 @@ class GUI():
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
+			if len([x for x in self.char_selected if x != None]) == len(self.char_selected):
+				self.fade_dir += 1
+				self.fade = -98*math.cos(math.radians(self.fade_dir%360)) + 98
+				pygame.draw.rect(self.win,(255,self.fade,0),(0,310,1280,80))
+				text = self.font_LLL.render('Press the Select button to continue',True,BLACK)
+				self.win.blit(text,text.get_rect(center=(640,350)))
+				if bool(len([x for x in self.joystick_button if x == 0])) or (pygame.Rect(0,310,1280,80).collidepoint(pygame.mouse.get_pos()) and self.mDown):
+					self.new(2)
+		if self.location == 2:
+			if self.map_pos >= len(self.covers):
+				self.map_pos = 0
+			elif self.map_pos < 0:
+				self.map_pos = len(self.covers)-1
+			#self.map_pos = min(max(0,self.map_pos),len(self.covers)-1)
+			self.win.blit(pygame.transform.scale(self.covers[sorted(self.covers)[self.map_pos]],(740,400)),(270,100))
+			text = self.font_LL.render(sorted(self.covers)[self.map_pos],True,BLACK)
+			self.win.blit(text,text.get_rect(center=(640,550)))
+			pygame.draw.rect(self.win,BLACK,(270,100,740,400),5)
+			
+				
 
 	def run_paint(self):
 		p = paint(self.win,self.sprites_folder,self.icons)
 		p.new()
 		p.run()
 		self.playing = p.running
+	
+	def run_game(self):
+		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
+		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name)
+		g.new()
+		g.run()
+		self.running = g.running
+	
+	def new_joystick(self):
+		joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+		for x in joysticks: x.init()
+		for x in joysticks[:]:
+			try: #incompatible controller detection
+				for i in (0,1): x.get_axis(i) #remove controllers with no thumbstick
+				if "ppjoy" in x.get_name().lower():0/0 #remove faked controllers (steering wheels, flight sticks, etc)
+				if "rvl"   in x.get_name().lower():0/0 #remove wii controllers
+			except:joysticks.pop(joysticks.index(x)).quit()
+		if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
+		else: joysticks=joysticks[:4]
+		self.joysticks = joysticks
 
 
 pygame.init()

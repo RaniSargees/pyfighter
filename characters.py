@@ -121,6 +121,7 @@ class Char(pygame.sprite.Sprite):
 		character_surface.blit(self.sprite_image[7],(128-21,256-15))
 		character_surface.blit(self.sprite_image[8],(128+6,256-45))
 		character_surface.blit(self.sprite_image[9],(128+6,256-15))
+		character_surface.set_colorkey((192,192,192))
 #		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
