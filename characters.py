@@ -75,7 +75,7 @@ class Char(pygame.sprite.Sprite):
 					self.y += self.grounded[0].rect[3] + self.grounded[0].speed * self.game.dt * (self.grounded[0].dir > 1)
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
-		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/max(1,self.game.clock.get_fps()))
+		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/(self.game.clock.get_fps()+(60*(self.game.clock.get_fps()==0))))
 		if (self.knocked and (self.y < -500 or self.x > 2080 or self.x < -800)) or self.y > 1000 : #respawn on death
 			self.dmg = 0
 			self.stun = 0
