@@ -46,7 +46,7 @@ class Game():
 				if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9], texture=texture)
 		try:
 			pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
-			pygame.mixer.music.play()
+			pygame.mixer.music.play(-1)
 		except:()
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
