@@ -300,7 +300,7 @@ class GUI():
 		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name)
 		g.new()
 		g.run()
-		self.running = g.playing
+		self.playing = g.running
 		self.new(1)
 
 	def new_joystick(self):

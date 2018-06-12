@@ -110,6 +110,7 @@ class Game():
 					self.sprite_data = open(os.path.join(file,i)).readline()
 	def run(self):
 		self.playing = 1
+		self.running = 1
 		while self.playing:
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
@@ -120,7 +121,7 @@ class Game():
 			#Events
 			for event in events:
 				if event.type == pygame.QUIT:
-					self.playing = 0;pygame.mixer.stop();pygame.mixer.music.stop()
+					self.playing = 0;self.running = 0;pygame.mixer.stop();pygame.mixer.music.stop()
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0;pygame.mixer.stop();pygame.mixer.music.stop()
 			self.win.fill(WHITE)
 			self.objects.update()
