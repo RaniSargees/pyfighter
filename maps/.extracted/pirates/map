@@ -1,3 +1,5 @@
-g 140 500 1000 500 ground.png
-p 140 200 100 10 plat.png
-p 1040 200 100 10 plat.png
+g 300 500 600 500 ground.png
+g 900 400 100 600 ground.png
+p 140 500 140 10 plat.png
+p 500 300 200 10 plat.png
+p 525 150 150 10 plat.png
