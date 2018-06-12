@@ -44,8 +44,10 @@ class Game():
 				if file[0] == "g": Ground(self, file[1:5], texture=texture)
 				if file[0] == "p": Ground(self, file[1:5], 1, texture=texture)
 				if file[0] == "m": Moving(self, file[1:5], file[5], file[6], file[7:9], texture=texture)
-		pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
-		pygame.mixer.music.play()
+		try:
+			pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
+			pygame.mixer.music.play()
+		except:()
 	def loadData(self):
 		game_folder = os.path.dirname(__file__)
 		map_folder = os.path.join(game_folder, 'maps')
