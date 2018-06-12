@@ -248,7 +248,6 @@ class GUI():
 		for i in self.img: #Prints all images in the self.img list
 			self.win.blit(i[0],i[1])
 		if self.location == 1:
-			#print(self.action)
 			for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
 				if j != None:
 					self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
@@ -304,6 +303,8 @@ class GUI():
 		self.new(1)
 
 	def new_joystick(self):
+		pygame.joystick.quit()
+		pygame.joystick.init()
 		joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in joysticks: x.init()
 		for x in joysticks[:]:
