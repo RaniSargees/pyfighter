@@ -20,6 +20,7 @@ class fireball(pygame.sprite.Sprite):
 		elif not(self.count):
 			self.loc = (self.loc[0] + (self.dir-0.5)*20,self.loc[1])
 			collisions = [(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
+			collisions.extend([(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.rect),x)for x in self.char.game.ground if not x.platform])
 			self.hitTarget = bool(len([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)]))
 		if self.go:
 			if self.count < self.char.special_1_len*2:
