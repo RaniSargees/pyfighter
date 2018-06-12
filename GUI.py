@@ -23,7 +23,7 @@ class GUI():
 		#	1, Character Select
 		#	2, Map Select
 		#	3, Options
-		self.pointer = [] #Where the joystick is current pointing to 
+		self.pointer = [] #Where the joystick is current pointing to
 		self.pointerUpdate = [] #Prevents pointer from changing rapidly (Must let axis go before pointer can be moved again)
 		self.joystick_button = []#The button that is pressed (default to -1)
 		self.joystick_selected = []#If the joystick has selected something lock it
@@ -60,7 +60,7 @@ class GUI():
 							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2,clickable = False)]]
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
-		
+
 		if self.location == 1: #Character Select screen
 			self.reset_pointers()
 			self.font_LLL = pygame.font.SysFont('Comic Sans MS',72)
@@ -113,9 +113,9 @@ class GUI():
 							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),
 							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],
 							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
-			
-			
-	
+
+
+
 	def reset_pointers(self):
 		self.pointer = []
 		self.pointerUpdate = []
@@ -162,7 +162,7 @@ class GUI():
 		for fileName in os.listdir(bg_folder): #Load BG image
 			if fileName == 'menu.png' or fileName == 'menu.jpg':
 				self.bg = pygame.transform.scale(pygame.image.load(os.path.join(bg_folder,fileName)).convert_alpha(),RES)
-		
+
 		for fileName in os.listdir(icon_folder):
 			self.icons[fileName[:-4]] = pygame.image.load(os.path.join(icon_folder,fileName)).convert_alpha()
 			self.icons[fileName[:-4]].set_colorkey((255,255,255))
@@ -189,7 +189,7 @@ class GUI():
 				self.buttons()
 			pygame.time.delay(10)
 			pygame.display.update()
-	
+
 	def pointers(self):
 		for x in self.joysticks[:-1]:
 			if not(self.pointerUpdate[x.get_id()]) and not(self.joystick_selected[x.get_id()]):
@@ -208,10 +208,10 @@ class GUI():
 					self.pointerUpdate[x.get_id()] = 1
 					self.pointer[y] = [self.pointer[y][0],max(self.pointer[y][1]-1,0)]
 					self.pointer[y] = [max(min(self.pointer[y][0],len(self.BTN_list[self.pointer[y][1]])-1),0),self.pointer[y][1]]
-			
+
 			elif abs(x.get_axis(0)) < .7 and abs(x.get_axis(1)) < .7:
 				self.pointerUpdate[x.get_id()] = 0
-		
+
 		for x,y in enumerate(self.joystick_button):
 			button = self.BTN_list[self.pointer[x][1]][self.pointer[x][0]]
 			self.joystick_button[x] = -1
@@ -224,7 +224,7 @@ class GUI():
 				self.joystick_selected[self.joysticks[x].get_id()] = 0
 				button.update(clicked = 0)
 				self.char_selected[x] = None
-					
+
 
 	def buttons(self):
 		for i in self.MenuBTN:
@@ -258,13 +258,13 @@ class GUI():
 					self.win.blit(class_name,class_name_rect)
 					for k in range(stats[1]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*k),585,14,20))
-					
+
 					for l in range(stats[2]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*l),625,14,20))
-					
+
 					for m in range(stats[3]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*m),665,14,20))
-				
+
 				for n in range(11):
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
@@ -287,22 +287,21 @@ class GUI():
 			text = self.font_LL.render(sorted(self.covers)[self.map_pos],True,BLACK)
 			self.win.blit(text,text.get_rect(center=(640,550)))
 			pygame.draw.rect(self.win,BLACK,(270,100,740,400),5)
-			
-				
+
 
 	def run_paint(self):
 		p = paint(self.win,self.sprites_folder,self.icons)
 		p.new()
 		p.run()
 		self.playing = p.running
-	
+
 	def run_game(self):
 		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
 		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name)
 		g.new()
 		g.run()
-		self.running = g.running
-	
+		self.running = g.playing
+
 	def new_joystick(self):
 		joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 		for x in joysticks: x.init()

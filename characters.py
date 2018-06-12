@@ -278,7 +278,7 @@ class Mage(Char):
 			self.ability_time = 0.2
 			self.explosion = self.game.effects['ball_explosion'].copy()
 			self.special_1_len = len(self.explosion)
-			fireball(self,self.x-86,self.y-144,self.facing)
+			fireball(self,self.x-86,self.y-184,self.facing)
 	def run_special1(self):pass
 
 	def special2(self):
