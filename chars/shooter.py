@@ -16,7 +16,7 @@ class char(Char):
 		pass
 
 	def special1(self,direction):
-		if not self.ability_run+1:
+		if not(self.ability_run+1 or self.ability_delay_time):
 			self.freeze = 2
 			self.direction = direction
 			self.ability_run = 1
@@ -28,11 +28,12 @@ class char(Char):
 			self.ability_location = (self.x,self.y-92)
 
 	def run_special1(self):
+		self.ability_delay_time = 1
 		if self.whip_phase == 1: #Extend Whip
 			self.ability_location = (self.ability_location[0]+25*((self.direction==1)-0.5)*2,self.ability_location[1])
 			pygame.draw.line(self.game.win,YELLOW,(self.x,self.y-77),(self.ability_location[0],self.ability_location[1]+15),10)
 			self.game.win.blit(self.tip,self.ability_location)
-			if abs(self.x - self.ability_location[0]) > 400:
+			if abs(self.x - self.ability_location[0]) > 200:
 				self.whip_phase = 2
 				self.currentCord = self.ability_location
 			collisions=[(pygame.Rect(x.hitbox).collidepoint(self.ability_location[0]+20, self.ability_location[1]+15), x) for x in self.game.sprites]
