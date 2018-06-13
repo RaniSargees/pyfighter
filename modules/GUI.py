@@ -1,10 +1,10 @@
-import pygame, os, zipfile, math
-from paint import *
-from game import *
+import pygame, os, zipfile, math, sys
+from modules.paint import *
+from modules.game import *
 from settings import *
-from joystick_wrapper import *
-from map import *
-from BTN import *
+from modules.joystick_wrapper import *
+from modules.map import *
+from modules.BTN import *
 
 class GUI():
 	def __init__(self,win,joysticks):
@@ -25,10 +25,10 @@ class GUI():
 		#	3, Options
 		self.pointer = [] #Where the joystick is current pointing to
 		self.pointerUpdate = [] #Prevents pointer from changing rapidly (Must let axis go before pointer can be moved again)
-		self.joystick_button = []#The button that is pressed (default to -1)
-		self.joystick_selected = []#If the joystick has selected something lock it
-		self.char_selected = []#The character currently selected by the controller
-		self.char_name = []#Name of the character selected (the name used to load the character in)
+		self.joystick_button = [] #The button that is pressed (default to -1)
+		self.joystick_selected = [] #If the joystick has selected something lock it
+		self.char_selected = [] #The character currently selected by the controller
+		self.char_name = [] #Name of the character selected (the name used to load the character in)
 		for x in joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
@@ -131,7 +131,7 @@ class GUI():
 		self.char_selected.append(None)
 
 	def load_data(self):
-		game_folder = os.path.dirname(__file__)
+		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
 		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
 		self.sprites_folder = os.path.join(img_folder, 'sprites')

@@ -1,9 +1,9 @@
 import pygame
 from settings import *
-from characters import *
-from projectiles import *
+from modules.character import *
+from modules.projectiles import *
 
-class Shooter(Char):
+class char(Char):
 	def special0(self):
 		if not self.ability_run+1:
 			self.freeze = 2

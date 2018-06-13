@@ -1,9 +1,9 @@
 import pygame, math, os
 from random import randint
 from settings import *
-from paintCanvas import *
-from BTN import *
-from text_box import *
+from modules.paintCanvas import *
+from modules.BTN import *
+from modules.text_box import *
 
 
 class paint():

@@ -1,11 +1,9 @@
-import pygame, math, os, zipfile
+import pygame, math, os, zipfile, sys
 from io import BytesIO
-from characters import *
-from shooter import *
-from друг import *
-from mage import *
-from map import *
-from joystick_wrapper import *
+from modules.character import *
+from chars import *
+from modules.map import *
+from modules.joystick_wrapper import *
 from settings import *
 
 class Game():
@@ -23,9 +21,9 @@ class Game():
 		self.TempFont = pygame.font.SysFont("monospace", 36)
 		if self.charList == []:
 			for x in self.joysticks:
-				if "ouya" in x.get_name().lower(): Mage(self, x, 'test',[0,3,1,2,4,5])
-				elif "xbox" in x.get_name().lower(): Shooter(self, x, 'test')
-				else: Shooter(self, x, 'test')
+				if "ouya" in x.get_name().lower(): mage.char(self, x, 'test',[0,3,1,2,4,5])
+				elif "xbox" in x.get_name().lower(): shooter.char(self, x, 'test')
+				else: shooter.char(self, x, 'test')
 				#Classes:
 				#	Mage
 				#	друг
@@ -36,9 +34,9 @@ class Game():
 				#x is num
 				#y is values
 				if "ouya" in self.joysticks[x].get_name().lower():
-					exec(str(['Mage','друг','Shooter'][y[0]])+'(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
+					exec(str(['mage','друг','shooter'][y[0]])+'.char(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
 				else:
-					exec(str(['Mage','друг','Shooter'][y[0]])+'(self,self.joysticks[x],y[1])')
+					exec(str(['mage','друг','shooter'][y[0]])+'.char(self,self.joysticks[x],y[1])')
 		#load map
 		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():
@@ -53,7 +51,7 @@ class Game():
 			pygame.mixer.music.play(-1)
 		except:()
 	def loadData(self):
-		game_folder = os.path.dirname(__file__)
+		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
 		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
 		effect_folder = os.path.join(img_folder, 'effects')

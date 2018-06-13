@@ -1,8 +1,8 @@
 import pygame, math
 from random import randint, uniform
 from settings import *
-from map import *
-from projectiles import *
+from modules.map import *
+from modules.projectiles import *
 
 class Char(pygame.sprite.Sprite):
 	def __init__(self,game,joystick,char,buttonmap=[0,1,2,3,4,5]):
