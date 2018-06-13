@@ -27,12 +27,12 @@ class char(Char):
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
-		self.hspeed += 150*(self.facing*2-1)
+		self.hspeed += (100+(25*((self.maxMoveSpeed-200)/200)))*(self.facing*2-1)
 		self.vspeed = 0
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
 		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		[(x[1].knockBack((self.hspeed/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 
 
@@ -47,7 +47,10 @@ class char(Char):
 		self.vspeed = -800
 		self.gravityMultiplier = 12
 		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."]
-	
+
+
+
+"""
 	def special3(self):
 		if not(self.ability_run+1):
 			self.release = 0
@@ -57,17 +60,15 @@ class char(Char):
 			self.freeze = 2
 			self.count = 0
 			self.hue = 0
-	
+
 	def run_special3(self):
 		self.color = [int(x*255) for x in hls_to_rgb(self.hue%360,0.5,1)]
 		print(hls_to_rgb(self.hue%360,0.5,1))
 		self.hue+=3
 		pygame.draw.polygon(self.game.win,self.color,((self.x-7,self.y-79),(self.x-10,self.y-72),(self.x-7,self.y-65),(self.x+7,self.y-65),(self.x+10,self.y-72),(self.x+7,self.y-79)))
-		
-		
 		if self.release:
 			self.ability_run = 0
 			self.ability_time = 0
 			self.stun = 0.4
-		
 
+"""
