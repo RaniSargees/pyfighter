@@ -74,7 +74,7 @@ class rainbow_poop(pygame.sprite.Sprite):
 		elif  [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]:
 			if not self.bounce:self.kill()
 			else:self.bounce-=1;self.yspeed*=-.8;self.xspeed*=.8
-			
+
 class Tinylaser(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,Xspeed,Yspeed,angle=0):
 		pygame.sprite.Sprite.__init__(self, char.game.objects)
@@ -84,7 +84,7 @@ class Tinylaser(pygame.sprite.Sprite):
 		self.loc = (x,y)
 		self.image = pygame.transform.rotate(pygame.transform.scale(self.char.bullet[0],(20,15)),angle)
 		self.image_rect = self.image.get_rect()
-	
+
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
@@ -94,7 +94,7 @@ class Tinylaser(pygame.sprite.Sprite):
 		if self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000 or len(collisions):
 			self.kill()
 		elif [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.collision_rect) and x.platform == 0]:
-			self.kill()			
+			self.kill()
 
 class laser(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,Xspeed,Yspeed,angle=0):
@@ -102,10 +102,10 @@ class laser(pygame.sprite.Sprite):
 		self.char = char
 		self.Xspeed = Xspeed
 		self.Yspeed = Yspeed
-		self.loc = (x,y)
+		self.loc = (x-20,y-15)
 		self.image = pygame.transform.rotate(pygame.transform.scale(self.char.bullet[0],(40,30)),angle)
 		self.image_rect = self.image.get_rect()
-	
+
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
@@ -116,7 +116,7 @@ class laser(pygame.sprite.Sprite):
 			self.kill()
 		elif [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.collision_rect) and x.platform == 0]:
 			self.kill()
-			
+
 class BIGlaser(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,Xspeed,Yspeed,angle,facing):
 		pygame.sprite.Sprite.__init__(self, char.game.objects)
@@ -127,7 +127,7 @@ class BIGlaser(pygame.sprite.Sprite):
 		self.loc = (x,y)
 		self.image = pygame.transform.rotate(self.char.bullet[0],angle)
 		self.image_rect = self.image.get_rect()
-	
+
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
@@ -150,7 +150,7 @@ class Bomblaser(pygame.sprite.Sprite):
 		self.angle = angle
 		self.image = pygame.transform.rotate(self.char.bullet[0],angle)
 		self.image_rect = self.image.get_rect()
-	
+
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
@@ -180,7 +180,7 @@ class M_Bomblaser(pygame.sprite.Sprite):
 		self.transformed_image = pygame.transform.scale(self.char.bullet[0],(40,30))
 		self.image = pygame.transform.rotate(self.transformed_image,angle)
 		self.image_rect = self.image.get_rect()
-	
+
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
