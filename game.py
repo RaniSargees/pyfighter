@@ -2,6 +2,8 @@ import pygame, math, os, zipfile
 from io import BytesIO
 from characters import *
 from shooter import *
+from друг import *
+from mage import *
 from map import *
 from joystick_wrapper import *
 from settings import *

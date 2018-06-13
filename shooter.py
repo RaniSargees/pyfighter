@@ -11,10 +11,10 @@ class Shooter(Char):
 			self.ability_time = 0.01
 			self.bullet = self.game.effects['pellet'].copy()
 			laser(self,self.x,self.y-92,((self.facing==1)-0.5)*2*50,0,0)
-			
+
 	def run_special0(self):
 		pass
-		
+
 	def special1(self,direction):
 		if not self.ability_run+1:
 			self.freeze = 2
@@ -26,7 +26,7 @@ class Shooter(Char):
 			self.target = []
 			self.tip = pygame.transform.scale(self.game.effects['pellet'][0].copy(),(40,30))
 			self.ability_location = (self.x,self.y-92)
-	
+
 	def run_special1(self):
 		if self.whip_phase == 1: #Extend Whip
 			self.ability_location = (self.ability_location[0]+25*((self.direction==1)-0.5)*2,self.ability_location[1])
@@ -60,7 +60,7 @@ class Shooter(Char):
 				else:
 					self.ability_run = 0
 					self.ability_time = 0
-		
+
 		elif self.whip_phase == 3:
 			self.timer += 1
 			if self.timer < 39:
@@ -74,12 +74,12 @@ class Shooter(Char):
 				self.freeze = 0
 				for char in self.target:
 					char.gravityMultiplier = 1
-					
+
 			if self.timer%30 == 0:
 				BIGlaser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*20,-20,-45-(90*(self.direction==1)),self.direction)
 			elif self.timer%10 == 0:
 				laser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*25,-25,-45-(90*(self.direction==1)))
-			
+
 	def special2(self):
 		if not(self.ability_run+1 or self.ability_air_side):
 			self.ability_air_side = 1
@@ -88,7 +88,7 @@ class Shooter(Char):
 			self.bullet = self.game.effects['pellet'].copy()
 			self.LR = 0
 			self.count = 0
-	
+
 	def run_special2(self):
 		self.count += 1
 		self.vspeed = -200
@@ -96,7 +96,7 @@ class Shooter(Char):
 		if self.count%3 == 0:
 			self.LR+=1
 			laser(self,self.x+(((self.LR%2)-0.5)*48)-15,self.y,0,20,90)
-	
+
 	def special3(self):
 		if not(self.ability_run+1 or self.ability_delay_time):
 			self.ability_run = 3
@@ -105,8 +105,7 @@ class Shooter(Char):
 			self.freeze = 2
 			self.bullet = self.game.effects['pellet'].copy()
 			Bomblaser(self,self.x,self.y-92,((self.facing==1)-0.5)*20,-10,facing=self.facing)
-	
+
 	def run_special3(self):
 		pass
-		
-			
+
