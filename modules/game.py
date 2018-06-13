@@ -23,7 +23,7 @@ class Game():
 			for x in self.joysticks:
 				if "ouya" in x.get_name().lower(): mage.char(self, x, 'test',[0,3,1,2,4,5])
 				elif "xbox" in x.get_name().lower(): shooter.char(self, x, 'test')
-				else: shooter.char(self, x, 'test')
+				else: друг.char(self, x, 'test')
 				#Classes:
 				#	Mage
 				#	друг
