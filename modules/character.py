@@ -103,11 +103,10 @@ class Char(pygame.sprite.Sprite):
 				self.freeze = 0
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
-		hit=len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.hitbox[1]+self.vspeed*self.game.dt, self.width, self.height) and not x.platform and x not in self.grounded])
-		while hit:
-			self.hspeed = (self.hspeed)//2
-			hit=len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.hitbox[1]+self.vspeed*self.game.dt, self.width, self.height) and not x.platform and x not in self.grounded])
-			if not self.hspeed: hit=0
+		while 1:
+			if not len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.hitbox[1]+self.vspeed*self.game.dt, self.width, self.height) and not x.platform and x not in self.grounded]):break
+			self.hspeed = int(self.hspeed/2)
+			if not self.hspeed: break
 		self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
 #		self.hitbox = (self.x+4-24,self.y-120,40,120)
