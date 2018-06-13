@@ -26,7 +26,7 @@ class char(Char):
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
-		self.hspeed = 1200*(self.facing*2-1)
+		self.hspeed += 150*(self.facing*2-1)
 		self.vspeed = 0
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
