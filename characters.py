@@ -33,6 +33,7 @@ class Char(pygame.sprite.Sprite):
 		self.ability_air = 0
 		self.ability_air_side = 0
 		self.ability_run = -1
+		self.ability_delay_time = 0
 		self.release = 0
 		self.dmg = 0
 		self.stun = 0
@@ -56,6 +57,9 @@ class Char(pygame.sprite.Sprite):
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
 		self.inStage = False
+		self.ability_delay_time -= self.game.dt
+		if self.ability_delay_time < 0:
+			self.ability_delay_time = 0
 		for i in self.grounded:
 			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 		if self.grounded:

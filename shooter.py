@@ -76,11 +76,37 @@ class Shooter(Char):
 					char.gravityMultiplier = 1
 					
 			if self.timer%30 == 0:
-				BIGlaser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*20,-20,-45-(90*(self.direction==1)),self.direction,)
+				BIGlaser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*20,-20,-45-(90*(self.direction==1)),self.direction)
 			elif self.timer%10 == 0:
 				laser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*25,-25,-45-(90*(self.direction==1)))
 			
-			
-				
-				
+	def special2(self):
+		if not(self.ability_run+1 or self.ability_air_side):
+			self.ability_air_side = 1
+			self.ability_run = 2
+			self.ability_time = 1.2
+			self.bullet = self.game.effects['pellet'].copy()
+			self.LR = 0
+			self.count = 0
+	
+	def run_special2(self):
+		self.count += 1
+		self.vspeed = -200
+		self.gravityMultiplier = 0
+		if self.count%3 == 0:
+			self.LR+=1
+			laser(self,self.x+(((self.LR%2)-0.5)*48)-15,self.y,0,20,90)
+	
+	def special3(self):
+		if not(self.ability_run+1 or self.ability_delay_time):
+			self.ability_run = 3
+			self.ability_time = 0.2
+			self.ability_delay_time = 2
+			self.freeze = 2
+			self.bullet = self.game.effects['pellet'].copy()
+			Bomblaser(self,self.x,self.y-92,((self.facing==1)-0.5)*20,-10,facing=self.facing)
+	
+	def run_special3(self):
+		pass
+		
 			
