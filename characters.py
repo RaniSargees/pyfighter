@@ -93,7 +93,10 @@ class Char(pygame.sprite.Sprite):
 					self.ability_time -= self.game.dt
 				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
 			else: self.atkEnd()
-		else:self.hit_list = [self];self.freeze = 0
+		else:
+			self.hit_list = [self]
+			if self.freeze != 3:
+				self.freeze = 0
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
 		hit=len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox[0]+self.hspeed*self.game.dt, self.hitbox[1]+self.vspeed*self.game.dt, self.width, self.height) and not x.platform and x not in self.grounded])
@@ -150,7 +153,7 @@ class Char(pygame.sprite.Sprite):
 			pass
 
 	def jump(self):
-		if self.currentJumps:
+		if self.currentJumps and self.freeze != 3:
 			self.currentJumps -= 1
 			self.vspeed = self.jumpSpeed
 			self.jumpBonus = 0
@@ -186,6 +189,7 @@ class Char(pygame.sprite.Sprite):
 		#Don't remove the line below. It fixes the sliding bug
 		self.y -= 5
 
+
 	def atkEnd(self):
 		if not(self.ability_time == -1):
 			self.ability_time = 0
@@ -196,7 +200,7 @@ class Char(pygame.sprite.Sprite):
 
 	def get_keys(self):
 		if self.stun <= 0:
-			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2)-1)*-1)
+			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2 or self.freeze==3)-1)*-1)
 			if  self.joystick.get_axis(0) < -.5 and self.freeze!=2:
 				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * Slow_multiplier
 				self.facing = 0

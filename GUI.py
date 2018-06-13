@@ -252,7 +252,7 @@ class GUI():
 				if j != None:
 					self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
 					stats = list(map(int,j[1].replace('[','').replace(']','').split(',')))
-					class_name = pygame.transform.rotate(self.font_L.render(('Mage','друг','Knight','Shooter')[stats[0]],True,BLACK),90)
+					class_name = pygame.transform.rotate(self.font_L.render(('Mage','друг','Shooter','Brawler')[stats[0]],True,BLACK),90)
 					class_name_rect = class_name.get_rect(center=(173+(96*(i+1))+(200*i),472))
 					self.win.blit(class_name,class_name_rect)
 					for k in range(stats[1]):

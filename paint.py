@@ -33,8 +33,8 @@ class paint():
 		#1 = brush
 		#2 = circle tool
 		self.Class = 0
-		#Boom boi, that one guy who shat out skittles durring class, sword swinger, gun spammer
-		#    0							1									2			3
+		#Boom boi, that one guy who shat out skittles durring class, gun spammer, that one kid who likes to punch people and scream autisticlly MR.FISTER IS HERE
+		#    0							1								2												3
 		self.attack = 1
 		self.defense = 1
 		self.speed = 1
@@ -117,8 +117,8 @@ class paint():
 		#Classes
 		BTN(self.win,0,(1050,200,90,90),self.Classes,text='Mage',fn='self.Class = 0')
 		BTN(self.win,0,(1150,200,90,90),self.Classes,text='друг',fn='self.Class = 1')
-		BTN(self.win,0,(1050,300,90,90),self.Classes,text='Sword',fn='self.Class = 2')
-		BTN(self.win,0,(1150,300,90,90),self.Classes,text='Guns',fn='self.Class = 3')
+		BTN(self.win,0,(1050,300,90,90),self.Classes,text='Shooter',fn='self.Class = 2')
+		BTN(self.win,0,(1150,300,90,90),self.Classes,text='Brawler',fn='self.Class = 3')
 
 
 		self.surf = pygame.Surface((280,150),pygame.SRCALPHA,32)
