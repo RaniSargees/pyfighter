@@ -3,6 +3,7 @@ from random import randint, uniform
 from settings import *
 from modules.map import *
 from modules.projectiles import *
+from modules.animation import *
 
 class Char(pygame.sprite.Sprite):
 	def __init__(self,game,joystick,char,buttonmap=[0,1,2,3,4,5]):
@@ -10,6 +11,7 @@ class Char(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
 		self.sprite_image = self.game.char_sprites[char][:-1]
+		self.anim = animator(self.sprite_image)
 		stats = eval(str(self.game.char_sprites[char][-1]))[-1]
 		self.x = 200
 		self.y = 200
@@ -130,6 +132,8 @@ class Char(pygame.sprite.Sprite):
 		character_surface.blit(self.sprite_image[7],(128-21,256-15))
 		character_surface.blit(self.sprite_image[8],(128+6,256-45))
 		character_surface.blit(self.sprite_image[9],(128+6,256-15))
+
+		character_surface = self.anim.idle()
 		character_surface.set_colorkey((192,192,192))
 #		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 
