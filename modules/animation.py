@@ -31,7 +31,6 @@ class animator():
 		if self.anim!="idle":self.frame=randint(0,240);self.anim="idle"
 		else:self.frame+=1
 		self.surface.fill(0)
-
 		self.surface.blit(self.l_leg, (128-21, 256-45))
 		self.surface.blit(self.r_leg, (128+ 6, 256-45))
 		self.surface.blit(self.l_foot,(128-21, 256-15))
@@ -42,27 +41,16 @@ class animator():
 		r_arm = self.r_arm .copy()
 		l_hand= self.l_hand.copy()
 		r_hand= self.r_hand.copy()
-
-		for x in [l_arm,r_arm,l_hand,r_hand]: #fixes black bars left on edges by rotozoom
-			pxarray = pygame.PixelArray(x)
-			pxarray.replace(BLACK,TEMP)
-			pxarray.replace(GRAEY,BLACK)
-			del pxarray
-		l_arm = pygame.transform.rotozoom(l_arm,  90,1)
-		l_hand= pygame.transform.rotozoom(l_hand, 90,1)
-		r_arm = pygame.transform.rotozoom(r_arm, -90,1)
-		r_hand= pygame.transform.rotozoom(r_hand,-90,1)
-		for x in [l_arm,r_arm,l_hand,r_hand]:
-			pxarray = pygame.PixelArray(x)
-			pxarray.replace(BLACK,GRAEY)
-			pxarray.replace(TEMP,BLACK)
-			del pxarray
-		l_arm .set_colorkey(GRAEY)
-		r_arm .set_colorkey(GRAEY)
+		l_arm = pygame.transform.rotate(l_arm,  90)
+		l_hand= pygame.transform.rotate(l_hand, 90)
+		r_arm = pygame.transform.rotate(r_arm, -90)
+		r_hand= pygame.transform.rotate(r_hand,-90)
+		l_arm.set_colorkey(GRAEY) #colorkey has to be set twice because pygame sucks
+		r_arm.set_colorkey(GRAEY)
 		l_hand.set_colorkey(GRAEY)
 		r_hand.set_colorkey(GRAEY)
 		self.surface.blit(l_arm, (128-32, 256-81+sin(self.frame//30)*2))
 		self.surface.blit(r_arm, (128+16 , 256-81+sin(self.frame//30)*2))
-		self.surface.blit(l_hand,(128-31, 256-51+sin(self.frame//30)*2))
-		self.surface.blit(r_hand,(128+17 , 256-51+sin(self.frame//30)*2))
+		self.surface.blit(l_hand,(128-32, 256-51+sin(self.frame//30)*2))
+		self.surface.blit(r_hand,(128+16 , 256-51+sin(self.frame//30)*2))
 		return self.surface
