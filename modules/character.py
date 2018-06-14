@@ -143,6 +143,7 @@ class Char(pygame.sprite.Sprite):
 
 		#######
 		head = pygame.Surface((self.sprite_image[0].get_width(), self.sprite_image[0].get_height()))
+		head.fill(GRAEY)
 		head.blit(self.sprite_image[0].copy(),(0,0))
 		head.set_colorkey(GRAEY)
 		if (self.x < 0 or self.x > RES[0]) and self.y>0: #draw offscreen arrows

@@ -33,8 +33,21 @@ class animator():
 		self.surface.fill(0)
 		self.surface.blit(self.head, (128-10.5, 256-120+sin(self.frame//30)*2))
 		self.surface.blit(self.body, (128-21  , 256-99 +sin(self.frame//30)*2))
-		l_arm = pygame.transform.rotozoom(self.l_arm, 90,1)
-		r_arm = pygame.transform.rotozoom(self.r_arm,-90,1)
+		l_arm = self.l_arm.copy()
+		r_arm = self.r_arm.copy()
+
+		for x in [l_arm,r_arm]: #fixes black bars left on edges by rotozoom
+			pxarray = pygame.PixelArray(x)
+			pxarray.replace(BLACK,TEMP)
+			pxarray.replace(GRAEY,BLACK)
+			del pxarray
+		l_arm = pygame.transform.rotozoom(l_arm, 90,1)
+		r_arm = pygame.transform.rotozoom(r_arm,-90,1)
+		for x in [l_arm,r_arm]:
+			pxarray = pygame.PixelArray(x)
+			pxarray.replace(BLACK,GRAEY)
+			pxarray.replace(TEMP,BLACK)
+			del pxarray
 		l_arm.set_colorkey(GRAEY)
 		r_arm.set_colorkey(GRAEY)
 		self.surface.blit(l_arm, (128-32, 256-99+sin(self.frame//30)*2))
