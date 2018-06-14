@@ -45,10 +45,6 @@ class animator():
 		l_hand= pygame.transform.rotate(l_hand, 90)
 		r_arm = pygame.transform.rotate(r_arm, -90)
 		r_hand= pygame.transform.rotate(r_hand,-90)
-		l_arm.set_colorkey(GRAEY) #colorkey has to be set twice because pygame sucks
-		r_arm.set_colorkey(GRAEY)
-		l_hand.set_colorkey(GRAEY)
-		r_hand.set_colorkey(GRAEY)
 		self.surface.blit(l_arm, (128-32, 256-81+sin(self.frame//30)*2))
 		self.surface.blit(r_arm, (128+17 , 256-81+sin(self.frame//30)*2))
 		self.surface.blit(l_hand,(128-32, 256-51+sin(self.frame//30)*2))
