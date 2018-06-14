@@ -54,7 +54,7 @@ class Char(pygame.sprite.Sprite):
 		self.defense = stats[-2]
 		self.attack = 1+(stats[0]/22)
 	def __repr__(self):return"ID"+str(self.joystick.get_id())
-	def update(self,keys,events):
+	def update(self,keys,events):		
 		self.keys = keys
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
@@ -93,6 +93,13 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = 0
 			self.hspeed = 0
 		self.get_keys()
+		
+		#Draw Character
+		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
+		character_surface = self.anim.idle()
+		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
+		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
+		
 		if self.ability_run >= 0:
 			if self.ability_time > 0 or self.ability_time == -1:
 				if self.ability_time > 0:
@@ -113,33 +120,10 @@ class Char(pygame.sprite.Sprite):
 		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
 #		self.hitbox = (self.x+4-24,self.y-120,40,120)
 
-		#Draw Character
-		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		character_surface = pygame.surface.Surface((256, 256))
-		character_surface.fill((192,192,192))
-		#pygame.draw.rect(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(self.x-48/2,self.y-72,48,72))
-		character_surface.blit(self.sprite_image[0],(128-10.5,256-120))
-		character_surface.blit(self.sprite_image[1],(128-21,256-99))
-		#character_surface.blit(pygame.transform.rotate(self.sprite_image[2],90),(825,130))
-		#character_surface.blit(pygame.transform.rotate(self.sprite_image[3],90),(825,230))
-		#character_surface.blit(pygame.transform.rotate(self.sprite_image[4],-90),(975,130))
-		#character_surface.blit(pygame.transform.rotate(self.sprite_image[5],-90),(975,230))
-		character_surface.blit(self.sprite_image[2],(128-51,256-99))
-		character_surface.blit(self.sprite_image[3],(128-66,256-99))
-		character_surface.blit(self.sprite_image[4],(128+21,256-99))
-		character_surface.blit(self.sprite_image[5],(128+51,256-99))
-		character_surface.blit(self.sprite_image[6],(128-21,256-45))
-		character_surface.blit(self.sprite_image[7],(128-21,256-15))
-		character_surface.blit(self.sprite_image[8],(128+6,256-45))
-		character_surface.blit(self.sprite_image[9],(128+6,256-15))
-		character_surface.set_colorkey((192,192,192))
 
-
-		character_surface = self.anim.idle()
 #		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 
-		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
-		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
+		
 
 		#######
 		head = pygame.Surface((self.sprite_image[0].get_width(), self.sprite_image[0].get_height()))
@@ -188,6 +172,8 @@ class Char(pygame.sprite.Sprite):
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
+		try: [exec('x.freeze=0') for x in self.target]
+		except: pass
 		self.ability_run = -1
 		self.ability_time = 0
 		self.ability_air=0

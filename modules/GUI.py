@@ -133,18 +133,22 @@ class GUI():
 
 
 
-	def reset_pointers(self):
+	def reset_pointers(self,char_name = 0):
 		self.pointer = []
 		self.pointerUpdate = []
 		self.joystick_button = []
 		self.joystick_selected = []
 		self.char_selected = []
+		if char_name == 1:
+			self.char_name = [None]
 		for x in self.joysticks[:-1]:
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
 			self.joystick_selected.append(0)
 			self.char_selected.append(None)
+			if char_name ==1:
+				self.char_name.append(None)
 		self.char_selected.append(None)
 
 	def load_data(self):
@@ -307,7 +311,6 @@ class GUI():
 			img = pygame.transform.scale(self.icons['controller'],(180,180))
 			img2 = pygame.transform.scale(self.icons['keyboard'],(180,180))
 			if len(self.joysticks) > 1:
-				self.reset_pointers()
 				for i in range(len(self.joysticks[:-1])): #Draws/displays how many controllers are connected
 					self.win.blit(img,(10+(96*(i+1)+200*i),240))
 				i += 1
@@ -351,6 +354,7 @@ class GUI():
 		if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 		else: joysticks=joysticks[:4]
 		self.joysticks = joysticks
+		self.reset_pointers(1)
 
 
 pygame.init()
