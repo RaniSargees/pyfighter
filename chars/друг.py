@@ -1,4 +1,5 @@
 import pygame
+from random import random
 from colorsys import hls_to_rgb
 from settings import *
 from modules.character import *
@@ -32,7 +33,7 @@ class char(Char):
 		self.gravityMultiplier = 0
 		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
 		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack((self.hspeed/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		[(x[1].knockBack((abs(self.hspeed)/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 
 
@@ -49,7 +50,48 @@ class char(Char):
 		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."]
 
 
+	def special3(self):
+		if not(self.ability_run+1 or self.ability_delay_time):
+			self.ability_delay_time = 2
+			self.ability_run = 3
+			self.ability_time = 3
+			self.gravityMultiplier = 0.4
+			self.image_list = []
+			self.level = []
+			self.count = 0
+			self.image_x = []
+			self.surf = pygame.Surface((180,180))
+			for x in range(60):
+				hue = random()*360
+				image = [pygame.transform.scale(x, (60,60)) for x in self.game.effects['flaming_turds'].copy()]
+				for i in image:#Randomly change the color of the projectile
+					pxarray = pygame.PixelArray(i)
+					pxarray.replace((255,  0, 0), tuple([int(255*x) for x in hls_to_rgb(hue, .5,  1)]))
+					pxarray.replace((169,  1, 1), tuple([int(255*x) for x in hls_to_rgb(hue, .4, .8)]))
+					pxarray.replace((255,112,17), tuple([int(255*x) for x in hls_to_rgb(hue, .6, .7)]))
+					pxarray.replace((251,228,30), tuple([int(255*x) for x in hls_to_rgb(hue, .7, .8)]))
+					del pxarray
+				self.image_list.append(image)
+				self.image_x.append((randint(-60,180),randint(0,180),randint(5,20)))
+			self.img_len = len(image)
+			
+	
+	def run_special3(self):
+		self.count += 1
+		self.surf.fill((WHITE))
 
+		for i,j in enumerate(self.image_list): #Blits rainbow projectiles onto surfaces
+			self.image_x[i] = (self.image_x[i][0] +self.image_x[i][2],self.image_x[i][1],self.image_x[i][2])
+			if self.image_x[i][0] > 180:
+				self.image_x[i] = (-60,self.image_x[i][1],self.image_x[i][2])
+			self.surf.blit(j[self.count%self.img_len],(self.image_x[i][0],self.image_x[i][1]))
+			
+		pygame.draw.polygon(self.surf,WHITE,((0,0),(0,180),(60,180)))
+		pygame.draw.polygon(self.surf,WHITE,((180,0),(180,180),(120,180)))
+		self.surf.set_colorkey((WHITE))
+		self.game.win.blit(self.surf,(self.x-90,self.y-180))
+			
+			
 """
 	def special3(self):
 		if not(self.ability_run+1):
@@ -62,9 +104,8 @@ class char(Char):
 			self.hue = 0
 
 	def run_special3(self):
-		self.color = [int(x*255) for x in hls_to_rgb(self.hue%360,0.5,1)]
-		print(hls_to_rgb(self.hue%360,0.5,1))
-		self.hue+=3
+		self.color = [int(x*255) for x in hls_to_rgb(self.hue/360,0.5,1)]
+		self.hue+=1
 		pygame.draw.polygon(self.game.win,self.color,((self.x-7,self.y-79),(self.x-10,self.y-72),(self.x-7,self.y-65),(self.x+7,self.y-65),(self.x+10,self.y-72),(self.x+7,self.y-79)))
 		if self.release:
 			self.ability_run = 0
