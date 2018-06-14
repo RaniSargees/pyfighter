@@ -49,9 +49,10 @@ class rainbow_poop(pygame.sprite.Sprite):
 		self.bounce = bounce
 		self.dir = direction
 		self.hit_list = [self,char]
-		self.frame = 0
 		self.image = [pygame.transform.scale(x, (48,48)) for x in self.char.fire]
 		if self.dir-1:self.image=[pygame.transform.flip(x, 1,0) for x in self.image]
+		self.loop_len = len(self.image)
+		self.frame = 0
 		hue = random()*360
 		self.yspeed = yspeed
 		for x in self.image:
@@ -63,7 +64,8 @@ class rainbow_poop(pygame.sprite.Sprite):
 			del pxarray
 
 	def update(self):
-		self.char.game.win.blit(self.image[self.frame],(self.x, self.y))
+		self.frame += 1
+		self.char.game.win.blit(self.image[self.frame%self.loop_len],(self.x, self.y))
 		self.x += (self.dir*2-1) * self.xspeed * 800 * self.char.game.dt
 		self.y += self.yspeed
 		self.yspeed += 1
