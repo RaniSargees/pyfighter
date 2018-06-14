@@ -1,31 +1,28 @@
 import pygame
-from math import sin,cos,pi,radians,degrees
+from math import sin,cos,asin,acos,radians,degrees
 from random import randint
 from settings import *
+pi=3
 
 class animator():
 	def __init__(self,sprite):
 		self.surface	= pygame.surface.Surface((256,256), pygame.SRCALPHA, 32)
 		self.frame  	= 0
 		self.anim   	= ""
-		self.head   	= sprite[0]
-		self.body   	= sprite[1]
-		self.l_arm  	= sprite[2]
-		self.l_arm_1	= sprite[2]
-		self.l_arm_2	= sprite[2]
-		self.l_hand 	= sprite[3]
-		self.r_arm  	= sprite[4]
-		self.r_arm_1	= sprite[4]
-		self.r_arm_2	= sprite[4]
-		self.r_hand 	= sprite[5]
-		self.l_leg  	= sprite[6]
-		self.l_leg_1	= sprite[6]
-		self.l_leg_2	= sprite[6]
-		self.l_foot 	= sprite[7]
-		self.r_leg  	= sprite[8]
-		self.r_leg_1	= sprite[8]
-		self.r_leg_2	= sprite[8]
-		self.r_foot 	= sprite[9]
+		self.head   	= sprite[0] # 21,21
+		self.body   	= sprite[1] # 42,54
+		self.l_arm  	= sprite[2] # 30,15
+		self.l_hand 	= sprite[3] # 15,15
+		self.r_arm  	= sprite[4] # 30,15
+		self.r_hand 	= sprite[5] # 15,15
+		self.l_leg  	= sprite[6] # 15,30
+		self.l_leg_top	= sprite[6].subsurface(( 0, 0,15,15)) # 15,15
+		self.l_leg_bot	= sprite[6].subsurface(( 0,15,15,15)) # 15,15
+		self.l_foot 	= sprite[7] # 15,15
+		self.r_leg  	= sprite[8] # 15,30
+		self.r_leg_top	= sprite[8].subsurface(( 0, 0,15,15)) # 15,15
+		self.r_leg_bot	= sprite[8].subsurface(( 0,15,15,15)) # 15,15
+		self.r_foot 	= sprite[9] # 15,15
 
 	def idle(self):
 		if self.anim!="idle":self.frame=randint(0,240);self.anim="idle"
@@ -50,3 +47,13 @@ class animator():
 		self.surface.blit(l_hand,(128-32, 256-51+sin(self.frame//30)*2))
 		self.surface.blit(r_hand,(128+17 , 256-51+sin(self.frame//30)*2))
 		return self.surface
+
+	def walk(self,hspeed):
+		if self.anim!="walk":self.frame=0;self.anim="walk"
+		else: self.frame+=hspeed
+		r_angle = radians(degrees(sin(frame//3000))*15)
+		r_bone = (,)
+		self.surface.blit(self.head, (128-10.5, 256-120))
+		self.surface.blit(self.body, (128-21  , 256- 99))
+		#TODO everything
+
