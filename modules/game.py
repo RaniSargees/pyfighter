@@ -76,7 +76,7 @@ class Game():
 			file = os.path.join(sprites_folder, fileName)
 			for i in sorted(os.listdir(file)):
 				if i.lower().endswith(".png") or i.lower().endswith(".jpg"):
-					sprite_image = pygame.image.load(os.path.join(file,i)).convert_alpha()
+					sprite_image = pygame.image.load(os.path.join(file,i)).convert()
 					head_rect = (285,80,70,70)
 					torso_rect = (250,150,140,180)
 					L_arm_rect = (150,180,100,50)
