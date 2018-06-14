@@ -50,7 +50,7 @@ class animator():
 		l_hand.set_colorkey(GRAEY)
 		r_hand.set_colorkey(GRAEY)
 		self.surface.blit(l_arm, (128-32, 256-81+sin(self.frame//30)*2))
-		self.surface.blit(r_arm, (128+16 , 256-81+sin(self.frame//30)*2))
+		self.surface.blit(r_arm, (128+17 , 256-81+sin(self.frame//30)*2))
 		self.surface.blit(l_hand,(128-32, 256-51+sin(self.frame//30)*2))
-		self.surface.blit(r_hand,(128+16 , 256-51+sin(self.frame//30)*2))
+		self.surface.blit(r_hand,(128+17 , 256-51+sin(self.frame//30)*2))
 		return self.surface
