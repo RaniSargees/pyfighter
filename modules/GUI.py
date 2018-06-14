@@ -38,6 +38,13 @@ class GUI():
 			self.char_name.append(None)
 		self.char_selected.append(None)
 		self.char_name.append(None)
+		
+		#Fonts
+		self.font_LLL = pygame.font.SysFont('Comic Sans MS',72)
+		self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
+		self.font_L = pygame.font.SysFont('Comic Sans MS',32)
+		self.font_M = pygame.font.SysFont('Comic Sans MS',16)
+		self.font_S = pygame.font.SysFont('Comic Sans MS',8)
 
 	def new(self,location=0):
 		self.location = location
@@ -56,18 +63,13 @@ class GUI():
 			#Buttons
 			self.BTN_list = [[BTN(self.win,0,(140,300,600,200),self.MenuBTN,text='PLAY',fn='self.new(1)',thickness = 2,clickable = False),
 							BTN(self.win,0,(840,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2,clickable = False)],
-							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='OPTIONS',fn='self.new(3)',thickness = 2,clickable = False),
+							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='RECONNECT CONTROLLERS',fn='self.new(3)',thickness = 2,clickable = False),
 							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2,clickable = False)]]
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
 
 		if self.location == 1: #Character Select screen
 			self.reset_pointers()
-			self.font_LLL = pygame.font.SysFont('Comic Sans MS',72)
-			self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
-			self.font_L = pygame.font.SysFont('Comic Sans MS',32)
-			self.font_M = pygame.font.SysFont('Comic Sans MS',16)
-			self.font_S = pygame.font.SysFont('Comic Sans MS',8)
 			#Back Button
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
 			#Title Text
@@ -113,6 +115,21 @@ class GUI():
 							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),
 							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],
 							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
+		
+		if self.location == 3: #Controller Connection
+			self.reset_pointers()
+			self.text = self.font_LLL.render('Connect your controllers',True,BLACK)
+			self.img.append([self.text,self.text.get_rect(center=(640,80))])
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)],
+							[BTN(self.win,0,(390,500,500,100),self.MenuBTN,text='Reset Controllers',fn='self.new_joystick()', clickable = False)]]
+			surf = pygame.Surface((1280,300),pygame.SRCALPHA,32)
+			for i in range(4):
+				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i],(96*(i+1)+200*i,0,200,300))
+				pygame.draw.rect(surf,BLACK,(96*(i+1)+200*i,0,200,300),3)
+			self.img.append([surf,(0,160)])
+			for i in range(4):
+				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
+				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
 
 
 
@@ -165,7 +182,7 @@ class GUI():
 
 		for fileName in os.listdir(icon_folder):
 			self.icons[fileName[:-4]] = pygame.image.load(os.path.join(icon_folder,fileName)).convert_alpha()
-			self.icons[fileName[:-4]].set_colorkey((255,255,255))
+			self.icons[fileName[:-4]].set_colorkey(WHITE)
 
 	def run(self):
 		self.playing = 1
@@ -276,16 +293,34 @@ class GUI():
 				self.win.blit(text,text.get_rect(center=(640,350)))
 				if bool(len([x for x in self.joystick_button if x == 0])) or (pygame.Rect(0,310,1280,80).collidepoint(pygame.mouse.get_pos()) and self.mDown):
 					self.new(2)
-		if self.location == 2:
+		elif self.location == 2:
 			if self.map_pos >= len(self.covers):
 				self.map_pos = 0
 			elif self.map_pos < 0:
 				self.map_pos = len(self.covers)-1
-			#self.map_pos = min(max(0,self.map_pos),len(self.covers)-1)
 			self.win.blit(pygame.transform.scale(self.covers[sorted(self.covers)[self.map_pos]],(740,400)),(270,100))
 			text = self.font_LL.render(sorted(self.covers)[self.map_pos],True,BLACK)
 			self.win.blit(text,text.get_rect(center=(640,550)))
 			pygame.draw.rect(self.win,BLACK,(270,100,740,400),5)
+		
+		elif self.location == 3:
+			img = pygame.transform.scale(self.icons['controller'],(180,180))
+			img2 = pygame.transform.scale(self.icons['keyboard'],(180,180))
+			if len(self.joysticks) > 1:
+				self.reset_pointers()
+				for i in range(len(self.joysticks[:-1])): #Draws/displays how many controllers are connected
+					self.win.blit(img,(10+(96*(i+1)+200*i),240))
+				i += 1
+				if len(self.joysticks)==4:
+					if self.joysticks.get_name == "Dummy Joystick":
+						self.win.blit(img2,(10+(96*(i+1)+200*i),240))
+					else:
+						self.win.blit(img,(10+(96*(i+1)+200*i),240))
+				else:
+					self.win.blit(img2,(10+(96*(i+1)+200*i),240))
+			else:
+				self.win.blit(img2,(10+(96),240))
+				
 
 
 	def run_paint(self):
