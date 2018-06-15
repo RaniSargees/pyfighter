@@ -72,9 +72,7 @@ class animator():
 		r_foot_offset = pygame.math.Vector2(0,28).rotate(r_angle)
 		r_foot, rf_rect = animator.pivot(self.r_foot,r_angle, r_foot_offset+(128+21,256-45), (-7.5,7.5)) #rotate feet about connecting point
 		l_foot, lf_rect = animator.pivot(self.l_foot,l_angle, l_foot_offset+(128-21+15,256-45), (-7.5,7.5))
-
 		bob = 1+abs(r_angle/3) #calculate offset for "bobbing" while walking
-
 		self.surface.blit(r_foot, rf_rect) #blit foot
 		self.surface.blit(r_leg, rl_rect) #blit leg
 		self.surface.blit(r_hand, rh_rect.move(0,bob)) #blit hand
@@ -85,4 +83,31 @@ class animator():
 		self.surface.blit(l_leg, ll_rect) #blit leg
 		self.surface.blit(l_hand, lh_rect.move(0,bob)) #blit hand
 		self.surface.blit(l_arm, la_rect.move(0,bob)) #blit arm
+		return self.surface
+
+	def DAB_ON_HATERS(self): #i'm sorry.
+		if self.anim!="daberoni":self.frame=0;self.anim="daberoni" #reset frame on animation change
+		self.surface.fill(0) #clear
+		r_arm, ra_rect = animator.pivot(self.r_arm, 190, (128+17,256-81), (15,-7.5))
+		l_arm, la_rect = animator.pivot(self.l_arm, 10, (128-32+15,256-81), (-15,-7.5))
+		l_hand_offset = pygame.math.Vector2(-28,0).rotate(10) #generate offsets for hand positions
+		r_hand_offset = pygame.math.Vector2(28,0).rotate(190)
+		r_hand, rh_rect = animator.pivot(self.r_hand, 190, r_hand_offset+(128+17,256-81), (7.5,-7.5)) #rotate hands about connecting point
+		l_hand, lh_rect = animator.pivot(self.l_hand,  10, l_hand_offset+(128-32+15,256-81), (-7.5,-7.5))
+		rl_rect = (128+ 6,256-45)
+		ll_rect = (128-21,256-45)
+		l_foot_offset = pygame.math.Vector2(0,28)
+		r_foot_offset = pygame.math.Vector2(0,28)
+		rf_rect = r_foot_offset+(128+6,256-45)
+		lf_rect = l_foot_offset+(128-21,256-45)
+		self.surface.blit(self.body, (128-  21, 256- 99))
+		self.surface.blit(self.head, (128-10.5, 256-120)) #blit body and head
+		self.surface.blit(self.r_foot, rf_rect) #blit foot
+		self.surface.blit(self.r_leg, rl_rect) #blit leg
+		self.surface.blit(self.l_foot, lf_rect) #blit foot
+		self.surface.blit(self.l_leg, ll_rect) #blit leg
+		self.surface.blit(l_hand, lh_rect) #blit hand
+		self.surface.blit(l_arm, la_rect) #blit arm
+		self.surface.blit(r_hand, rh_rect) #blit hand
+		self.surface.blit(r_arm, ra_rect) #blit arm
 		return self.surface

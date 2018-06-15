@@ -50,7 +50,7 @@ class Game():
 			pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
 			pygame.mixer.music.play(-1)
 		except:()
-		try: self.bg = pygame.transform.smoothscale(pygame.image.load(BytesIO(self.maps[self.map].read("bg.png"))), (RES[0], RES[1]))
+		try: self.bg = pygame.transform.smoothscale(pygame.image.load(BytesIO(self.maps[self.map].read("bg.png"))), (RES[0], RES[1])).convert()
 		except: self.bg=0
 	def loadData(self):
 		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
