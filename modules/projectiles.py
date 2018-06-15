@@ -104,7 +104,7 @@ class laser(pygame.sprite.Sprite):
 		self.char = char
 		self.Xspeed = Xspeed
 		self.Yspeed = Yspeed
-		self.loc = (x-20,y-15)
+		self.loc = (x,y)
 		self.image = pygame.transform.rotate(pygame.transform.scale(self.char.bullet[0],(40,30)),angle)
 		self.image_rect = self.image.get_rect()
 

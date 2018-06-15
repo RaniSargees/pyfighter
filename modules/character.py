@@ -68,17 +68,18 @@ class Char(pygame.sprite.Sprite):
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
-			if self.knocked and self.grounded[0].platform==0:
-				self.hspeed *= 0.1
-				self.vspeed *= -1
-				self.stun = 0
+			if self.knocked:
+				if self.grounded[0].platform==0:
+					self.hspeed *= 0.1
+					self.vspeed *= -1
+					self.stun = 0
 			else:
 				self.ability_air = 0
 				self.ability_air_side = 0
 				self.currentJumps = self.maxJumps
 				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
-				if len(self.grounded) and self.gravityMultiplier == 3 and not len([x for x in self.grounded if not x.platform]):
+				if len(self.grounded) and self.gravityMultiplier == 3 and not len([x for x in self.grounded if not x.platform]):#Fall through platforms when Down key is pressed
 					self.y += self.grounded[0].rect[3] + self.grounded[0].speed * self.game.dt * (self.grounded[0].dir > 1)
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
@@ -184,7 +185,7 @@ class Char(pygame.sprite.Sprite):
 		self.ability_air=0
 		self.gravityMultiplier=1
 		Knockback_force = ((((hit)**1.2) * ((self.dmg+30)**1.1))/10)*(1.5-((self.defense-1)/10))
-		self.stun = min(int(Knockback_force/4000),1.5)
+		self.stun = min(Knockback_force/4000,1.5)
 		self.knocked = 1
 		if direction < 2:
 			self.hspeed = (direction-0.5)*2*Knockback_force*math.cos(math.pi/6) * (60/max(1,self.game.clock.get_fps()))

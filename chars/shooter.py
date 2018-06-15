@@ -10,7 +10,7 @@ class char(Char):
 			self.ability_run = 0
 			self.ability_time = 0.01
 			self.bullet = self.game.effects['pellet'].copy()
-			laser(self,self.x,self.y-92,((self.facing==1)-0.5)*2*50,0,0)
+			laser(self,self.x-20,self.y-92-15,((self.facing==1)-0.5)*2*50,0,0)
 
 	def run_special0(self):
 		pass
@@ -96,7 +96,7 @@ class char(Char):
 		self.gravityMultiplier = 0
 		if self.count%3 == 0:
 			self.LR+=1
-			laser(self,self.x+(((self.LR%2)-0.5)*48)-15,self.y,0,20,90)
+			laser(self,self.x+(((self.LR%2)-0.5)*38)-15,self.y,0,20,90)
 
 	def special3(self):
 		if not(self.ability_run+1 or self.ability_delay_time):
