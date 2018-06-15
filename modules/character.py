@@ -54,7 +54,7 @@ class Char(pygame.sprite.Sprite):
 		self.defense = stats[-2]
 		self.attack = 1+(stats[0]/22)
 	def __repr__(self):return"ID"+str(self.joystick.get_id())
-	def update(self,keys,events):		
+	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
@@ -93,13 +93,16 @@ class Char(pygame.sprite.Sprite):
 			self.vspeed = 0
 			self.hspeed = 0
 		self.get_keys()
-		
+
 		#Draw Character
 		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		character_surface = self.anim.idle()
+		if not self.hspeed:character_surface = self.anim.idle()
+		else:character_surface=self.anim.walk(self.hspeed)
+
+
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
-		
+
 		if self.ability_run >= 0:
 			if self.ability_time > 0 or self.ability_time == -1:
 				if self.ability_time > 0:
@@ -123,7 +126,7 @@ class Char(pygame.sprite.Sprite):
 
 #		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
 
-		
+
 
 		#######
 		head = pygame.Surface((self.sprite_image[0].get_width(), self.sprite_image[0].get_height()))
