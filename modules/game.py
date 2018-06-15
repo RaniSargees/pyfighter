@@ -34,9 +34,9 @@ class Game():
 				#x is num
 				#y is values
 				if "ouya" in self.joysticks[x].get_name().lower():
-					exec(str(['mage','друг','shooter'][y[0]])+'.char(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
+					exec(str(['mage','друг','shooter','brawler'][y[0]])+'.char(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
 				else:
-					exec(str(['mage','друг','shooter'][y[0]])+'.char(self,self.joysticks[x],y[1])')
+					exec(str(['mage','друг','shooter','brawler'][y[0]])+'.char(self,self.joysticks[x],y[1])')
 		#load map
 		for x in self.maps[self.map].open("map").readlines():
 			if x.strip():
