@@ -69,12 +69,14 @@ class animator():
 		r_hand, rh_rect = animator.pivot(self.r_hand,l_angle/2+90, r_hand_offset+(128+17,256-81), (7.5,-7.5)) #rotate hands about connecting point
 		l_hand, lh_rect = animator.pivot(self.l_hand,r_angle/2-90, l_hand_offset+(128-32+15,256-81), (-7.5,-7.5))
 
+		bob = 1+abs(r_angle/3)
+
 		self.surface.blit(r_leg, rl_rect) #blit leg
-		self.surface.blit(r_hand, rh_rect.move(0,abs(r_angle/3))) #blit hand
-		self.surface.blit(r_arm, ra_rect.move(0,abs(r_angle/3))) #blit arm (bobbing w/ body)
-		self.surface.blit(self.head, (128-10.5, 256-120 + abs(r_angle/3))) #blit body and head (bobbing)
-		self.surface.blit(self.body, (128-  21, 256- 99 + abs(r_angle/3)))
+		self.surface.blit(r_hand, rh_rect.move(0,bob)) #blit hand
+		self.surface.blit(r_arm, ra_rect.move(0,bob)) #blit arm (bobbing w/ body)
+		self.surface.blit(self.head, (128-10.5, 256-120 + bob)) #blit body and head (bobbing)
+		self.surface.blit(self.body, (128-  21, 256- 99 + bob))
 		self.surface.blit(l_leg, ll_rect) #blit leg
-		self.surface.blit(l_hand, lh_rect.move(0,abs(r_angle/3))) #blit hand
-		self.surface.blit(l_arm, la_rect.move(0,abs(r_angle/3))) #blit arm (bobbing w/ body)
+		self.surface.blit(l_hand, lh_rect.move(0,bob)) #blit hand
+		self.surface.blit(l_arm, la_rect.move(0,bob)) #blit arm (bobbing w/ body)
 		return self.surface
