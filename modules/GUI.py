@@ -99,11 +99,16 @@ class GUI():
 				#Put user select box here.
 				#Selected chars stats, sprite, class etc.
 			temp = []
+			char_amount = len(self.char_sprites)
+			size_reduction = 0
+			while char_amount > (12+(size_reduction*6))*(size_reduction+2): #Determines how large each character profile is on the character select screen
+				size_reduction += 1
+			profile_size = (200/(size_reduction+2))
 			for j,k in enumerate(sorted(self.char_sprites, key=lambda k:k.lower())):
-				if j%12 == 0 and j != 0: #Change if there is more than 24chars (Make image/buttons smaller)
+				if j%(12+(size_reduction*6)) == 0 and j != 0:
 					self.BTN_list.append(temp)
 					temp = []
-				temp.append(BTN(self.win,0,(40+100*(j%12),100+100*(j//12),100,100),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_name[x],self.char_selected[x] = [self.char_sprites["'+str(k)+'"][1],"'+str(k)+'"],self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(100,100))))
+				temp.append(BTN(self.win,0,(40+profile_size*(j%(12+(size_reduction*6))),100+profile_size*(j//(12+(size_reduction*6))),profile_size,profile_size),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_name[x],self.char_selected[x] = [self.char_sprites["'+str(k)+'"][1],"'+str(k)+'"],self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(int(profile_size),int(profile_size)))))
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
