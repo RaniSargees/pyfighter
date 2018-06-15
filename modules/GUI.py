@@ -96,8 +96,6 @@ class GUI():
 				surf.blit(pygame.transform.scale(self.icons['defense'].copy(),(16,16)),(12,227))
 				surf.blit(pygame.transform.scale(self.icons['speed'].copy(),(16,16)),(12,267))
 				self.img.append([surf,((96*(h+1))+(200*h),400)])
-				#Put user select box here.
-				#Selected chars stats, sprite, class etc.
 			temp = []
 			char_amount = len(self.char_sprites)
 			size_reduction = 0

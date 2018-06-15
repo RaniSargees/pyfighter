@@ -5,10 +5,27 @@ from modules.projectiles import *
 
 class char(Char):
 	def special0(self):
-		pass
+		if not self.ability_run+1:
+			self.dirn = self.facing
+			self.ability_run = 0
+			sefl.ability_time = -1
+			self.release = 0
+			self.freeze = 2
+			self.SP0_counter = 0
+			self.SP0_go = 0
 		
 	def run_special0(self):
-		pass
+		if (self.BTNDown and self.release) or self.SP0_counter > 180:
+			self.SP0_go = 1
+		else:
+			self.SP0_counter += 1
+		if self.SP0_go:
+			self.hspeed = (self.facing -0.5)*2*(self.SP0_counter*3)
+			self.SP0_counter -= 5
+			if self.SP0_counter <= 0:
+				self.SP0_go = 0
+				self.ability_run = 0
+				serlf.ability_time = 0
 		
 		
 	def special3(self):
