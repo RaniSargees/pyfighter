@@ -68,15 +68,21 @@ class animator():
 		r_hand_offset = pygame.math.Vector2(28,0).rotate(l_angle/2+90)
 		r_hand, rh_rect = animator.pivot(self.r_hand,l_angle/2+90, r_hand_offset+(128+17,256-81), (7.5,-7.5)) #rotate hands about connecting point
 		l_hand, lh_rect = animator.pivot(self.l_hand,r_angle/2-90, l_hand_offset+(128-32+15,256-81), (-7.5,-7.5))
+		l_foot_offset = pygame.math.Vector2(0,28).rotate(l_angle) #generate offsets for foot positions
+		r_foot_offset = pygame.math.Vector2(0,28).rotate(r_angle)
+		r_foot, rf_rect = animator.pivot(self.r_foot,r_angle, r_foot_offset+(128+21,256-45), (-7.5,7.5)) #rotate feet about connecting point
+		l_foot, lf_rect = animator.pivot(self.l_foot,l_angle, l_foot_offset+(128-21+15,256-45), (-7.5,7.5))
 
-		bob = 1+abs(r_angle/3)
+		bob = 1+abs(r_angle/3) #calculate offset for "bobbing" while walking
 
+		self.surface.blit(r_foot, rf_rect) #blit foot
 		self.surface.blit(r_leg, rl_rect) #blit leg
 		self.surface.blit(r_hand, rh_rect.move(0,bob)) #blit hand
-		self.surface.blit(r_arm, ra_rect.move(0,bob)) #blit arm (bobbing w/ body)
-		self.surface.blit(self.head, (128-10.5, 256-120 + bob)) #blit body and head (bobbing)
+		self.surface.blit(r_arm, ra_rect.move(0,bob)) #blit arm
+		self.surface.blit(self.head, (128-10.5, 256-120 + bob)) #blit body and head
 		self.surface.blit(self.body, (128-  21, 256- 99 + bob))
+		self.surface.blit(l_foot, lf_rect) #blit foot
 		self.surface.blit(l_leg, ll_rect) #blit leg
 		self.surface.blit(l_hand, lh_rect.move(0,bob)) #blit hand
-		self.surface.blit(l_arm, la_rect.move(0,bob)) #blit arm (bobbing w/ body)
+		self.surface.blit(l_arm, la_rect.move(0,bob)) #blit arm
 		return self.surface
