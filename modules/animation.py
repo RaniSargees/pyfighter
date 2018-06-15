@@ -48,10 +48,10 @@ class animator():
 		l_hand= pygame.transform.rotate(self.l_hand, 90)
 		r_arm = pygame.transform.rotate(self.r_arm, -90)
 		r_hand= pygame.transform.rotate(self.r_hand,-90)
-		self.surface.blit(l_arm, (128-32, 256-81+sin(self.frame/30)*2)) #blit rotated arms and hands (bob up/down)
-		self.surface.blit(r_arm, (128+17 , 256-81+sin(self.frame/30)*2))
-		self.surface.blit(l_hand,(128-32, 256-51+sin(self.frame/30)*2))
-		self.surface.blit(r_hand,(128+17 , 256-51+sin(self.frame/30)*2))
+		self.surface.blit(l_arm, (128-32, 256-81-9+sin(self.frame/30)*2)) #blit rotated arms and hands (bob up/down)
+		self.surface.blit(r_arm, (128+17 , 256-81-9+sin(self.frame/30)*2))
+		self.surface.blit(l_hand,(128-32, 256-51-9+sin(self.frame/30)*2))
+		self.surface.blit(r_hand,(128+17 , 256-51-9+sin(self.frame/30)*2))
 		return self.surface
 
 	def walk(self,hspeed):
