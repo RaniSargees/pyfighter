@@ -154,7 +154,7 @@ class Char(pygame.sprite.Sprite):
 			pass
 
 	def jump(self):
-		if self.currentJumps and self.freeze != 3:
+		if self.currentJumps and self.freeze != 3 and self.freeze != 2:
 			self.currentJumps -= 1
 			self.vspeed = self.jumpSpeed
 			self.jumpBonus = 0
@@ -215,14 +215,13 @@ class Char(pygame.sprite.Sprite):
 			elif self.hspeed and not(self.knocked):
 				if abs(self.hspeed)>self.moveSpeed: self.hspeed -= (self.hspeed/abs(self.hspeed) * self.moveSpeed * (bool(not self.grounded)*.15 + bool(self.grounded)) * (60/max(1,self.game.clock.get_fps())))/((self.grounded==0)*5+1)
 				else: self.hspeed = 0
-			self.gravityMultiplier = (self.joystick.get_axis(1) >.9)*2 + 1
+			self.gravityMultiplier = ((self.joystick.get_axis(1) >.9)*2*(self.freeze != 2) + 1)
 			if self.joystick.get_button(self.buttonmap[0]) and (self.vspeed < 0) and (self.jumpBonus < self.maxJumpBonus):
 				self.vspeed += self.jumpBonusSpeed * (60/max(1,self.game.clock.get_fps()))
 				self.jumpBonus += 1
 			for e in self.events:
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60*self.attack,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
-					self.BTNDown = 1
 					if e.button == self.buttonmap[0]: self.jump()
 					if e.button == self.buttonmap[2]:
 						if self.joystick.get_axis(1)> .5: self.atkLight(3)
@@ -230,13 +229,14 @@ class Char(pygame.sprite.Sprite):
 						elif abs(self.joystick.get_axis(0))>.5: self.atkLight(self.facing)
 						else: self.atkLight(4)
 					elif e.button == self.buttonmap[1]:
+						self.BTNDown = 1
 						if self.joystick.get_axis(1)> .5: self.atkHeavy(3)
 						elif self.joystick.get_axis(1)<-.5: self.atkHeavy(2)
 						elif abs(self.joystick.get_axis(0))>.5: self.atkHeavy(self.facing)
 						else: self.atkHeavy(4)
 				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
-					self.BTNDown = 0
 					if e.button == self.buttonmap[1]:
+						self.BTNDown = 0
 						self.release = 1
 
 		else:
