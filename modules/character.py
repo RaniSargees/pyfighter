@@ -97,7 +97,7 @@ class Char(pygame.sprite.Sprite):
 
 		#Draw Character
 		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		if not self.hspeed:character_surface = self.anim.idle()
+		if not self.hspeed:character_surface = self.anim.DAB_ON_HATERS()
 		else:character_surface=self.anim.walk(self.hspeed)
 
 
