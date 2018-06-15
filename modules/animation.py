@@ -52,7 +52,7 @@ class animator():
 		if self.anim!="walk":self.frame=0;self.anim="walk"
 		else: self.frame+=hspeed
 		r_angle = radians(degrees(sin(frame//3000))*15)
-		r_bone = (,)
+		#r_bone = (,)
 		self.surface.blit(self.head, (128-10.5, 256-120))
 		self.surface.blit(self.body, (128-21  , 256- 99))
 		#TODO everything
