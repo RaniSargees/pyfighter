@@ -101,7 +101,7 @@ class animator():
 		rf_rect = r_foot_offset+(128+6,256-45)
 		lf_rect = l_foot_offset+(128-21,256-45)
 		self.surface.blit(self.body, (128-  21, 256- 99))
-		self.surface.blit(self.head, (128-10.5, 256-120)) #blit body and head
+		self.surface.blit(pygame.transform.rotate(self.head, -15), (128-5, 256-110)) #blit body and head
 		self.surface.blit(self.r_foot, rf_rect) #blit foot
 		self.surface.blit(self.r_leg, rl_rect) #blit leg
 		self.surface.blit(self.l_foot, lf_rect) #blit foot
