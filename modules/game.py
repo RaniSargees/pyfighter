@@ -50,6 +50,8 @@ class Game():
 			pygame.mixer.music.load(BytesIO(self.maps[self.map].read("music.ogg")))
 			pygame.mixer.music.play(-1)
 		except:()
+		try: self.bg = pygame.transform.smoothscale(pygame.image.load(BytesIO(self.maps[self.map].read("bg.png"))), (RES[0], RES[1]))
+		except: self.bg=0
 	def loadData(self):
 		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
 		map_folder = os.path.join(game_folder, 'maps')
@@ -126,7 +128,8 @@ class Game():
 					self.playing = 0;self.running = 0;pygame.mixer.stop();pygame.mixer.music.\
 					stop() #hammertime!
 				if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE: self.playing=0;pygame.mixer.stop();pygame.mixer.music.stop()
-			self.win.fill(WHITE)
+			if self.bg: self.win.blit(self.bg,(0,0))
+			else:self.win.fill(WHITE)
 			self.objects.update()
 			self.sprites.update(keys, events)
 			self.ground.update()
