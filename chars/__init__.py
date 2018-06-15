@@ -1,1 +1,1 @@
-__all__=["shooter", "mage", "друг"]
+__all__=["shooter", "mage", "друг","brawler"]
