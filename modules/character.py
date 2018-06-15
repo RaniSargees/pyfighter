@@ -29,7 +29,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
-		self.inStage = 0
+#		self.inStage = 0
 		self.hit_list = [self]
 		self.ability_time = 0
 		self.ability_air = 0
@@ -59,12 +59,12 @@ class Char(pygame.sprite.Sprite):
 		self.keys = keys
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
-		self.inStage = False
+#		self.inStage = False
 		self.ability_delay_time -= self.game.dt
 		if self.ability_delay_time < 0:
 			self.ability_delay_time = 0
-		for i in self.grounded:
-			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
+#		for i in self.grounded:
+#			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
@@ -97,10 +97,13 @@ class Char(pygame.sprite.Sprite):
 
 		#Draw Character
 		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		if not self.hspeed:character_surface = self.anim.idle()
-		else:character_surface=self.anim.walk(self.hspeed)
-
-
+		attacking = 0 #TODO add a real check here
+		if not attacking:
+			if self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
+			elif not self.hspeed and self.grounded:character_surface = self.anim.idle()
+			else:character_surface = self.anim.jump()
+		else:
+			pass #TODO add attack animations
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
@@ -130,11 +133,7 @@ class Char(pygame.sprite.Sprite):
 
 
 		#######
-		head = pygame.Surface((self.sprite_image[0].get_width(), self.sprite_image[0].get_height()))
-		head.fill(GRAEY)
-		head.blit(self.sprite_image[0].copy(),(0,0))
-		head.blit(self.sprite_image[0].copy(),(0,0))
-		head.set_colorkey(GRAEY)
+		head = self.sprite_image[0].copy()
 		if (self.x < 0 or self.x > RES[0]) and self.y>0: #draw offscreen arrows
 			if self.x > RES[0]:
 				pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))

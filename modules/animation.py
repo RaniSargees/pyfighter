@@ -34,9 +34,9 @@ class animator():
 		self.r_leg_bot	= sprite[8].subsurface(( 0,15,15,15)) # 15,15
 		self.r_foot 	= sprite[9] # 15,15
 
-	def idle(self):
+	def idle(self, anim=1):
 		if self.anim!="idle":self.frame=randint(0,240);self.anim="idle" #reset frame on animation change
-		else:self.frame+=1 #update frame
+		else:self.frame+=anim #update frame
 		self.surface.fill(0)
 		self.surface.blit(self.l_leg, (128-21, 256-45)) #blit non moving objects
 		self.surface.blit(self.r_leg, (128+ 6, 256-45))
@@ -85,29 +85,73 @@ class animator():
 		self.surface.blit(l_arm, la_rect.move(0,bob-9)) #blit arm
 		return self.surface
 
+	def jump(self):
+		if self.anim!="jump":self.frame=0;self.anim="jump" #reset frame on animation change
+		else: self.frame=min(self.frame+1,20)
+		if self.frame < 4: #3 frame animation because i'm not adding actual support for this in character.py
+			self.surface.fill(0) #clear
+			angle = ((self.frame)%2+1)*7.5
+
+
+			l_leg_offset = pygame.math.Vector2(0,14).rotate(-angle) #generate offsets for foot positions
+			r_leg_offset = pygame.math.Vector2(0,14).rotate(-angle)
+			l_foot_offset = l_leg_offset+pygame.math.Vector2(0,14).rotate(angle)
+			r_foot_offset = r_leg_offset+pygame.math.Vector2(0,14).rotate(angle)
+			r_foot, rf_rect  = animator.pivot(self.r_foot   ,-angle,r_foot_offset+(128+ 6+15,256-45), (-7.5,7.5))
+			l_foot, lf_rect  = animator.pivot(self.l_foot   ,-angle,l_foot_offset+(128-21+15,256-45), (-7.5,7.5))
+			r_leg1, rl_rect1 = animator.pivot(self.r_leg_top,-angle,              (128+ 6+15,256-45), (-7.5,7.5))
+			l_leg1, ll_rect1 = animator.pivot(self.l_leg_top,-angle,              (128-21+15,256-45), (-7.5,7.5))
+			r_leg2, rl_rect2 = animator.pivot(self.r_leg_bot,angle, r_leg_offset +(128+ 6+15,256-45), (-7.5,7.5))
+			l_leg2, ll_rect2 = animator.pivot(self.l_leg_bot,angle, r_leg_offset +(128-21+15,256-45), (-7.5,7.5))
+
+			self.surface.blit(r_foot, rf_rect) #blit foot
+			self.surface.blit(r_leg1, rl_rect1) #blit leg
+			self.surface.blit(r_leg2, rl_rect2) #blit leg
+			self.surface.blit(self.head, (128-10.5, 256-120)) #blit body and head
+			self.surface.blit(self.body, (128-  21, 256- 99))
+			self.surface.blit(l_foot, lf_rect) #blit foot
+			self.surface.blit(l_leg1, ll_rect1) #blit leg
+			self.surface.blit(l_leg2, ll_rect2) #blit leg
+
+			l_arm = pygame.transform.rotate(self.l_arm,  90) #rotate arms and hands (T-Pose to A-pose)
+			l_hand= pygame.transform.rotate(self.l_hand, 90)
+			r_arm = pygame.transform.rotate(self.r_arm, -90)
+			r_hand= pygame.transform.rotate(self.r_hand,-90)
+			self.surface.blit(l_arm, (128-32, 256-81-7))
+			self.surface.blit(r_arm, (128+17 , 256-81-7))
+			self.surface.blit(l_hand,(128-32, 256-51-7))
+			self.surface.blit(r_hand,(128+17 , 256-51-7))
+
+
+		elif self.frame==4: self.surface=self.idle();self.frame=4;self.anim="jump";return self.surface
+		return self.surface
+
+
 	def DAB_ON_HATERS(self): #i'm sorry.
 		if self.anim!="daberoni":self.frame=0;self.anim="daberoni" #reset frame on animation change
-		self.surface.fill(0) #clear
-		r_arm, ra_rect = animator.pivot(self.r_arm, 190, (128+17,256-81), (15,-7.5))
-		l_arm, la_rect = animator.pivot(self.l_arm, 10, (128-32+15,256-81), (-15,-7.5))
-		l_hand_offset = pygame.math.Vector2(-28,0).rotate(10) #generate offsets for hand positions
-		r_hand_offset = pygame.math.Vector2(28,0).rotate(190)
-		r_hand, rh_rect = animator.pivot(self.r_hand, 190, r_hand_offset+(128+17,256-81), (7.5,-7.5)) #rotate hands about connecting point
-		l_hand, lh_rect = animator.pivot(self.l_hand,  10, l_hand_offset+(128-32+15,256-81), (-7.5,-7.5))
-		rl_rect = (128+ 6,256-45)
-		ll_rect = (128-21,256-45)
-		l_foot_offset = pygame.math.Vector2(0,28)
-		r_foot_offset = pygame.math.Vector2(0,28)
-		rf_rect = r_foot_offset+(128+6,256-45)
-		lf_rect = l_foot_offset+(128-21,256-45)
-		self.surface.blit(self.body, (128-  21, 256- 99))
-		self.surface.blit(pygame.transform.rotate(self.head, -15), (128-5, 256-110)) #blit body and head
-		self.surface.blit(self.r_foot, rf_rect) #blit foot
-		self.surface.blit(self.r_leg, rl_rect) #blit leg
-		self.surface.blit(self.l_foot, lf_rect) #blit foot
-		self.surface.blit(self.l_leg, ll_rect) #blit leg
-		self.surface.blit(l_hand, lh_rect.move(0,-9)) #blit hand
-		self.surface.blit(l_arm, la_rect.move(0,-9)) #blit arm
-		self.surface.blit(r_hand, rh_rect.move(0,-9)) #blit hand
-		self.surface.blit(r_arm, ra_rect.move(0,-9)) #blit arm
+		if not self.frame: #only render this once since it's not even animated
+			self.surface.fill(0) #clear
+			r_arm, ra_rect = animator.pivot(self.r_arm, 190, (128+17,256-81), (15,-7.5))
+			l_arm, la_rect = animator.pivot(self.l_arm, 10, (128-32+15,256-81), (-15,-7.5))
+			l_hand_offset = pygame.math.Vector2(-28,0).rotate(10) #generate offsets for hand positions
+			r_hand_offset = pygame.math.Vector2(28,0).rotate(190)
+			r_hand, rh_rect = animator.pivot(self.r_hand, 190, r_hand_offset+(128+17,256-81), (7.5,-7.5)) #rotate hands about connecting point
+			l_hand, lh_rect = animator.pivot(self.l_hand,  10, l_hand_offset+(128-32+15,256-81), (-7.5,-7.5))
+			rl_rect = (128+ 6,256-45)
+			ll_rect = (128-21,256-45)
+			l_foot_offset = pygame.math.Vector2(0,28)
+			r_foot_offset = pygame.math.Vector2(0,28)
+			rf_rect = r_foot_offset+(128+6,256-45)
+			lf_rect = l_foot_offset+(128-21,256-45)
+			self.surface.blit(self.body, (128-  21, 256- 99))
+			self.surface.blit(pygame.transform.rotate(self.head, -15), (128-5, 256-110)) #blit body and head
+			self.surface.blit(self.r_foot, rf_rect) #blit foot
+			self.surface.blit(self.r_leg, rl_rect) #blit leg
+			self.surface.blit(self.l_foot, lf_rect) #blit foot
+			self.surface.blit(self.l_leg, ll_rect) #blit leg
+			self.surface.blit(l_hand, lh_rect.move(0,-9)) #blit hand
+			self.surface.blit(l_arm, la_rect.move(0,-9)) #blit arm
+			self.surface.blit(r_hand, rh_rect.move(0,-9)) #blit hand
+			self.surface.blit(r_arm, ra_rect.move(0,-9)) #blit arm
+			self.frame = 1
 		return self.surface
