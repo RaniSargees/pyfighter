@@ -39,6 +39,7 @@ class Char(pygame.sprite.Sprite):
 		self.release = 0
 		self.dmg = 0
 		self.stun = 0
+		self.BTNDown = 0
 		self.knocked = 0
 		self.freeze = 0
 		self.facing = 0
@@ -221,6 +222,7 @@ class Char(pygame.sprite.Sprite):
 			for e in self.events:
 				if e.type == pygame.KEYDOWN and e.key == pygame.K_p:self.knockBack(60*self.attack,self.facing) #testing only, remove later
 				if e.type == pygame.JOYBUTTONDOWN and e.joy==self.joystick.get_id():
+					self.BTNDown = 1
 					if e.button == self.buttonmap[0]: self.jump()
 					if e.button == self.buttonmap[2]:
 						if self.joystick.get_axis(1)> .5: self.atkLight(3)
@@ -233,6 +235,7 @@ class Char(pygame.sprite.Sprite):
 						elif abs(self.joystick.get_axis(0))>.5: self.atkHeavy(self.facing)
 						else: self.atkHeavy(4)
 				elif e.type == pygame.JOYBUTTONUP and e.joy==self.joystick.get_id():
+					self.BTNDown = 0
 					if e.button == self.buttonmap[1]:
 						self.release = 1
 
