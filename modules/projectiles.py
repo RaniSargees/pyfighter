@@ -16,6 +16,7 @@ class fireball(pygame.sprite.Sprite):
 		self.Yspeed = 0
 		self.explosion = self.char.explosion
 		self.hit_list = [self,char]
+		self.hitbox = (0,0,0,0)
 	def update(self):
 		self.hitbox = (self.loc[0]+50,self.loc[1]+50,100,100)
 		if self.hitTarget and not(self.count):

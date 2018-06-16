@@ -337,7 +337,7 @@ class GUI():
 
 	def run_game(self):
 		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
-		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name)
+		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name,platform = self.icons['platform'])
 		g.new()
 		g.run()
 		self.playing = g.running

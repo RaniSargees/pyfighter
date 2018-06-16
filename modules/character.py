@@ -30,7 +30,7 @@ class Char(pygame.sprite.Sprite):
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
-#		self.inStage = 0
+		self.spawning = 0
 		self.hit_list = [self]
 		self.ability_time = 0
 		self.ability_air = 0
@@ -55,20 +55,22 @@ class Char(pygame.sprite.Sprite):
 		#Stats
 		self.defense = stats[-2]
 		self.attack = 1+(stats[0]/22)
+		self.respawn()
 	def __repr__(self):return"ID"+str(self.joystick.get_id())
 	def update(self,keys,events):
 		self.keys = keys
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
-#		self.inStage = False
 		self.ability_delay_time -= self.game.dt
 		if self.ability_delay_time < 0:
 			self.ability_delay_time = 0
-#		for i in self.grounded:
-#			self.inStage = (self.x <= (i.rect[0]+i.rect[2]) and self.x >= i.rect[0])
 		if self.grounded:
 			if self.stun <= 0:
 				self.knocked = 0
+			if self.spawning:
+				self.spawning -= self.game.dt
+				if self.spawning < 0:
+					self.spawning = 0
 			if self.knocked:
 				if self.grounded[0].platform==0:
 					self.hspeed *= 0.1
@@ -86,15 +88,7 @@ class Char(pygame.sprite.Sprite):
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/(self.game.clock.get_fps()+(60*(self.game.clock.get_fps()==0))))
 		if (self.knocked and (self.y < -500 or self.x > 2080 or self.x < -800)) or self.y > 1000 : #respawn on death
-			self.dmg = 0
-			self.stun = 0
-			self.ability_run = 0
-			self.freeze = 0
-			self.ability_time = 0
-			self.x = 200+(self.joystick.get_id()*200)
-			self.y = 200
-			self.vspeed = 0
-			self.hspeed = 0
+			self.respawn()
 		self.get_keys()
 
 		#Draw Character
@@ -127,16 +121,10 @@ class Char(pygame.sprite.Sprite):
 			if not self.hspeed: break
 		self.x+=self.hspeed*self.game.dt
 		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
-#		self.hitbox = (self.x+4-24,self.y-120,40,120)
-
-
-#		pygame.draw.rect(self.game.win, BLACK, self.hitbox,2)
-
-
 
 		#######
 		head = self.sprite_image[0].copy()
-		if (self.x < 0 or self.x > RES[0]) and self.y>0: #draw offscreen arrows
+		if (self.x < 0 or self.x > RES[0]) and self.y>0 and not(self.spawning): #draw offscreen arrows
 			if self.x > RES[0]:
 				pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((RES[0],self.y),(RES[0]-16,self.y+16),(RES[0]-16,self.y-16)))
 				pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(RES[0]-28,int(self.y)), 20)
@@ -145,7 +133,7 @@ class Char(pygame.sprite.Sprite):
 				pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((0,self.y),(16,self.y+16),(16,self.y-16)))
 				pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(28,int(self.y)), 20)
 				self.game.win.blit(head, (18, self.y-10))
-		elif self.y<0:
+		elif self.y<0 and not(self.spawning):
 			arrowX = int(max(min(self.x,RES[0]-20),20))
 			pygame.draw.polygon(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],((arrowX,0),(arrowX-16,16),(arrowX+16,16)))
 			pygame.draw.circle(self.game.win,(BLUE, RED, YELLOW, GREEN)[self.joystick.get_id()],(arrowX,28), 20)
@@ -206,7 +194,7 @@ class Char(pygame.sprite.Sprite):
 		self.dmg+=(hit*(1 - self.defense/20))
 
 	def get_keys(self):
-		if self.stun <= 0:
+		if self.stun <= 0 and not(self.spawning):
 			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2 or self.freeze==3)-1)*-1)
 			if  self.joystick.get_axis(0) < -.5 and self.freeze!=2:
 				self.hspeed = max(self.hspeed-self.moveSpeed*(60/max(1,self.game.clock.get_fps())), -self.maxMoveSpeed) * Slow_multiplier
@@ -244,5 +232,25 @@ class Char(pygame.sprite.Sprite):
 		else:
 			self.stun -= self.game.dt
 
+	def respawn(self):
+		self.spawning = 3
+		self.ability_time = 0
+		self.ability_air = 0
+		self.ability_air_side = 0
+		self.ability_run = -1
+		self.ability_delay_time = 0
+		self.release = 0
+		self.dmg = 0
+		self.stun = 0
+		self.BTNDown = 0
+		self.knocked = 0
+		self.freeze = 0
+		self.facing = 0
+		i = self.joystick.get_id()
+		self.x = (96*(i+1)+(200*i)+100)
+		self.y = -500
+		self.vspeed = 0
+		self.hspeed = 0
+		TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
 
 

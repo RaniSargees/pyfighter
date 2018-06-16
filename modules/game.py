@@ -7,10 +7,11 @@ from modules.joystick_wrapper import *
 from settings import *
 
 class Game():
-	def __init__(self, win, joysticks, map="default", charList = []):
+	def __init__(self, win, joysticks, map="default", charList = [],platform = None):
 		self.joysticks = joysticks
 		self.win = win
 		self.charList = charList
+		self.platform = platform
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()
 		self.ground = pygame.sprite.Group()
@@ -148,13 +149,13 @@ class Game():
 			name = self.NameFont.render(str(j.name),True,BLACK)
 			self.win.blit(name,name.get_rect(center=(96*(i+1)+(200*i)+50,690)))
 			dmg = j.dmg
-			dmg_color = (max(int(255-(bool(dmg//120)*(dmg-120))),180),#RED
-						max(int(255-(bool(dmg//50)*(dmg-50))*2.215),0),#GREEN
-						max(int(255-(j.dmg*5.1)),0))#BLUE
+			dmg_color = (max(int(255-(bool(dmg//180)*(dmg-180))),180),#RED
+						max(int(255-(bool(dmg//60)*(dmg-60))*1.875),0),#GREEN
+						max(int(255-(j.dmg*4.25)),0))#BLUE
 			dmg_txt_c = self.HPFont.render(str(int(dmg))+'%',True,dmg_color)
 			for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
 				outline = self.HPFont.render(str(int(dmg))+'%',True,BLACK)
-				rect = outline.get_rect(center=(96*(i+1)+(200*i)+150+(k[0]),650+(k[1])))
+				rect = outline.get_rect(center=(96*(i+1)+(200*i)+150+(k[0]*2),650+(k[1]*2)))
 				self.win.blit(outline,rect)
 			self.win.blit(dmg_txt_c,dmg_txt_c.get_rect(center=(96*(i+1)+(200*i)+150,650)))
 		pygame.display.update()
