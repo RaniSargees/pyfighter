@@ -21,6 +21,7 @@ class Game():
 		self.loadData()
 		self.HPFont = pygame.font.SysFont("Trebuchet MS",36)
 		self.NameFont = pygame.font.SysFont("Constantia",18)
+		self.TinyFont = pygame.font.SysFont("Constantia",12)
 		if self.charList == []:
 			for x in self.joysticks:
 				if "ouya" in x.get_name().lower(): mage.char(self, x, 'test',[0,3,1,2,4,5])
@@ -143,21 +144,28 @@ class Game():
 		for j in self.sprites:
 			i = j.joystick.get_id()
 			img = pygame.transform.scale(j.sprite_image[0].copy(),(80,80))
+			img_s = pygame.transform.scale(j.sprite_image[0].copy(),(20,20))
 			pygame.draw.rect(self.win,(BLUE,RED,YELLOW,GREEN)[i],(96*(i+1)+(200*i),600,200,100))
 			pygame.draw.rect(self.win,BLACK,(96*(i+1)+(200*i),600,200,100),4)
 			self.win.blit(img,(96*(i+1)+(200*i)+5,600+5))
 			name = self.NameFont.render(str(j.name),True,BLACK)
 			self.win.blit(name,name.get_rect(center=(96*(i+1)+(200*i)+50,690)))
-			dmg = j.dmg
-			dmg_color = (max(int(255-(bool(dmg//180)*(dmg-180))),180),#RED
-						max(int(255-(bool(dmg//60)*(dmg-60))*1.875),0),#GREEN
-						max(int(255-(j.dmg*4.25)),0))#BLUE
-			dmg_txt_c = self.HPFont.render(str(int(dmg))+'%',True,dmg_color)
-			for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
-				outline = self.HPFont.render(str(int(dmg))+'%',True,BLACK)
-				rect = outline.get_rect(center=(96*(i+1)+(200*i)+150+(k[0]*2),650+(k[1]*2)))
-				self.win.blit(outline,rect)
-			self.win.blit(dmg_txt_c,dmg_txt_c.get_rect(center=(96*(i+1)+(200*i)+150,650)))
+			if j.stock:
+				dmg = j.dmg
+				dmg_color = (max(int(255-(bool(dmg//180)*(dmg-180))),180),#RED
+							max(int(255-(bool(dmg//60)*(dmg-60))*1.875),0),#GREEN
+							max(int(255-(j.dmg*4.25)),0))#BLUE
+				dmg_txt_c = self.HPFont.render(str(int(dmg))+'%',True,dmg_color)
+				for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
+					outline = self.HPFont.render(str(int(dmg))+'%',True,BLACK)
+					rect = outline.get_rect(center=(96*(i+1)+(200*i)+150+(k[0]*2),670+(k[1]*2)))
+					self.win.blit(outline,rect)
+				stock_label = self.TinyFont.render('Stocks Left',True,BLACK)
+				self.win.blit(stock_label,(96*(i+1)+(200*i)+100,605))
+				pygame.draw.line(self.win,BLACK,(96*(i+1)+(200*i)+100,617),(96*(i+1)+(200*i)+160,617),2)
+				for l in range(j.stock):
+					self.win.blit(img_s,(96*(i+1)+(200*i)+100+(25*l),620))
+				self.win.blit(dmg_txt_c,dmg_txt_c.get_rect(center=(96*(i+1)+(200*i)+150,670)))
 		pygame.display.update()
 
 if __name__ == "__main__":

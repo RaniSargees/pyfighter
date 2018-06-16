@@ -27,6 +27,8 @@ class Char(pygame.sprite.Sprite):
 		self.vspeed = 0
 		self.hspeed = 0
 		self.gravity = 32
+		self.stock = 4
+		self.dead = 0
 		self.gravityMultiplier = 1
 		self.joystick = joystick
 		self.buttonmap = buttonmap
@@ -58,6 +60,8 @@ class Char(pygame.sprite.Sprite):
 		self.respawn()
 	def __repr__(self):return"ID"+str(self.joystick.get_id())
 	def update(self,keys,events):
+		if self.dead:
+			return 1
 		self.keys = keys
 		self.events = events
 		self.grounded = sorted([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y, self.hitbox[2]-2, 2)], key=lambda x:x.platform)
@@ -88,6 +92,7 @@ class Char(pygame.sprite.Sprite):
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
 		else: self.vspeed += self.gravity * self.gravityMultiplier * (60/(self.game.clock.get_fps()+(60*(self.game.clock.get_fps()==0))))
 		if (self.knocked and (self.y < -500 or self.x > 2080 or self.x < -800)) or self.y > 1000 : #respawn on death
+			self.stock -= 1
 			self.respawn()
 		self.get_keys()
 
@@ -233,24 +238,28 @@ class Char(pygame.sprite.Sprite):
 			self.stun -= self.game.dt
 
 	def respawn(self):
-		self.spawning = 3
-		self.ability_time = 0
-		self.ability_air = 0
-		self.ability_air_side = 0
-		self.ability_run = -1
-		self.ability_delay_time = 0
-		self.release = 0
-		self.dmg = 0
-		self.stun = 0
-		self.BTNDown = 0
-		self.knocked = 0
-		self.freeze = 0
-		self.facing = 0
-		i = self.joystick.get_id()
-		self.x = (96*(i+1)+(200*i)+100)
-		self.y = -500
-		self.vspeed = 0
-		self.hspeed = 0
-		TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
+		if self.stock:
+			self.spawning = 3
+			self.ability_time = 0
+			self.ability_air = 0
+			self.ability_air_side = 0
+			self.ability_run = -1
+			self.ability_delay_time = 0
+			self.release = 0
+			self.dmg = 0
+			self.stun = 0
+			self.BTNDown = 0
+			self.knocked = 0
+			self.freeze = 0
+			self.facing = 0
+			i = self.joystick.get_id()
+			self.x = (96*(i+1)+(200*i)+100)
+			self.y = -500
+			self.vspeed = 0
+			self.hspeed = 0
+			TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
+		else:
+			self.dead = True
+			
 
 
