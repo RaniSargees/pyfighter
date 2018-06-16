@@ -18,7 +18,8 @@ class Game():
 		self.map = map
 	def new(self):
 		self.loadData()
-		self.TempFont = pygame.font.SysFont("monospace", 36)
+		self.HPFont = pygame.font.SysFont("Trebuchet MS",36)
+		self.NameFont = pygame.font.SysFont("Constantia",18)
 		if self.charList == []:
 			for x in self.joysticks:
 				if "ouya" in x.get_name().lower(): mage.char(self, x, 'test',[0,3,1,2,4,5])
@@ -79,6 +80,7 @@ class Game():
 			for i in sorted(os.listdir(file)):
 				if i.lower().endswith(".png") or i.lower().endswith(".jpg"):
 					sprite_image = pygame.image.load(os.path.join(file,i)).convert()
+					#Splits up character into different subsurfaces
 					head_rect = (285,80,70,70)
 					torso_rect = (250,150,140,180)
 					L_arm_rect = (150,180,100,50)
@@ -137,8 +139,24 @@ class Game():
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-		for i,j in enumerate(self.sprites):
-			self.win.blit(self.TempFont.render(str(int(j.dmg)),True,(BLUE,RED,YELLOW, GREEN)[j.joystick.get_id()]),((200*i)+50,650))
+		for j in self.sprites:
+			i = j.joystick.get_id()
+			img = pygame.transform.scale(j.sprite_image[0].copy(),(80,80))
+			pygame.draw.rect(self.win,(BLUE,RED,YELLOW,GREEN)[i],(96*(i+1)+(200*i),600,200,100))
+			pygame.draw.rect(self.win,BLACK,(96*(i+1)+(200*i),600,200,100),4)
+			self.win.blit(img,(96*(i+1)+(200*i)+5,600+5))
+			name = self.NameFont.render(str(j.name),True,BLACK)
+			self.win.blit(name,name.get_rect(center=(96*(i+1)+(200*i)+50,690)))
+			dmg = j.dmg
+			dmg_color = (max(int(255-(bool(dmg//120)*(dmg-120))),180),#RED
+						max(int(255-(bool(dmg//50)*(dmg-50))*2.215),0),#GREEN
+						max(int(255-(j.dmg*5.1)),0))#BLUE
+			dmg_txt_c = self.HPFont.render(str(int(dmg))+'%',True,dmg_color)
+			for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
+				outline = self.HPFont.render(str(int(dmg))+'%',True,BLACK)
+				rect = outline.get_rect(center=(96*(i+1)+(200*i)+150+(k[0]),650+(k[1])))
+				self.win.blit(outline,rect)
+			self.win.blit(dmg_txt_c,dmg_txt_c.get_rect(center=(96*(i+1)+(200*i)+150,650)))
 		pygame.display.update()
 
 if __name__ == "__main__":

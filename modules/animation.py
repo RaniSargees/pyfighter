@@ -2,7 +2,7 @@ import pygame
 from math import sin,cos,asin,acos,radians,degrees
 from random import randint
 from settings import *
-pi=3
+pi=3 # ヽ(｀Д´)ﾉ WHYYYYY
 
 class animator():
 

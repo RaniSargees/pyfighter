@@ -53,6 +53,7 @@ class GUI():
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
+		
 		if self.location == 0: #Main Menu
 			self.reset_pointers()
 			#Title Text
@@ -76,8 +77,7 @@ class GUI():
 			self.text = self.font_LL.render('Choose your character',True,BLACK)
 			self.text_rect = self.text.get_rect(center=(640,50))
 			self.img.append([self.text,self.text_rect])
-			#Player Boxes
-			for h,i in enumerate(self.joysticks):
+			for h,i in enumerate(self.joysticks): #Player Boxes
 				surf = pygame.Surface((200,300))
 				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i.get_id()],(0,0,200,300))
 				surf.blit(self.font_L.render('PLAYER '+str(h+1),True,BLACK),(5,140))

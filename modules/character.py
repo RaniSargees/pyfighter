@@ -10,6 +10,7 @@ class Char(pygame.sprite.Sprite):
 		self.groups = game.sprites
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.game = game
+		self.name = char
 		self.sprite_image = self.game.char_sprites[char][:-1]
 		self.anim = animator(self.sprite_image)
 		stats = eval(str(self.game.char_sprites[char][-1]))[-1]
