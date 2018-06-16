@@ -6,7 +6,7 @@ from modules.projectiles import *
 
 class char(Char):
 	def special0(self):
-		if not self.ability_run+1:
+		if not(self.ability_run+1):
 			self.dirn = self.facing
 			self.ability_run = 0
 			self.ability_time = -1
@@ -31,6 +31,37 @@ class char(Char):
 				self.SP0_go = 0
 				self.ability_run = 0
 				self.ability_time = 0
+	
+	def special1(self, dir):
+		if not(self.ability_run+1 or self.ability_air):
+			self.ability_run = 1
+			self.ability_air = 1
+			self.ability_time = 0.65
+			self.freeze = 2
+			self.dir = dir
+			self.hspeed = 1800*(dir-0.5)
+			self.vspeed = -600
+	
+	def run_special1(self):
+		pygame.draw.rect(self.game.win,BLUE,(self.x-70+((self.dir==1)*(90)), self.y-120, 50, 120),4)
+		collisions=[(pygame.Rect((self.x-70+((self.dir==1)*(90)), self.y-120, 50, 120)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+		
+	def special2(self):
+		if not(self.ability_run+1 or self.ability_air_side):
+			self.ability_air_side = 1
+			self.freeze = 2
+			self.ability_run = 2
+			self.ability_time = 0.4
+		
+	
+	def run_special2(self):
+		self.vspeed = -500
+		pygame.draw.rect(self.game.win,BLUE,(self.x-40, self.y-140, 80, 40),4)
+		collisions=[(pygame.Rect((self.x-40, self.y-120, 80, 20)).colliderect(x.hitbox),x)for x in self.game.sprites]
+		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		
 		
 	def special3(self):

@@ -65,7 +65,7 @@ class rainbow_poop(pygame.sprite.Sprite):
 			pxarray.replace((255,112,17), tuple([int(255*x) for x in hls_to_rgb(hue, .6, .7)]))
 			pxarray.replace((251,228,30), tuple([int(255*x) for x in hls_to_rgb(hue, .7, .8)]))
 			del pxarray
-
+		self.hitbox = (0,0,0,0)
 	def update(self):
 		self.hitbox = (self.x+20, self.y+20,8,8)
 		self.frame += 1

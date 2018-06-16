@@ -88,7 +88,7 @@ class animator():
 	def jump(self):
 		if self.anim!="jump":self.frame=0;self.anim="jump" #reset frame on animation change
 		else: self.frame=min(self.frame+1,20)
-		if self.frame < 4: #3 frame animation because i'm not adding actual support for this in character.py
+		if self.frame < 4: #3 frame animation because I'm not adding actual support for this in character.py
 			self.surface.fill(0) #clear
 			angle = ((self.frame)%2+1)*7.5
 
