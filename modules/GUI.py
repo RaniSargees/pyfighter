@@ -106,7 +106,7 @@ class GUI():
 				if j%(12+(size_reduction*6)) == 0 and j != 0:
 					self.BTN_list.append(temp)
 					temp = []
-				temp.append(BTN(self.win,0,(40+profile_size*(j%(12+(size_reduction*6))),100+profile_size*(j//(12+(size_reduction*6))),profile_size,profile_size),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_name[x],self.char_selected[x] = [self.char_sprites["'+str(k)+'"][1],"'+str(k)+'"],self.char_sprites["'+str(k)+'"]', image = pygame.transform.scale(self.char_sprites[k][0].copy(),(int(profile_size),int(profile_size)))))
+				temp.append(BTN(self.win,0,(40+profile_size*(j%(12+(size_reduction*6))),100+profile_size*(j//(12+(size_reduction*6))),profile_size,profile_size),self.MenuBTN,text=k,allign = 'bottom',fn = 'self.char_name[x],self.char_selected[x] = [self.char_sprites["'+str(k)+'"][1],"'+str(k)+'"],self.char_sprites["'+str(k)+'"]',thickness = 2, image = pygame.transform.scale(self.char_sprites[k][0].copy(),(int(profile_size),int(profile_size)))))
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
@@ -271,7 +271,7 @@ class GUI():
 	def draw(self):
 		for i in self.img: #Prints all images in the self.img list
 			self.win.blit(i[0],i[1])
-		if self.location == 1:
+		if self.location == 1:#Character Select Screen
 			for i,j in enumerate(self.char_selected): #If a character is selected blit its image and stats onto the user profile
 				if j != None:
 					self.win.blit(pygame.transform.scale(j[0].copy(),(140,140)),((96*(i+1))+(200*i)+5,405))
@@ -300,7 +300,7 @@ class GUI():
 				self.win.blit(text,text.get_rect(center=(640,350)))
 				if bool(len([x for x in self.joystick_button if x == 0])) or (pygame.Rect(0,310,1280,80).collidepoint(pygame.mouse.get_pos()) and self.mDown):
 					self.new(2)
-		elif self.location == 2:
+		elif self.location == 2:#Map Select Screen
 			if self.map_pos >= len(self.covers):
 				self.map_pos = 0
 			elif self.map_pos < 0:
@@ -310,7 +310,7 @@ class GUI():
 			self.win.blit(text,text.get_rect(center=(640,550)))
 			pygame.draw.rect(self.win,BLACK,(270,100,740,400),5)
 		
-		elif self.location == 3:
+		elif self.location == 3:#Reconnect Controller Screen
 			img = pygame.transform.scale(self.icons['controller'],(180,180))
 			img2 = pygame.transform.scale(self.icons['keyboard'],(180,180))
 			if len(self.joysticks) > 1:
