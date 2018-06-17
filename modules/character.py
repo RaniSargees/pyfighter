@@ -102,8 +102,9 @@ class Char(pygame.sprite.Sprite):
 		attacking = 0 #TODO add a real check here
 		if not attacking:
 			if self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
-			elif not self.hspeed and self.grounded:character_surface = self.anim.idle()
-			else:character_surface = self.anim.jump()
+			#elif not self.hspeed and self.grounded:
+			else:character_surface = self.anim.idle()
+#			else:character_surface = self.anim.jump() # this animation sucks, just leave it commented
 		else:
 			pass #TODO add attack animations
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))

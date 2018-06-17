@@ -28,6 +28,7 @@ class char(Char):
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
+		self.character_surface = self.anim.DAB_ON_HATERS()
 		self.hspeed += (100+(25*((self.maxMoveSpeed-200)/200)))*(self.facing*2-1)
 		self.vspeed = 0
 		self.gravityMultiplier = 0
