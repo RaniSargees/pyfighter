@@ -52,9 +52,10 @@ class char(Char):
 
 	def special3(self):
 		if not(self.ability_run+1 or self.ability_delay_time):
+			self.game.Sounds.play('tornado')
 			self.ability_delay_time = 2
 			self.ability_run = 3
-			self.ability_time = 3
+			self.ability_time = 2.5
 			self.gravityMultiplier = 0.4
 			self.image_list = []
 			self.level = []
@@ -89,7 +90,7 @@ class char(Char):
 		pygame.draw.polygon(self.surf,WHITE,((0,0),(0,180),(60,180)))
 		pygame.draw.polygon(self.surf,WHITE,((180,0),(180,180),(120,180)))
 		self.surf.set_colorkey((WHITE))
-		self.game.win.blit(self.surf,(self.x-90,self.y-180))
+		self.img.append((self.surf,(self.x-90,self.y-180)))
 		
 		collisions=[(pygame.Rect((self.x-90,self.y-180,180,180)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(10, randint(0,2)),x[1].damage(0.5*self.attack))for x in collisions if x[0] and not(x[1]==self)]

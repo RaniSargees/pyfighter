@@ -22,8 +22,10 @@ class GUI():
 		self.map_pos = 0
 		self.BTN_list = []
 		self.action = 0
+		self.counter = 0
 		self.once = 1
 		self.once2= 1
+		self.once3= 1
 		self.dt = 0
 		self.time = pygame.time.Clock()
 		self.pointer = [] #Where the joystick is current pointing to
@@ -149,8 +151,6 @@ class GUI():
 
 		elif self.location == 4:
 			self.reset_pointers()
-			self.Sounds.play('winner')
-			self.counter = 0
 			self.text = self.font_LLL.render("THE WINNER IS: "+str(self.ranks[0].name).upper(),1,BLACK)
 			self.img.append([self.text,(220,5)])
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)]]
@@ -179,15 +179,18 @@ class GUI():
 			[x.kill() for x in self.ranks]
 
 
+
 	def reset_pointers(self,char_name = 0):
 		self.pointer = []
 		self.pointerUpdate = []
 		self.joystick_button = []
 		self.joystick_selected = []
 		self.char_selected = []
+		self.once_char = [1]
 		if char_name == 1:
 			self.char_name = [None]
-		for x in self.joysticks[:-1]:
+		for x in self.joysticks[:-1]:	
+			self.once_char.append(1)
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
@@ -385,7 +388,11 @@ class GUI():
 		
 		elif self.location == 4:
 			self.counter += self.dt
-			if self.counter > 6 and self.once2:
+			if self.once3:
+				self.Sounds.play('winner')
+				self.once3 = 0
+				self.counter = 0
+			if self.counter > 1.6 and self.once2:
 				self.once2 = 0
 				self.Sounds.play(('mage','apyr','shooter','brawler')[self.ranks[0].obj_name])
 
@@ -400,6 +407,7 @@ class GUI():
 	def run_game(self): #run the game
 		self.Sounds.stop_all()
 		self.once2 = 1
+		self.once3 = 1
 		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
 		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name,platform = self.icons['platform'],sounds = self.Sounds)
 		g.new()

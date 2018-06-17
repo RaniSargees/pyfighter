@@ -7,7 +7,7 @@ class Sound_Manager():
 		self.sfx_list = {}
 		for fileName in os.listdir(self.sfx_folder): #Load Sound Effects
 			file = os.path.join(self.sfx_folder,fileName)
-			self.sfx_list[str(fileName).strip('.ogg')] = file
+			self.sfx_list[str(fileName[:-4])] = file
 	def load(self,name):
 		return pygame.mixer.Sound(self.sfx_list[name])
 

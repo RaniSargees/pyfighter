@@ -43,6 +43,7 @@ class Char(pygame.sprite.Sprite):
 		self.ability_delay_time = 0
 		self.release = 0
 		self.dmg = 0
+		self.img = []
 		self.stun = 0
 		self.BTNDown = 0
 		self.knocked = 0
@@ -97,7 +98,6 @@ class Char(pygame.sprite.Sprite):
 			self.stock -= 1
 			self.respawn()
 		self.get_keys()
-
 		if self.ability_run >= 0:
 			if self.ability_time > 0 or self.ability_time == -1:
 				if self.ability_time > 0:
@@ -122,7 +122,9 @@ class Char(pygame.sprite.Sprite):
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
-
+		for i in self.img:#For blitting stuff after the character is
+			self.game.win.blit(i[0],i[1])
+		self.img = []
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
 		while 1:
@@ -171,8 +173,9 @@ class Char(pygame.sprite.Sprite):
 		[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
-		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
-		except Exception as e:print(e)
+		#try:
+		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
+		#except Exception as e:print(e)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player
