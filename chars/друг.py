@@ -35,7 +35,7 @@ class char(Char):
 		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack((abs(self.hspeed)/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
-
+		return self.anim.DAB_ON_HATERS()
 
 	def special2(self):
 		self.ability_air_side = 0
