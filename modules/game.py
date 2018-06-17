@@ -138,6 +138,10 @@ class Game():
 			self.sprites.update(keys, events)
 			self.ground.update()
 			self.draw()
+			if len([x.stock for x in self.sprites if x.stock > 0]) <= 1:
+				self.playing = 0
+				pygame.mixer.stop()
+				pygame.mixer.music.stop()
 
 	def draw(self):
 		pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))

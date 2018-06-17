@@ -245,6 +245,7 @@ class Char(pygame.sprite.Sprite):
 			self.ability_air_side = 0
 			self.ability_run = -1
 			self.ability_delay_time = 0
+			self.gravityMultiplier = 1
 			self.release = 0
 			self.dmg = 0
 			self.stun = 0
