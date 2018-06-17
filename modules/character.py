@@ -14,6 +14,7 @@ class Char(pygame.sprite.Sprite):
 		self.name = char
 		self.sprite_image = self.game.char_sprites[char][:-1]
 		self.anim = animator(self.sprite_image)
+		self.obj_name = eval(str(self.game.char_sprites[char][-1]))[0]
 		stats = eval(str(self.game.char_sprites[char][-1]))[-1]
 		self.x = 200
 		self.y = 200
