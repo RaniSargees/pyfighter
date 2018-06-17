@@ -1,1 +1,1 @@
-from modules import GUI
+import modules.GUI

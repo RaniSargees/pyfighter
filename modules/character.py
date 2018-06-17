@@ -4,6 +4,7 @@ from settings import *
 from modules.map import *
 from modules.projectiles import *
 from modules.animation import *
+from time import time
 
 class Char(pygame.sprite.Sprite):
 	def __init__(self,game,joystick,char,buttonmap=[0,1,2,3,4,5]):
@@ -86,7 +87,7 @@ class Char(pygame.sprite.Sprite):
 				self.currentJumps = self.maxJumps
 				if self.vspeed>0:self.vspeed=0
 				self.y=self.grounded[0].rect[1]
-				if len(self.grounded) and self.gravityMultiplier == 3 and not len([x for x in self.grounded if not x.platform]):#Fall through platforms when Down key is pressed
+				if len(self.grounded) and self.gravityMultiplier == 3 and not len([x for x in self.grounded if not x.platform]): #Fall through platforms when Down key is pressed
 					self.y += self.grounded[0].rect[3] + self.grounded[0].speed * self.game.dt * (self.grounded[0].dir > 1)
 				self.x += self.grounded[0].speed*((self.grounded[0].dir==0)*-1 + (self.grounded[0].dir==1))*self.game.dt
 				self.y += self.grounded[0].speed*(self.grounded[0].dir==3)*self.game.dt
@@ -260,8 +261,12 @@ class Char(pygame.sprite.Sprite):
 			self.hspeed = 0
 			TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
 		else:
+<<<<<<< HEAD
 			self.game.order.append(self)
 			self.dead = True
 			
 
 
+=======
+			self.dead = time() #store time of death in unix time (breaks if game played before jan 1 1970 or after jan 19 2038 on 32 bit systems)
+>>>>>>> 898825fd74f948708205f3175ff1d0f13b080928
