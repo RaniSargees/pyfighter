@@ -135,25 +135,38 @@ class GUI():
 			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
-
-		#if self.location == 4: #End Screen (Announces Winner)
-		#	print(self.ranks)
-		#	self.new(1)
 			
 
 		elif self.location == 4:
 			self.reset_pointers()
 			self.text = self.font_LLL.render("THE WINNER IS: "+str(self.ranks[0].name).upper(),1,BLACK)
-			self.img.append([self.text,self.text.get_rect(center=(640,80))])
+			self.img.append([self.text,(220,5)])
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)]]
 			surf = pygame.Surface((1280,560),pygame.SRCALPHA,32)
+			
+			
+			temp = []
+			for h,i in enumerate(self.ranks):
+				l = i.joystick.get_id()
+				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[l],(96*(l+1)+200*l,(bool(h)*50),200,420))
+				pygame.draw.rect(surf,BLACK,(96*(l+1)+200*l,0+(bool(h)*50),200,430),3)
+				rank_text = self.font_LLL.render(('1st','2nd','3rd','4th')[h],True,((255,215,0),(192,192,192),(80,50,20),(70,130,180))[h])
+				if h == 0:
+					sprite = i.anim.DAB_ON_HATERS()
+				else:
+					sprite = i.anim.idle()
+				self.img.append([pygame.transform.scale(sprite,(int(sprite.get_width()*1.5),int(sprite.get_height()*1.5))),(96*(l+1)+(200*l)-90,(bool(h)*50)-80)])
+				for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
+					outline = self.font_LLL.render(('1st','2nd','3rd','4th')[h],True,BLACK)
+					rect = outline.get_rect(center=(96*(l+1)+(200*l)+100+(k[0]),300+(k[1])))
+					temp.append([outline,rect])
+				temp.append([rank_text,rank_text.get_rect(center=(96*(l+1)+(200*l)+100,300))])
+			self.img.append([surf,(0,300)])
 			for i in range(len(self.ranks)):
-				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i],(96*(i+1)+200*i,0,200,560))
-				pygame.draw.rect(surf,BLACK,(96*(i+1)+200*i,0,200,300),3)
-			self.img.append([surf,(0,160)])
-			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
-				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
+				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),380))])
+			self.img.extend(temp)
+			[x.kill() for x in self.ranks]
 
 
 	def reset_pointers(self,char_name = 0):
