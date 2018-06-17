@@ -53,9 +53,9 @@ class GUI():
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
+		self.reset_pointers()
 		
 		if self.location == 0: #Main Menu
-			self.reset_pointers()
 			#Title Text
 			self.font = pygame.font.SysFont('Comic Sans MS',144)
 			self.text = self.font.render('PYFIGHTER',True,BLACK)
@@ -70,7 +70,6 @@ class GUI():
 			#Add transparency to it
 
 		if self.location == 1: #Character Select screen
-			self.reset_pointers()
 			#Back Button
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
 			#Title Text
@@ -120,7 +119,6 @@ class GUI():
 							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
 		
 		if self.location == 3: #Controller Connection
-			self.reset_pointers()
 			self.text = self.font_LLL.render('Connect your controllers',True,BLACK)
 			self.img.append([self.text,self.text.get_rect(center=(640,80))])
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)],
@@ -133,6 +131,11 @@ class GUI():
 			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
+		
+		if self.location == 4: #End Screen (Announces Winner)
+			print(self.order)
+			self.new(1)
+			
 
 
 
@@ -292,7 +295,7 @@ class GUI():
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
-			if len([x for x in self.char_selected if x != None]) == len(self.char_selected):
+			if len([x for x in self.char_selected if x != None]) == len(self.char_selected) and len(self.char_selected) > 1:
 				self.fade_dir += 1
 				self.fade = -98*math.cos(math.radians(self.fade_dir%360)) + 98
 				pygame.draw.rect(self.win,(255,self.fade,0),(0,310,1280,80))
@@ -341,7 +344,8 @@ class GUI():
 		g.new()
 		g.run()
 		self.playing = g.running
-		self.new(1)
+		self.order = g.order
+		self.new(4)
 
 	def new_joystick(self):
 		pygame.joystick.quit()

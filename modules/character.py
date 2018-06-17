@@ -260,6 +260,7 @@ class Char(pygame.sprite.Sprite):
 			self.hspeed = 0
 			TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
 		else:
+			self.game.order.append(self)
 			self.dead = True
 			
 

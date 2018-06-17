@@ -13,10 +13,11 @@ class Game():
 		self.charList = charList
 		self.platform = platform
 		self.clock = pygame.time.Clock()
-		self.sprites = pygame.sprite.Group()
+		self.sprites = pygame.sprite.Group()#Sprite Groups
 		self.ground = pygame.sprite.Group()
 		self.objects = pygame.sprite.Group()
 		self.map = map
+		self.order = []#Stores what place the characters are (eg. 1st, 2nd) by list index (-1 is 1st, 0 is last...)
 	def new(self):
 		self.loadData()
 		self.HPFont = pygame.font.SysFont("Trebuchet MS",36)
@@ -117,8 +118,8 @@ class Game():
 				elif i.lower().endswith(".trash"):
 					self.sprite_data = open(os.path.join(file,i)).readline()
 	def run(self):
-		self.playing = 1
-		self.running = 1
+		self.playing = 1#Game is running
+		self.running = 1#Program is running
 		while self.playing:
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
@@ -138,7 +139,9 @@ class Game():
 			self.sprites.update(keys, events)
 			self.ground.update()
 			self.draw()
-			if len([x.stock for x in self.sprites if x.stock > 0]) <= 1:
+			left = [x for x in self.sprites if x.stock > 0]
+			if len(left)<= 1:
+				self.order.append(left[0])
 				self.playing = 0
 				pygame.mixer.stop()
 				pygame.mixer.music.stop()
