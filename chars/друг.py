@@ -28,7 +28,6 @@ class char(Char):
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
-		self.character_surface = self.anim.DAB_ON_HATERS()
 		self.hspeed += (100+(25*((self.maxMoveSpeed-200)/200)))*(self.facing*2-1)
 		self.vspeed = 0
 		self.gravityMultiplier = 0
@@ -36,7 +35,7 @@ class char(Char):
 		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack((abs(self.hspeed)/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
-
+		return self.anim.DAB_ON_HATERS()
 
 	def special2(self):
 		self.ability_air_side = 0

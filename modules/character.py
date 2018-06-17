@@ -97,29 +97,31 @@ class Char(pygame.sprite.Sprite):
 			self.respawn()
 		self.get_keys()
 
-		#Draw Character
-		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
-		attacking = 0 #TODO add a real check here
-		if not attacking:
-			if self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
-			#elif not self.hspeed and self.grounded:
-			else:character_surface = self.anim.idle()
-#			else:character_surface = self.anim.jump() # this animation sucks, just leave it commented
-		else:
-			pass #TODO add attack animations
-		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
-		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
-
 		if self.ability_run >= 0:
 			if self.ability_time > 0 or self.ability_time == -1:
 				if self.ability_time > 0:
 					self.ability_time -= self.game.dt
-				exec(['self.run_special0()','self.run_special1()','self.run_special2()','self.run_special3()'][self.ability_run])
-			else: self.atkEnd()
+				if   self.ability_run==0:character_surface=self.run_special0()
+				elif self.ability_run==1:character_surface=self.run_special1()
+				elif self.ability_run==2:character_surface=self.run_special2()
+				elif self.ability_run==3:character_surface=self.run_special3()
+				if character_surface == None: character_surface = self.anim.idle()
+			else: self.atkEnd();character_surface=self.anim.idle()
 		else:
 			self.hit_list = [self]
 			if self.freeze != 3:
 				self.freeze = 0
+			if self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
+			#elif not self.hspeed and self.grounded:
+			else:character_surface = self.anim.idle()
+#			else:character_surface = self.anim.jump() # this animation sucks, just leave it commented
+
+		#Draw Character
+		#Character List index [head,torso,L_arm,L_hand,R_arm,R_hand,L_leg,L_foot,R_leg,R_foot,sprite_data]
+		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
+		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
+
+
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
 		while 1:
