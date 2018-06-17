@@ -261,12 +261,4 @@ class Char(pygame.sprite.Sprite):
 			self.hspeed = 0
 			TimedGround(self.game,(96*(i+1)+(200*i)+50,-500,100,20),3,200,200,7,texture = self.game.platform)
 		else:
-<<<<<<< HEAD
-			self.game.order.append(self)
-			self.dead = True
-			
-
-
-=======
 			self.dead = time() #store time of death in unix time (breaks if game played before jan 1 1970 or after jan 19 2038 on 32 bit systems)
->>>>>>> 898825fd74f948708205f3175ff1d0f13b080928
