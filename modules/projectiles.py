@@ -6,6 +6,7 @@ from settings import *
 class fireball(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,direction):
 		pygame.sprite.Sprite.__init__(self,char.game.objects)
+		char.game.Sounds.play('pew')
 		self.char = char
 		self.loc = (x,y)
 		self.dir = direction
@@ -17,6 +18,7 @@ class fireball(pygame.sprite.Sprite):
 		self.explosion = self.char.explosion
 		self.hit_list = [self,char]
 		self.hitbox = (0,0,0,0)
+		self.once = 1
 	def update(self):
 		self.hitbox = (self.loc[0]+50,self.loc[1]+50,100,100)
 		if self.hitTarget and not(self.count):
@@ -27,6 +29,9 @@ class fireball(pygame.sprite.Sprite):
 			collisions.extend([(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.rect),x)for x in self.char.game.ground if not x.platform])
 			self.hitTarget = bool(len([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)]))
 		if self.go:
+			if self.once:
+				self.once = 0
+				self.char.game.Sounds.play('explosion')
 			if self.count < self.char.special_1_len*2:
 				self.char.game.win.blit(self.explosion[self.count//2],self.loc)
 				if self.count < 8:
@@ -181,6 +186,7 @@ class Bomblaser(pygame.sprite.Sprite):
 		self.image = pygame.transform.rotate(self.char.bullet[0],self.angle)
 		self.image_rect = self.image.get_rect()
 		if [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0] or len(collisions):
+			self.char.game.Sounds.play('pew')
 			for i in [[0.707,0.707,-45],[0,1,-90],[-0.707,0.707,-135],[-0.707,-0.707,-180],[-1,0,135],[0,-1,90],[0.707,-0.707,45],[1,0,0]]:
 				M_Bomblaser(self.char,self.loc[0],self.loc[1],i[0]*10,(i[1]+1)*-10,angle = i[2],facing=self.facing,hit_list = self.hit_list)
 			self.kill()

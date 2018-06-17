@@ -8,6 +8,7 @@ from modules.projectiles import *
 class char(Char):
 	def special0(self):
 		if not self.ability_run+1:
+			self.game.Sounds.play('shortdrop')
 			self.ability_run = 0
 			self.release = 0
 			self.freeze = 2
@@ -22,6 +23,7 @@ class char(Char):
 
 	def special1(self, dir):
 		if not (self.ability_run+1 or self.ability_air_side):
+			self.game.Sounds.play('dab')
 			self.ability_air_side = 1
 			self.freeze=2
 			self.fire = self.game.effects['flaming_turds'].copy()
@@ -40,6 +42,7 @@ class char(Char):
 	def special2(self):
 		self.ability_air_side = 0
 		if self.ability_run+1 == 0 and not(self.ability_air):
+			self.game.Sounds.play('shortdrop')
 			self.ability_air = 1
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.ability_run = 2

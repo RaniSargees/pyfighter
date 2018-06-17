@@ -181,6 +181,7 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		try: [exec('x.freeze=0') for x in self.target]
 		except: pass
+		self.game.Sounds.play('oof')
 		self.ability_run = -1
 		self.ability_time = 0
 		self.ability_air=0

@@ -19,6 +19,7 @@ class char(Char):
 	def run_special0(self):
 		if self.release and not(self.special_0_count):
 			self.special_0_go = 1
+			self.game.Sounds.play('explosion')
 			scale = min(int(self.special_0_timer * 400 + 150),400)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale,scale))
 			self.LocNow = (self.x-((self.facing==0)*(scale+self.width//2-(scale/4)))+((self.facing==1)*(self.width//2-(scale/4)))+(64*(self.facing*2-1)),self.y-(scale))
@@ -58,6 +59,7 @@ class char(Char):
 
 	def special2(self):
 		if self.ability_run+1 == 0 and not(self.ability_air):
+			self.game.Sounds.play('explosion')
 			self.ability_air = 1
 			size = 175
 			self.ability_run = 2
@@ -100,6 +102,7 @@ class char(Char):
 
 	def run_special3(self):
 		if self.release and not(self.special_3_count):
+			self.game.Sounds.play('explosion')
 			self.special_3_go = 1
 			scale = min(int(self.special_3_timer * 100 + 100),300)
 			for i,j in enumerate(self.explosion):self.explosion[i]=pygame.transform.scale(j,(scale*2,scale))
