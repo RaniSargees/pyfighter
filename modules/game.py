@@ -17,6 +17,7 @@ class Game():
 		self.ground = pygame.sprite.Group()
 		self.objects = pygame.sprite.Group()
 		self.map = map
+		self.ranks = []
 	def new(self):
 		self.loadData()
 		self.HPFont = pygame.font.SysFont("Trebuchet MS",36)
@@ -140,6 +141,7 @@ class Game():
 			self.draw()
 			if len([x.stock for x in self.sprites if x.stock > 0]) <= 1:
 				self.playing = 0
+				self.ranks = sorted([x for x in self.sprites], key=lambda x:x.dead) #sort players by time of death (breaks if game is played before jan 1 1970, or after jan 19 2038 on 32 bit systems)
 				pygame.mixer.stop()
 				pygame.mixer.music.stop()
 

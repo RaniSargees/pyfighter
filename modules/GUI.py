@@ -18,6 +18,7 @@ class GUI():
 		self.map_pos = 0
 		self.BTN_list = []
 		self.action = 0
+		self.ranks = []
 		#Location Index:
 		#	0, Main Menu
 		#	1, Character Select
@@ -38,7 +39,7 @@ class GUI():
 			self.char_name.append(None)
 		self.char_selected.append(None)
 		self.char_name.append(None)
-		
+
 		#Fonts
 		self.font_LLL = pygame.font.SysFont('Comic Sans MS',72)
 		self.font_LL = pygame.font.SysFont('Comic Sans MS',48)
@@ -53,7 +54,7 @@ class GUI():
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
-		
+
 		if self.location == 0: #Main Menu
 			self.reset_pointers()
 			#Title Text
@@ -69,7 +70,7 @@ class GUI():
 			#Insert moving character sprites(just the heads) in BG from sprites_folder
 			#Add transparency to it
 
-		if self.location == 1: #Character Select screen
+		elif self.location == 1: #Character Select screen
 			self.reset_pointers()
 			#Back Button
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
@@ -110,7 +111,7 @@ class GUI():
 			if temp != []:
 				self.BTN_list.append(temp)
 				temp = []
-		if self.location == 2: #Map select screen
+		elif self.location == 2: #Map select screen
 			self.reset_pointers()
 			self.text = self.font_LLL.render('Select your map',True,BLACK)
 			self.img.append([self.text,self.text.get_rect(center=(640,40))])
@@ -118,8 +119,8 @@ class GUI():
 							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),
 							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],
 							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
-		
-		if self.location == 3: #Controller Connection
+
+		elif self.location == 3: #Controller Connection
 			self.reset_pointers()
 			self.text = self.font_LLL.render('Connect your controllers',True,BLACK)
 			self.img.append([self.text,self.text.get_rect(center=(640,80))])
@@ -133,7 +134,19 @@ class GUI():
 			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
-
+		elif self.location == 4:
+			self.reset_pointers()
+			self.text = self.font_LLL.render("GAME OVER",1,BLACK)
+			self.img.append([self.text,self.text.get_rect(center=(640,80))])
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)]]
+			surf = pygame.Surface((1280,300),pygame.SRCALPHA,32)
+			for i in range(4):
+				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i],(96*(i+1)+200*i,0,200,300))
+				pygame.draw.rect(surf,BLACK,(96*(i+1)+200*i,0,200,300),3)
+			self.img.append([surf,(0,160)])
+			for i in range(4):
+				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
+				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
 
 
 	def reset_pointers(self,char_name = 0):
@@ -309,7 +322,7 @@ class GUI():
 			text = self.font_LL.render(sorted(self.covers)[self.map_pos],True,BLACK)
 			self.win.blit(text,text.get_rect(center=(640,550)))
 			pygame.draw.rect(self.win,BLACK,(270,100,740,400),5)
-		
+
 		elif self.location == 3:#Reconnect Controller Screen
 			img = pygame.transform.scale(self.icons['controller'],(180,180))
 			img2 = pygame.transform.scale(self.icons['keyboard'],(180,180))
@@ -326,7 +339,7 @@ class GUI():
 					self.win.blit(img2,(10+(96*(i+1)+200*i),240))
 			else:
 				self.win.blit(img2,(10+(96),240))
-				
+
 
 
 	def run_paint(self):
@@ -335,13 +348,17 @@ class GUI():
 		p.run()
 		self.playing = p.running
 
-	def run_game(self):
+	def run_game(self): #i run the game
 		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
 		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name,platform = self.icons['platform'])
 		g.new()
 		g.run()
 		self.playing = g.running
-		self.new(1)
+		if not g.ranks:
+			self.new(1)
+		else:
+			self.ranks = g.ranks[:]
+			self.new(4)
 
 	def new_joystick(self):
 		pygame.joystick.quit()
