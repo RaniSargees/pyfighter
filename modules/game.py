@@ -7,16 +7,18 @@ from modules.joystick_wrapper import *
 from settings import *
 
 class Game():
-	def __init__(self, win, joysticks, map="default", charList = [],platform = None):
+	def __init__(self, win, joysticks, map="default", charList = [],platform = None, sounds = None):
 		self.joysticks = joysticks
 		self.win = win
 		self.charList = charList
 		self.platform = platform
+		self.Sounds = sounds
 		self.clock = pygame.time.Clock()
 		self.sprites = pygame.sprite.Group()#Sprite Groups
 		self.ground = pygame.sprite.Group()
 		self.objects = pygame.sprite.Group()
 		self.map = map
+		self.once = 1
 		self.ranks = []#Stores what place the characters are (eg. 1st, 2nd)
 	def new(self):
 		self.loadData()
@@ -33,7 +35,6 @@ class Game():
 				#	друг
 				#	Shooter
 		else:
-			print(self.charList)
 			for x,y in enumerate(self.charList):
 				#x is num
 				#y is values
@@ -120,6 +121,8 @@ class Game():
 	def run(self):
 		self.playing = 1#Game is running
 		self.running = 1#Program is running
+		self.Sounds.play('ready')
+		self.counter = self.clock.get_time()
 		while self.playing:
 			keys = pygame.key.get_pressed()
 			events = pygame.event.get()
@@ -127,6 +130,10 @@ class Game():
 				try:x.update(events)
 				except:pass
 			self.dt = self.clock.tick(FPS) / 1000
+			self.counter += self.dt
+			if self.counter > 3 and self.once:
+				self.once = 0
+				self.Sounds.play('GO')
 			#Events
 			for event in events:
 				if event.type == pygame.QUIT:
@@ -143,7 +150,6 @@ class Game():
 			if len(left)<= 1:
 				self.playing = 0
 				self.ranks = sorted([x for x in self.sprites], key=lambda x:x.dead) #sort players by time of death (breaks if game is played before jan 1 1970, or after jan 19 2038 on 32 bit systems)
-				print(self.ranks)
 				pygame.mixer.stop()
 				pygame.mixer.music.stop()
 

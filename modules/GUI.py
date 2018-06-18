@@ -1,6 +1,7 @@
 import pygame, os, zipfile, math, sys
 from modules.paint import *
 from modules.game import *
+from modules.Sound_Loader import *
 from settings import *
 from modules.joystick_wrapper import *
 from modules.map import *
@@ -12,25 +13,30 @@ class GUI():
 		self.joysticks = joysticks
 		self.bg = None
 		self.img = []
+		self.Sounds = Sound_Manager()
+		self.Sounds.load_music('menu')
+		pygame.mixer.music.play(-1)
 		self.mDown = 0
 		self.fade = 1
 		self.fade_dir = 0
 		self.map_pos = 0
 		self.BTN_list = []
 		self.action = 0
-		self.ranks = []
-		#Location Index:
-		#	0, Main Menu
-		#	1, Character Select
-		#	2, Map Select
-		#	3, Options
+		self.counter = 0
+		self.once = 1
+		self.once2= 1
+		self.once3= 1
+		self.dt = 0
+		self.time = pygame.time.Clock()
 		self.pointer = [] #Where the joystick is current pointing to
 		self.pointerUpdate = [] #Prevents pointer from changing rapidly (Must let axis go before pointer can be moved again)
 		self.joystick_button = [] #The button that is pressed (default to -1)
 		self.joystick_selected = [] #If the joystick has selected something lock it
 		self.char_selected = [] #The character currently selected by the controller
 		self.char_name = [] #Name of the character selected (the name used to load the character in)
+		self.once_char = [1] #To make stuff only run once
 		for x in joysticks[:-1]:
+			self.once_char.append(1)
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
@@ -48,6 +54,11 @@ class GUI():
 		self.font_S = pygame.font.SysFont('Comic Sans MS',8)
 
 	def new(self,location=0):
+		#Location Index:
+		#   0, Main Menu
+		#   1, Character Select
+		#   2, Map Select
+		#   3, Options
 		self.location = location
 		self.load_data()
 		self.MenuBTN = pygame.sprite.Group()
@@ -74,6 +85,7 @@ class GUI():
 
 		elif self.location == 1: #Character Select screen
 			self.reset_pointers()
+			self.Sounds.play("choose")
 			#Back Button
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
 			#Title Text
@@ -143,8 +155,6 @@ class GUI():
 			self.img.append([self.text,(220,5)])
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)]]
 			surf = pygame.Surface((1280,560),pygame.SRCALPHA,32)
-			
-			
 			temp = []
 			for h,i in enumerate(self.ranks):
 				l = i.joystick.get_id()
@@ -169,15 +179,18 @@ class GUI():
 			[x.kill() for x in self.ranks]
 
 
+
 	def reset_pointers(self,char_name = 0):
 		self.pointer = []
 		self.pointerUpdate = []
 		self.joystick_button = []
 		self.joystick_selected = []
 		self.char_selected = []
+		self.once_char = [1]
 		if char_name == 1:
 			self.char_name = [None]
-		for x in self.joysticks[:-1]:
+		for x in self.joysticks[:-1]:	
+			self.once_char.append(1)
 			self.pointer.append([0,0])
 			self.pointerUpdate.append(0)
 			self.joystick_button.append(-1)
@@ -244,7 +257,7 @@ class GUI():
 			if self.BTN_list != []:
 				self.pointers()
 				self.buttons()
-			pygame.time.delay(10)
+			self.dt = self.time.tick(60)/1000
 			pygame.display.update()
 
 	def pointers(self):
@@ -273,6 +286,7 @@ class GUI():
 			button = self.BTN_list[self.pointer[x][1]][self.pointer[x][0]]
 			self.joystick_button[x] = -1
 			if y == 0:
+				self.Sounds.play('click')
 				exec(button.fn)
 				if button.clickable:
 					self.joystick_selected[self.joysticks[x].get_id()] = 1
@@ -289,6 +303,8 @@ class GUI():
 				i.update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 				if self.mDown:
 					x = -1
+					self.Sounds.play('click')
+					self.once_char[x] = 1
 					exec(i.fn)
 					if i.clickable:
 						for j in self.MenuBTN:
@@ -312,6 +328,9 @@ class GUI():
 					class_name = pygame.transform.rotate(self.font_L.render(('Mage','друг','Shooter','Brawler')[stats[0]],True,BLACK),90)
 					class_name_rect = class_name.get_rect(center=(173+(96*(i+1))+(200*i),472))
 					self.win.blit(class_name,class_name_rect)
+					if self.once_char[i]:
+						self.once_char[i] = 0
+						self.Sounds.play(('mage','apyr','shooter','brawler')[stats[0]])
 					for k in range(stats[1]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*k),585,14,20))
 
@@ -320,12 +339,16 @@ class GUI():
 
 					for m in range(stats[3]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*m),665,14,20))
-
+				else:
+					self.once_char[i] = 1
 				for n in range(11):
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
 			if len([x for x in self.char_selected if x != None]) == len(self.char_selected) and len(self.char_selected) > 1:
+				if self.once:
+					self.once = 0
+					self.Sounds.play('slash')
 				self.fade_dir += 1
 				self.fade = -98*math.cos(math.radians(self.fade_dir%360)) + 98
 				pygame.draw.rect(self.win,(255,self.fade,0),(0,310,1280,80))
@@ -333,6 +356,8 @@ class GUI():
 				self.win.blit(text,text.get_rect(center=(640,350)))
 				if bool(len([x for x in self.joystick_button if x == 0])) or (pygame.Rect(0,310,1280,80).collidepoint(pygame.mouse.get_pos()) and self.mDown):
 					self.new(2)
+			else:
+				self.once = 1
 		elif self.location == 2:#Map Select Screen
 			if self.map_pos >= len(self.covers):
 				self.map_pos = 0
@@ -359,6 +384,16 @@ class GUI():
 					self.win.blit(img2,(10+(96*(i+1)+200*i),240))
 			else:
 				self.win.blit(img2,(10+(96),240))
+		
+		elif self.location == 4:
+			self.counter += self.dt
+			if self.once3:
+				self.Sounds.play('winner')
+				self.once3 = 0
+				self.counter = 0
+			if self.counter > 1.6 and self.once2:
+				self.once2 = 0
+				self.Sounds.play(('mage','apyr','shooter','brawler')[self.ranks[0].obj_name])
 
 
 
@@ -368,9 +403,12 @@ class GUI():
 		p.run()
 		self.playing = p.running
 
-	def run_game(self): #i run the game
+	def run_game(self): #run the game
+		self.Sounds.stop_all()
+		self.once2 = 1
+		self.once3 = 1
 		self.char_name = [[int(self.char_name[x][0][1]),str(self.char_name[x][1])] for x in range(len(self.char_name))]
-		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name,platform = self.icons['platform'])
+		g = Game(self.win,self.joysticks,map=sorted(self.covers)[self.map_pos],charList=self.char_name,platform = self.icons['platform'],sounds = self.Sounds)
 		g.new()
 		g.run()
 		self.playing = g.running
@@ -379,6 +417,8 @@ class GUI():
 		else:
 			self.ranks = g.ranks[:]
 			self.new(4)
+		self.Sounds.load_music('menu')
+		pygame.mixer.music.play(-1)
 
 	def new_joystick(self):
 		pygame.joystick.quit()

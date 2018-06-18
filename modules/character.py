@@ -14,6 +14,7 @@ class Char(pygame.sprite.Sprite):
 		self.name = char
 		self.sprite_image = self.game.char_sprites[char][:-1]
 		self.anim = animator(self.sprite_image)
+		self.obj_name = eval(str(self.game.char_sprites[char][-1]))[0]
 		stats = eval(str(self.game.char_sprites[char][-1]))[-1]
 		self.x = 200
 		self.y = 200
@@ -42,6 +43,7 @@ class Char(pygame.sprite.Sprite):
 		self.ability_delay_time = 0
 		self.release = 0
 		self.dmg = 0
+		self.img = []
 		self.stun = 0
 		self.BTNDown = 0
 		self.knocked = 0
@@ -97,7 +99,6 @@ class Char(pygame.sprite.Sprite):
 			self.stock -= 1
 			self.respawn()
 		self.get_keys()
-
 		if self.ability_run >= 0:
 			if self.ability_time > 0 or self.ability_time == -1:
 				if self.ability_time > 0:
@@ -124,7 +125,9 @@ class Char(pygame.sprite.Sprite):
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
 		if self.latktimer:self.latktimer-=1
-
+		for i in self.img: #For blitting stuff after the character is
+			self.game.win.blit(i[0],i[1])
+		self.img = []
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
 		self.y += self.vspeed * self.game.dt
 		while 1:
@@ -183,6 +186,7 @@ class Char(pygame.sprite.Sprite):
 		#direction represents the direction of the attacking player
 		try: [exec('x.freeze=0') for x in self.target]
 		except: pass
+		self.game.Sounds.play('oof')
 		self.ability_run = -1
 		self.ability_time = 0
 		self.ability_air=0

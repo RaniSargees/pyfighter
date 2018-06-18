@@ -6,6 +6,7 @@ from modules.projectiles import *
 class char(Char):
 	def special0(self):
 		if not self.ability_run+1:
+			self.game.Sounds.play('pew')
 			self.freeze = 2
 			self.ability_run = 0
 			self.ability_time = 0.01
@@ -17,6 +18,7 @@ class char(Char):
 
 	def special1(self,direction):
 		if not(self.ability_run+1 or self.ability_delay_time):
+			self.game.Sounds.play('extend')
 			self.freeze = 2
 			self.direction = direction
 			self.ability_run = 1
@@ -77,12 +79,15 @@ class char(Char):
 					char.gravityMultiplier = 1
 
 			if self.timer%30 == 0:
+				self.game.Sounds.play('pew')
 				BIGlaser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*20,-20,-45-(90*(self.direction==1)),self.direction)
 			elif self.timer%10 == 0:
+				self.game.Sounds.play('pew')
 				laser(self,self.x,self.y-92,((self.direction==1)-0.5)*2*25,-25,-45-(90*(self.direction==1)))
 
 	def special2(self):
 		if not(self.ability_run+1 or self.ability_air_side):
+			self.game.Sounds.play('longpew',maxtime = 1200)
 			self.ability_air_side = 1
 			self.ability_run = 2
 			self.ability_time = 1.2
@@ -100,6 +105,7 @@ class char(Char):
 
 	def special3(self):
 		if not(self.ability_run+1 or self.ability_delay_time):
+			self.game.Sounds.play('pew')
 			self.ability_run = 3
 			self.ability_time = 0.2
 			self.ability_delay_time = 2
