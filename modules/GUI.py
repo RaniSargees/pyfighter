@@ -449,8 +449,8 @@ for x in joysticks[:]:
 	except:joysticks.pop(joysticks.index(x)).quit()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 else: joysticks=joysticks[:4]
-#win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
-win = pygame.display.set_mode(RES)
+win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#win = pygame.display.set_mode(RES)
 
 g = GUI(win,joysticks)
 g.new(0)
