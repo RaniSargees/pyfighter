@@ -49,41 +49,41 @@ class fireball(pygame.sprite.Sprite):
 
 class rainbow_poop(pygame.sprite.Sprite):
 	def __init__(self, char, x, y, direction, yspeed = -5, xspeed = 2, bounce = 0):
-		pygame.sprite.Sprite.__init__(self, char.game.objects)
-		self.char = char
-		self.Xspeed= xspeed
-		self.x = x-24
+		pygame.sprite.Sprite.__init__(self, char.game.objects) #add self to projectile group
+		self.char = char #store character
+		self.Xspeed= xspeed #set horizontal speed
+		self.x = x-24 #store starting coords
 		self.y = y-24
-		self.bounce = bounce
-		self.dir = direction
-		self.hit_list = [self,char]
-		self.image = [pygame.transform.scale(x, (48,48)) for x in self.char.fire]
-		if self.dir-1:self.image=[pygame.transform.flip(x, 1,0) for x in self.image]
-		self.loop_len = len(self.image)
-		self.frame = 0
-		hue = random()*360
-		self.Yspeed = yspeed
-		for x in self.image:
+		self.bounce = bounce #variable for bounce count
+		self.dir = direction #direction to move
+		self.hit_list = [self,char] #dont hit the same person twice
+		self.image = [pygame.transform.scale(x, (48,48)) for x in self.char.fire] #generate array of sized images
+		if self.dir-1:self.image=[pygame.transform.flip(x, 1,0) for x in self.image] #flip images for direction
+		self.loop_len = len(self.image) #frame count
+		self.frame = 0 #frame
+		hue = random()*360 #generate random hue
+		self.Yspeed = yspeed #set vertical speed
+		for x in self.image: #change colours to random hue
 			pxarray = pygame.PixelArray(x)
 			pxarray.replace((255,  0, 0), tuple([int(255*x) for x in hls_to_rgb(hue, .5,  1)]))
 			pxarray.replace((169,  1, 1), tuple([int(255*x) for x in hls_to_rgb(hue, .4, .8)]))
 			pxarray.replace((255,112,17), tuple([int(255*x) for x in hls_to_rgb(hue, .6, .7)]))
 			pxarray.replace((251,228,30), tuple([int(255*x) for x in hls_to_rgb(hue, .7, .8)]))
 			del pxarray
-		self.hitbox = (0,0,0,0)
+		self.hitbox =(0,0,0,0)
 	def update(self):
-		self.hitbox = (self.x+20, self.y+20,8,8)
-		self.frame += 1
-		self.char.game.win.blit(self.image[self.frame%self.loop_len],(self.x, self.y))
-		self.x += (self.dir*2-1) * self.Xspeed * 800 * self.char.game.dt
-		self.y += self.Yspeed
-		self.Yspeed += 1
-		collisions=[(pygame.Rect(x.hitbox).collidepoint(self.x+24, self.y+24), x)for x in self.char.game.sprites]
-		collisions=[x[1].damage(1*self.char.attack) for x in collisions[:]if x[1]not in self.hit_list and x[0]]
-		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000 or len(collisions):
+		self.hitbox = (self.x+20, self.y+20,8,8) #update hitbox
+		self.frame += 1 #increment frame
+		self.char.game.win.blit(self.image[self.frame%self.loop_len],(self.x, self.y)) #blit image at position
+		self.x += (self.dir*2-1) * self.Xspeed * 800 * self.char.game.dt #move by x speed
+		self.y += self.Yspeed #add yspeed
+		self.Yspeed += 1 #gravity
+		collisions=[(pygame.Rect(x.hitbox).collidepoint(self.x+24, self.y+24), x)for x in self.char.game.sprites] #check for collisions
+		collisions=[x[1].damage(1*self.char.attack) for x in collisions[:]if x[1]not in self.hit_list and x[0]] #deal damage
+		if self.y < -500 or self.x > 2080 or self.x < -800 or self.y > 1000 or len(collisions): #destroy when offscreen
 			self.kill()
-		elif  [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]:
-			if not self.bounce:self.kill()
+		elif  [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.x+18,self.y+18,12,12)]: #bounce off ground
+			if not self.bounce:self.kill() #destroy if bounced too many times
 			else:self.bounce-=1;self.Yspeed*=-.8;self.Xspeed*=.8
 
 class Tinylaser(pygame.sprite.Sprite):
