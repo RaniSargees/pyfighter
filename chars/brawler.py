@@ -36,6 +36,7 @@ class char(Char):
 				self.SP0_go = 0
 				self.ability_run = 0
 				self.ability_time = 0
+			return self.anim.punch(self.dirn)
 	
 	def special1(self, dir):#Side punch
 		if not(self.ability_run+1 or self.ability_air):
@@ -52,6 +53,7 @@ class char(Char):
 		collisions=[(pygame.Rect((self.x-70+((self.dir==1)*(90)), self.y-120, 50, 120)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+		return self.anim.punch(self.dirn)
 		
 	def special2(self):#Jump punch
 		if not(self.ability_run+1 or self.ability_air_side):
@@ -67,6 +69,7 @@ class char(Char):
 		collisions=[(pygame.Rect((self.x-40, self.y-120, 80, 20)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(self.attack*20, 2),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
+		return self.anim.punch(2)
 		
 		
 	def special3(self):
