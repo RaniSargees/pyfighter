@@ -56,7 +56,8 @@ class Char(pygame.sprite.Sprite):
 		self.width = 40
 		self.height = 120
 		self.hitbox = (self.x-self.width//2,self.y-self.height,self.width,self.height)
-
+		self.latktimer = 0
+		self.latkdir = 0
 		#Stats
 		self.defense = stats[-2]
 		self.attack = 1+(stats[0]/22)
@@ -112,7 +113,8 @@ class Char(pygame.sprite.Sprite):
 			self.hit_list = [self]
 			if self.freeze != 3:
 				self.freeze = 0
-			if self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
+			if self.latktimer:character_surface=self.anim.punch(self.latkdir)
+			elif self.hspeed and self.grounded:character_surface = self.anim.walk(self.hspeed)
 			#elif not self.hspeed and self.grounded:
 			else:character_surface = self.anim.idle()
 #			else:character_surface = self.anim.jump() # this animation sucks, just leave it commented
@@ -122,7 +124,8 @@ class Char(pygame.sprite.Sprite):
 		if self.facing: self.game.win.blit(character_surface,(self.x-128,self.y-256))
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
-		for i in self.img:#For blitting stuff after the character is
+		if self.latktimer:self.latktimer-=1
+		for i in self.img: #For blitting stuff after the character is
 			self.game.win.blit(i[0],i[1])
 		self.img = []
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
@@ -162,15 +165,18 @@ class Char(pygame.sprite.Sprite):
 			self.jumpBonus = 0
 
 	def atkLight(self, direction):
-		if direction == 4:
-			direction = self.facing
-		if direction < 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+20)), self.y-self.height, 20, self.height),4)
-			collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+20)),self.y-self.height,20,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		elif direction >= 2:
-			pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30),4)
-			collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
+		if not self.latktimer:
+			self.latkdir=direction
+			self.latktimer=8
+			if direction == 4:
+				direction = self.facing
+			if direction < 2:
+				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+20)), self.y-self.height, 20, self.height),4)
+				collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+20)),self.y-self.height,20,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			elif direction >= 2:
+				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30),4)
+				collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
+			[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
