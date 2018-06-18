@@ -1,3 +1,7 @@
+#Projectiles
+#Contains all projectiles used by characters
+
+
 from colorsys import hls_to_rgb
 from random import random
 import pygame

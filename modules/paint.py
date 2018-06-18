@@ -1,3 +1,7 @@
+#			Paint
+#Paint program used to create playable character in game
+#Tools are self explanatory and a name must be assigned to be able to save 
+
 import pygame, math, os
 from random import randint
 from settings import *

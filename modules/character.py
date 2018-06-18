@@ -1,3 +1,11 @@
+#			Character
+#Base case for all character objects
+#Use WASD or joystick to control character
+#J_keyboard or X_controller(xBOX) for a light attack
+#K_keyboard or B_controller(xBOX) for a heavy attack
+#Space_Keyboard or A_controller(xBOX) for a jump
+
+
 import pygame, math
 from random import randint, uniform
 from settings import *

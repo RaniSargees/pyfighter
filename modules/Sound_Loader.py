@@ -1,3 +1,5 @@
+#Sound_loader
+#Loads in sounds and plays them on command
 import pygame, os, sys
 
 class Sound_Manager():

@@ -1,3 +1,7 @@
+#		GUI
+#Displays main menu for game
+#Can be controlled using mouse or controller
+#Loads Game and Paint programs
 import pygame, os, zipfile, math, sys
 from modules.paint import *
 from modules.game import *

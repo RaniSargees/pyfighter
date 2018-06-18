@@ -1,3 +1,6 @@
+#Map
+#Controls Platforms and Ground objects for the map
+
 import pygame
 from settings import *
 

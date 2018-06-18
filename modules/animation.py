@@ -1,3 +1,6 @@
+#		Animation
+#Returns character sprites animated
+
 import pygame
 from math import sin,cos,asin,acos,radians,degrees
 from random import randint

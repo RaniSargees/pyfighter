@@ -1,3 +1,9 @@
+#		Game
+#Loads in all data for game
+#Starts up characters
+#Keeps track of winner
+
+
 import pygame, math, os, zipfile, sys
 from io import BytesIO
 from modules.character import *

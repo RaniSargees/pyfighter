@@ -1,3 +1,5 @@
+#PaintCanvas
+#Contains the surface data for the canvas on paint.py
 import pygame
 from settings import *
 class paintCanvas():

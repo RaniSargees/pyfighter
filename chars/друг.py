@@ -16,7 +16,7 @@ class char(Char):
 			self.fire = self.game.effects['flaming_turds'].copy()
 			self.special_0_len = len(self.fire)
 			self.ability_count = -8
-	def run_special0(self):
+	def run_special0(self):#Drops rainbow projectiles in a curve
 		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
