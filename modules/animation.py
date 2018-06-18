@@ -131,7 +131,7 @@ class animator():
 		return self.surface
 
 	def punch(self, dir):
-		if dir in (1,5):dir=0
+		if dir not in (2,3):dir=0
 		if self.anim!="punch"+str(dir):self.frame=0;self.anim="punch"+str(dir) #reset frame on animation change
 		else:self.frame+=1 #update frame
 		self.surface.fill(0)
