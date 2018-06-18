@@ -29,7 +29,7 @@ class Char(pygame.sprite.Sprite):
 		self.vspeed = 0
 		self.hspeed = 0
 		self.gravity = 32
-		self.stock = 1
+		self.stock = 4
 		self.dead = 0
 		self.gravityMultiplier = 1
 		self.joystick = joystick
