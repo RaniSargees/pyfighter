@@ -173,9 +173,8 @@ class Char(pygame.sprite.Sprite):
 		[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 
 	def atkHeavy(self,direction):
-		#try:
-		exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
-		#except Exception as e:print(e)
+		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
+		except Exception as e:print(e)
 
 	def knockBack(self,hit,direction=0):
 		#direction represents the direction of the attacking player

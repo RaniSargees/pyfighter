@@ -35,7 +35,6 @@ class Game():
 				#	друг
 				#	Shooter
 		else:
-			print(self.charList)
 			for x,y in enumerate(self.charList):
 				#x is num
 				#y is values

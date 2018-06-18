@@ -302,7 +302,6 @@ class GUI():
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				i.update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 				if self.mDown:
-					print(self.once_char)
 					x = -1
 					self.Sounds.play('click')
 					self.once_char[x] = 1
