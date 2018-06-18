@@ -29,7 +29,7 @@ class Char(pygame.sprite.Sprite):
 		self.vspeed = 0
 		self.hspeed = 0
 		self.gravity = 32
-		self.stock = 1
+		self.stock = 3
 		self.dead = 0
 		self.gravityMultiplier = 1
 		self.joystick = joystick
@@ -171,8 +171,8 @@ class Char(pygame.sprite.Sprite):
 			if direction == 4:
 				direction = self.facing
 			if direction < 2:
-				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+20)), self.y-self.height, 20, self.height),4)
-				collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+20)),self.y-self.height,20,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
+				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+50))-30, self.y-self.height, 50, self.height),4)
+				collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+50))-30,self.y-self.height,50,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			elif direction >= 2:
 				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30),4)
 				collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
