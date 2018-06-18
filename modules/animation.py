@@ -22,16 +22,20 @@ class animator():
 		self.head   	= sprite[0] # 21,21 #split sprites into separate variables
 		self.body   	= sprite[1] # 42,54
 		self.l_arm  	= sprite[2] # 30,15
+		self.l_arm_top	= sprite[2].subsurface((15,0,15,15)) # 15,15
+		self.l_arm_bot	= sprite[2].subsurface(( 0,0,15,15)) # 15,15
 		self.l_hand 	= sprite[3] # 15,15
 		self.r_arm  	= sprite[4] # 30,15
+		self.r_arm_top 	= sprite[4].subsurface(( 0,0,15,15)) # 15,15
+		self.r_arm_bot 	= sprite[4].subsurface((15,0,15,15)) # 15,15
 		self.r_hand 	= sprite[5] # 15,15
 		self.l_leg  	= sprite[6] # 15,30
-		self.l_leg_top	= sprite[6].subsurface(( 0, 0,15,15)) # 15,15 #extra body parts (probably wont be used)
-		self.l_leg_bot	= sprite[6].subsurface(( 0,15,15,15)) # 15,15
+		self.l_leg_top	= sprite[6].subsurface((0, 0,15,15)) # 15,15 #extra body parts (probably wont be used)
+		self.l_leg_bot	= sprite[6].subsurface((0,15,15,15)) # 15,15
 		self.l_foot 	= sprite[7] # 15,15
 		self.r_leg  	= sprite[8] # 15,30
-		self.r_leg_top	= sprite[8].subsurface(( 0, 0,15,15)) # 15,15
-		self.r_leg_bot	= sprite[8].subsurface(( 0,15,15,15)) # 15,15
+		self.r_leg_top	= sprite[8].subsurface((0, 0,15,15)) # 15,15
+		self.r_leg_bot	= sprite[8].subsurface((0,15,15,15)) # 15,15
 		self.r_foot 	= sprite[9] # 15,15
 
 	def idle(self, anim=1):
@@ -124,6 +128,67 @@ class animator():
 
 
 		elif self.frame==4: self.surface=self.idle();self.frame=4;self.anim="jump";return self.surface
+		return self.surface
+
+	def punch(self, dir):
+		if dir<2:dir=0
+		if self.anim!="punch"+str(dir):self.frame=0;self.anim="punch"+str(dir) #reset frame on animation change
+		else:self.frame+=1 #update frame
+		self.surface.fill(0)
+
+		angle = abs(cos(radians(self.frame*45/2))) * 45 #make the arm bend kinda like \/' hopefully, 8 frames
+		static= 45
+
+		tempr = pygame.surface.Surface((256, 256))
+		templ = pygame.surface.Surface((256, 256))
+		tempr.fill(GRAEY)
+		templ.fill(GRAEY)
+		tempr.set_colorkey(GRAEY)
+		templ.set_colorkey(GRAEY)
+		#rotate arms
+		r_arm_top, rat_rect = animator.pivot(self.r_arm_top,angle, (128+17,256-81), (7.5,-7.5))
+		l_arm_top, lat_rect = animator.pivot(self.l_arm_top,180+static, (128-32+7.5,256-81-15), (-7.5,-7.5))
+		rarm_offset = pygame.math.Vector2(14,0).rotate(angle)
+		larm_offset = pygame.math.Vector2(14,0).rotate(static)
+		r_arm_bot, rab_rect = animator.pivot(self.r_arm_bot, -angle, rarm_offset+(128+17+(15*angle/45),256-81), (7.5,-7.5))
+		l_arm_bot, lab_rect = animator.pivot(self.l_arm_bot,180-static, larm_offset+(128-32-7.5,256-81-7.5), (-7.5,-7.5))
+		rhand_offset= rarm_offset + pygame.math.Vector2(14,0).rotate(-angle)
+		lhand_offset= larm_offset + pygame.math.Vector2(14,0).rotate(-static)
+		tempr.blit(self.r_hand, rhand_offset+(128+17,256-81-15))
+		templ.blit(self.l_hand, lhand_offset+(128-32-7.5,256-81-15))
+		tempr.blit(r_arm_bot, rab_rect) #blit arms
+		templ.blit(l_arm_bot, lab_rect)
+		tempr.blit(r_arm_top, rat_rect)
+		templ.blit(l_arm_top, lat_rect)
+		if dir==2:
+			tempr=pygame.transform.rotate(tempr, 90)
+			templ=pygame.transform.rotate(templ, 90)
+		elif dir==3:
+			tempr=pygame.transform.rotate(tempr, -90)
+			templ=pygame.transform.rotate(templ, -90)
+
+
+		self.surface.blit(self.l_leg, (128-21, 256-45)) #blit non moving objects
+		self.surface.blit(self.r_leg, (128+ 6, 256-45))
+		self.surface.blit(self.l_foot,(128-21, 256-15))
+		self.surface.blit(self.r_foot,(128+ 6, 256-15))
+		self.surface.blit(self.head,(128-10.5,256-118))
+		self.surface.blit(self.body,(128-21  ,256- 97))
+
+		l_arm = pygame.transform.rotate(self.l_arm,  90)
+		l_hand= pygame.transform.rotate(self.l_hand, 90)
+		if not dir:
+			self.surface.blit(tempr, (0,0))
+			self.surface.blit(templ, (0,0))
+		elif dir==2:
+			self.surface.blit(tempr, (-24,56))
+			self.surface.blit(l_arm, (128-32, 256-81-7))
+			self.surface.blit(l_hand,(128-32, 256-51-7))
+		elif dir==3:
+			self.surface.blit(tempr, (64,24))
+			self.surface.blit(l_arm, (128-32, 256-81-7))
+			self.surface.blit(l_hand,(128-32, 256-51-7))
+
 		return self.surface
 
 
