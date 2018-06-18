@@ -13,8 +13,10 @@ class char(Char):
 			self.ability_run = 0
 			self.ability_time = -1
 			self.explosion = self.game.effects['explosion'].copy()
+			self.charging = self.game.effects['charging'].copy()
 			self.special_0_len = len(self.explosion)
 			self.special_0_count = 0
+			self.frame_count = 0
 
 	def run_special0(self):
 		if self.release and not(self.special_0_count):
@@ -25,6 +27,9 @@ class char(Char):
 			self.LocNow = (self.x-((self.facing==0)*(scale+self.width//2-(scale/4)))+((self.facing==1)*(self.width//2-(scale/4)))+(64*(self.facing*2-1)),self.y-(scale))
 			self.scale = scale
 		else:
+			if not(self.special_0_go):
+				self.game.win.blit(pygame.transform.scale(self.charging[self.frame_count%98],(50,50)),(self.x-25+(self.facing-0.5)*250,self.y-80))
+				self.frame_count += 1
 			self.special_0_timer += self.game.dt
 			if self.special_0_timer > 1: self.release=1;
 		if self.special_0_go:
@@ -96,8 +101,10 @@ class char(Char):
 			self.ability_run = 3
 			self.ability_time = -1
 			self.explosion = self.game.effects['aoe_explosion'].copy()
+			self.charging = self.game.effects['charging'].copy()
 			self.special_3_len = len(self.explosion)
 			self.special_3_count = 0
+			self.frame_count = 0
 
 
 	def run_special3(self):
@@ -109,6 +116,9 @@ class char(Char):
 			self.LocNow = (self.x+(self.width//2-scale),self.y-(scale))
 			self.scale = scale
 		else:
+			if not(self.special_3_go):
+				self.img.append((pygame.transform.scale(self.charging[self.frame_count%98],(20+self.frame_count,20+self.frame_count)),(self.x-(10+(self.frame_count/2)),self.y-(20+self.frame_count))))
+				self.frame_count += 1
 			self.special_3_timer += self.game.dt
 			if self.special_3_timer > 2: self.release=1;
 		if self.special_3_go:
