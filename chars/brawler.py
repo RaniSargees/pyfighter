@@ -17,7 +17,7 @@ class char(Char):
 			self.SP0_go = 0
 			self.frame_count = 0
 		
-	def run_special0(self):
+	def run_special0(self):#charge punch
 		if (self.BTNDown and self.release) or self.SP0_counter > 210:
 			self.SP0_go = 1
 		else:
@@ -37,7 +37,7 @@ class char(Char):
 				self.ability_run = 0
 				self.ability_time = 0
 	
-	def special1(self, dir):
+	def special1(self, dir):#Side punch
 		if not(self.ability_run+1 or self.ability_air):
 			self.ability_run = 1
 			self.ability_air = 1
@@ -53,7 +53,7 @@ class char(Char):
 		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		
-	def special2(self):
+	def special2(self):#Jump punch
 		if not(self.ability_run+1 or self.ability_air_side):
 			self.ability_air_side = 1
 			self.freeze = 2
@@ -84,8 +84,8 @@ class char(Char):
 			self.hit_list
 
 	def run_special3(self):
-		surf = pygame.Surface((1280,720),pygame.SRCALPHA,32)
-		if self.start:
+		surf = pygame.Surface((1280,720),pygame.SRCALPHA,32)#I was lasy so I made the surface be the entire screen
+		if self.start:#Controls the animation
 			self.open += 1
 			if self.open >= 90:
 				self.open = 90
@@ -97,10 +97,11 @@ class char(Char):
 				self.ability_run = 0
 				self.ability_time = 0
 			
-		self.color = [int(x*255) for x in hls_to_rgb(self.hue/360,0.5,1)]
+		self.color = [int(x*255) for x in hls_to_rgb(self.hue/360,0.5,1)]#Controls the color
 		self.hue+=1
 		if self.hue%30 == 0:
 			self.hit_list = []
+		#Draws the thing
 		pygame.draw.polygon(surf,self.color,((self.x-7,self.y-79),(self.x-10,self.y-72),(self.x-7,self.y-65),(self.x+7,self.y-65),(self.x+10,self.y-72),(self.x+7,self.y-79)))
 		pygame.draw.lines(surf,self.color,1,((self.x-(70*sin(radians(self.hue*4))),self.y-72-(70*sin(radians(self.open)))),
 													(self.x-(100*sin(radians(self.hue*4))),self.y-72),

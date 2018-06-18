@@ -125,7 +125,7 @@ class Char(pygame.sprite.Sprite):
 		else: self.game.win.blit(pygame.transform.flip(character_surface,1,0),(self.x-128,self.y-256))
 
 		if self.latktimer:self.latktimer-=1
-		for i in self.img: #For blitting stuff after the character is
+		for i in self.img: #For blitting stuff after the character
 			self.game.win.blit(i[0],i[1])
 		self.img = []
 		if self.vspeed<0 and len([x for x in self.game.ground if pygame.Rect(x.rect).colliderect(self.x-self.hitbox[2]//2+1, self.y-self.hitbox[3]+self.vspeed*self.game.dt, self.hitbox[2]-2, 1) and x.platform==0]): self.vspeed=0
@@ -178,7 +178,7 @@ class Char(pygame.sprite.Sprite):
 				collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 
-	def atkHeavy(self,direction):
+	def atkHeavy(self,direction):#Starts special/heavy attack
 		try:exec(['self.special1(direction)','self.special1(direction)','self.special2()','self.special3()','self.special0()'][direction])
 		except Exception as e:print(e)
 
@@ -204,15 +204,15 @@ class Char(pygame.sprite.Sprite):
 		self.y -= 5
 
 
-	def atkEnd(self):
+	def atkEnd(self):#Resets attacking variable
 		if not(self.ability_time == -1):
 			self.ability_time = 0
 			self.ability_run = -1
 
-	def damage(self, hit):
+	def damage(self, hit):#Calculated damage
 		self.dmg+=(hit*(1 - self.defense/20))
 
-	def get_keys(self):
+	def get_keys(self):#Does things when controller keys are pressed
 		if self.stun <= 0 and not(self.spawning):
 			Slow_multiplier = (abs((self.freeze==0)-0.2)+0.2) * (((self.freeze==2 or self.freeze==3)-1)*-1)
 			if  self.joystick.get_axis(0) < -.5 and self.freeze!=2:
