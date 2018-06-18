@@ -150,6 +150,9 @@ class Game():
 			if len(left)<= 1:
 				self.playing = 0
 				self.ranks = sorted([x for x in self.sprites], key=lambda x:x.dead) #sort players by time of death (breaks if game is played before jan 1 1970, or after jan 19 2038 on 32 bit systems)
+				print(self.ranks)
+				if min(self.ranks, key=lambda x:x.dead).dead==0:self.ranks=[self.ranks[0]]+self.ranks[1:][::-1]
+				print(self.ranks)
 				pygame.mixer.stop()
 				pygame.mixer.music.stop()
 

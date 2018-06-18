@@ -147,8 +147,6 @@ class GUI():
 			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
-			
-
 		elif self.location == 4:
 			self.reset_pointers()
 			self.text = self.font_LLL.render("THE WINNER IS: "+str(self.ranks[0].name).upper(),1,BLACK)
@@ -376,7 +374,7 @@ class GUI():
 					self.win.blit(img,(10+(96*(i+1)+200*i),240))
 				i += 1
 				if len(self.joysticks)==4:
-					if self.joysticks.get_name == "Dummy Joystick":
+					if self.joysticks[-1].get_name() == "Dummy Joystick":
 						self.win.blit(img2,(10+(96*(i+1)+200*i),240))
 					else:
 						self.win.blit(img,(10+(96*(i+1)+200*i),240))
