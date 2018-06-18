@@ -8,17 +8,22 @@ class char(Char):
 	def special0(self):
 		if not(self.ability_run+1):
 			self.dirn = self.facing
+			self.charging = self.game.effects['charging'].copy()
 			self.ability_run = 0
 			self.ability_time = -1
 			self.release = 0
 			self.freeze = 2
 			self.SP0_counter = 60
 			self.SP0_go = 0
+			self.frame_count = 0
 		
 	def run_special0(self):
 		if (self.BTNDown and self.release) or self.SP0_counter > 210:
 			self.SP0_go = 1
 		else:
+			if not(self.SP0_go):
+				self.img.append((pygame.transform.scale(self.charging[self.frame_count%98],(40,40)),(self.x-20+(((self.dirn==0)-0.5)*50),self.y-70)))
+				self.frame_count += 1
 			self.SP0_counter += 1
 		if self.SP0_go:
 			self.hspeed = (self.dirn-0.5)*2*(self.SP0_counter*10)
@@ -60,7 +65,7 @@ class char(Char):
 		self.vspeed = -500
 		pygame.draw.rect(self.game.win,BLUE,(self.x-40, self.y-140, 80, 40),4)
 		collisions=[(pygame.Rect((self.x-40, self.y-120, 80, 20)).colliderect(x.hitbox),x)for x in self.game.sprites]
-		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
+		[(x[1].knockBack(self.attack*20, 2),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 		
 		
@@ -79,6 +84,7 @@ class char(Char):
 			self.hit_list
 
 	def run_special3(self):
+		surf = pygame.Surface((1280,720),pygame.SRCALPHA,32)
 		if self.start:
 			self.open += 1
 			if self.open >= 90:
@@ -95,13 +101,14 @@ class char(Char):
 		self.hue+=1
 		if self.hue%30 == 0:
 			self.hit_list = []
-		pygame.draw.polygon(self.game.win,self.color,((self.x-7,self.y-79),(self.x-10,self.y-72),(self.x-7,self.y-65),(self.x+7,self.y-65),(self.x+10,self.y-72),(self.x+7,self.y-79)))
-		pygame.draw.lines(self.game.win,self.color,1,((self.x-(70*sin(radians(self.hue*4))),self.y-72-(70*sin(radians(self.open)))),
+		pygame.draw.polygon(surf,self.color,((self.x-7,self.y-79),(self.x-10,self.y-72),(self.x-7,self.y-65),(self.x+7,self.y-65),(self.x+10,self.y-72),(self.x+7,self.y-79)))
+		pygame.draw.lines(surf,self.color,1,((self.x-(70*sin(radians(self.hue*4))),self.y-72-(70*sin(radians(self.open)))),
 													(self.x-(100*sin(radians(self.hue*4))),self.y-72),
 													(self.x-(70*sin(radians(self.hue*4))),self.y-72+(70*sin(radians(self.open)))),
 													(self.x+(70*sin(radians(self.hue*4))),self.y-72+(70*sin(radians(self.open)))),
 													(self.x+(100*sin(radians(self.hue*4))),self.y-72),
 													(self.x+(70*sin(radians(self.hue*4))),self.y-72-(70*sin(radians(self.open))))),10)
+		self.img.append((surf,(0,0)))
 		collisions=[(pygame.Rect((self.x-70,self.y-142,140,142)).colliderect(x.hitbox),x)for x in self.game.objects]
 		for x in collisions:
 			if x[0] and not(x[1] in self.hit_list):

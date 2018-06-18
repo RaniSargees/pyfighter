@@ -97,5 +97,3 @@ class char(Char):
 		
 		collisions=[(pygame.Rect((self.x-90,self.y-180,180,180)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(10, randint(0,2)),x[1].damage(0.5*self.attack))for x in collisions if x[0] and not(x[1]==self)]
-		
-			

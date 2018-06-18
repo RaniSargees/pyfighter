@@ -202,4 +202,3 @@ if __name__ == "__main__":
 	g.new()
 	g.run()
 	pygame.quit()
-
