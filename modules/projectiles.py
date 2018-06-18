@@ -35,7 +35,6 @@ class fireball(pygame.sprite.Sprite):
 			if self.count < self.char.special_1_len*2:
 				self.char.game.win.blit(self.explosion[self.count//2],self.loc)
 				if self.count < 8:
-					pygame.draw.rect(self.char.game.win,BLUE,(self.loc[0]+50,self.loc[1]+50,100,100),4)
 					collisions=[(pygame.Rect((self.loc[0]+50,self.loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
 				else: collisions=[]
 				self.count += 1

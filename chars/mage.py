@@ -37,7 +37,6 @@ class char(Char):
 				self.game.win.blit(self.explosion[self.special_0_count],self.LocNow)
 				if self.special_0_count <= 8:
 					#Change the spawn location dependant on variable scale
-					pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4),4)
 					collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/4),self.LocNow[1]+(self.scale/4),self.scale/2,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				else: collisions = [];self.freeze=0
 				self.special_0_count += 1
@@ -80,7 +79,6 @@ class char(Char):
 		if self.special_2_count < len(self.explosion*2):
 			self.game.win.blit(self.explosion[self.special_2_count//2],self.LocNow)
 			self.special_2_count += 1
-		pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667),4)
 		collisions=[(pygame.Rect((self.LocNow[0]+43.75,self.LocNow[1]+43.75,87.5,116.667)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(12*self.attack, 3),x[1].damage(16 * self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
@@ -124,7 +122,6 @@ class char(Char):
 		if self.special_3_go:
 			if self.special_3_count < self.special_3_len*2:
 				self.game.win.blit(self.explosion[self.special_3_count//2],self.LocNow)
-				pygame.draw.rect(self.game.win,BLUE,(self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4),4)
 				collisions=[(pygame.Rect((self.LocNow[0]+(self.scale/6),self.LocNow[1]+(self.scale/6),4*self.scale/3,3*self.scale/4)).colliderect(x.hitbox),x)for x in self.game.sprites]
 				self.special_3_count += 1
 				[(exec("x[1].knockBack((self.scale//20)*self.attack, x[1].x>(self.LocNow[0]+self.scale))"*(x[1]!=self)),x[1].damage(self.scale//100 * self.attack))for x in collisions if x[0]]

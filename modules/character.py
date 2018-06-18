@@ -171,10 +171,8 @@ class Char(pygame.sprite.Sprite):
 			if direction == 4:
 				direction = self.facing
 			if direction < 2:
-				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width+((direction==1)*(self.width+50))-30, self.y-self.height, 50, self.height),4)
 				collisions=[(pygame.Rect((self.x-self.width+((direction==1)*(self.width+50))-30,self.y-self.height,50,self.height)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			elif direction >= 2:
-				pygame.draw.rect(self.game.win,BLUE,(self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30),4)
 				collisions=[(pygame.Rect((self.x-self.width//2,20+self.y-(self.height+30)+((direction==3)*(self.height+10)),self.width,30)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			[(x[1].knockBack(6*self.attack, direction),x[1].damage(5*self.attack))for x in collisions if x[0] and x[1]!=self]
 

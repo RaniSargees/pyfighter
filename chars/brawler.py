@@ -27,7 +27,6 @@ class char(Char):
 			self.SP0_counter += 1
 		if self.SP0_go:
 			self.hspeed = (self.dirn-0.5)*2*(self.SP0_counter*10)
-			pygame.draw.rect(self.game.win,BLUE,(self.x,self.y-100,(self.dirn-0.5)*2*60,100),3)
 			collisions=[(pygame.Rect((self.x+(self.dirn==0)*-60,self.y-100,60,100)).colliderect(x.hitbox),x)for x in self.game.sprites]
 			[(x[1].knockBack(self.attack*self.SP0_counter/4, self.dirn),x[1].damage(self.attack *self.SP0_counter /4))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 			self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
@@ -49,7 +48,6 @@ class char(Char):
 			self.vspeed = -600
 	
 	def run_special1(self):
-		pygame.draw.rect(self.game.win,BLUE,(self.x-70+((self.dir==1)*(90)), self.y-120, 50, 120),4)
 		collisions=[(pygame.Rect((self.x-70+((self.dir==1)*(90)), self.y-120, 50, 120)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(self.attack*20, self.dir),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
@@ -65,7 +63,6 @@ class char(Char):
 	
 	def run_special2(self):
 		self.vspeed = -500
-		pygame.draw.rect(self.game.win,BLUE,(self.x-40, self.y-140, 80, 40),4)
 		collisions=[(pygame.Rect((self.x-40, self.y-120, 80, 20)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(self.attack*20, 2),x[1].damage(self.attack *15))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
