@@ -8,7 +8,6 @@ from settings import *
 pi=3 # ヽ(｀Д´)ﾉ WHYYYYY
 
 class animator():
-
 	@staticmethod
 	def pivot(surface, angle, centre, offset): #rotate surfaces about a point
 		#offset should be a pygame.math.Vector2 (allows for rotating offsets)
@@ -163,7 +162,7 @@ class animator():
 		templ.blit(l_arm_bot, lab_rect)
 		tempr.blit(r_arm_top, rat_rect)
 		templ.blit(l_arm_top, lat_rect)
-		if dir==2:
+		if dir==2: #rotate arms depending on direction
 			tempr=pygame.transform.rotate(tempr, 90)
 			templ=pygame.transform.rotate(templ, 90)
 		elif dir==3:
@@ -180,7 +179,7 @@ class animator():
 
 		l_arm = pygame.transform.rotate(self.l_arm,  90)
 		l_hand= pygame.transform.rotate(self.l_hand, 90)
-		if not dir:
+		if not dir: #shift arms based on rotation
 			self.surface.blit(tempr, (0,0))
 			self.surface.blit(templ, (0,0))
 		elif dir==2:
