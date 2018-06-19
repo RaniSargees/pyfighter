@@ -13,7 +13,7 @@ class char(Char):
 			self.release = 0
 			self.freeze = 2
 			self.ability_time = -1
-			self.fire = self.game.effects['flaming_turds'].copy() #setup variables for projectile
+			self.fire = self.game.effects['flaming_turds'].copy() #loads in sprite image for ability
 			self.special_0_len = len(self.fire)
 			self.ability_count = -8
 	def run_special0(self): #Drops rainbow projectiles in a curve
@@ -76,7 +76,7 @@ class char(Char):
 					pxarray.replace((251,228,30), tuple([int(255*x) for x in hls_to_rgb(hue, .7, .8)]))
 					del pxarray
 				self.image_list.append(image)
-				self.image_x.append((randint(-60,180),randint(0,180),randint(5,20)))
+				self.image_x.append((randint(-60,180),randint(0,180),randint(5,20)))#Places each object randomly on the surface with a random speed
 			self.img_len = len(image)
 
 	def run_special3(self):
@@ -84,11 +84,11 @@ class char(Char):
 		self.surf.fill((WHITE))
 
 		for i,j in enumerate(self.image_list): #Blits rainbow projectiles onto surfaces
-			self.image_x[i] = (self.image_x[i][0] +self.image_x[i][2],self.image_x[i][1],self.image_x[i][2])
-			if self.image_x[i][0] > 180:
+			self.image_x[i] = (self.image_x[i][0] +self.image_x[i][2],self.image_x[i][1],self.image_x[i][2])#Updates each item in tornado
+			if self.image_x[i][0] > 180:#Loops back projectile if at the end
 				self.image_x[i] = (-60,self.image_x[i][1],self.image_x[i][2])
 			self.surf.blit(j[self.count%self.img_len],(self.image_x[i][0],self.image_x[i][1]))
-		pygame.draw.polygon(self.surf,WHITE,((0,0),(0,180),(60,180)))
+		pygame.draw.polygon(self.surf,WHITE,((0,0),(0,180),(60,180)))#Draws 2 White triangles and sets the color key to White so it looks like a tornado
 		pygame.draw.polygon(self.surf,WHITE,((180,0),(180,180),(120,180)))
 		self.surf.set_colorkey((WHITE))
 		self.img.append((self.surf,(self.x-90,self.y-180)))

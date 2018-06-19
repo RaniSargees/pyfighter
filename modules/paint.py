@@ -12,22 +12,22 @@ from modules.text_box import *
 
 class paint():
 	def __init__(self,win,directory=None,img_lst = []):
-		self.win = win
+		self.win = win#init varibales and sprite groups
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
 		self.Misc = pygame.sprite.Group()
 		self.Classes = pygame.sprite.Group()
-		self.shift = 20
+		self.shift = 20#The space between (0,0) and the canvas
 		self.click = False
 		self.hold = False
 		self.up = True
-		self.icons = img_lst
+		self.icons = img_lst#Spites (icon images)
 		self.canvas_new = 0
 		self.undo = 0
 		self.save = 0
 		self.running = 1
 		self.boxUpdate = 0
-		self.directory = directory
+		self.directory = directory#Save directory
 		self.ani_dir = 0
 		self.animate = 0
 		self.popUp = 0
@@ -36,11 +36,12 @@ class paint():
 		self.tool = 1
 		#1 = brush
 		#2 = circle tool
+		
+		#Character stats (This will be saved) (This is also the default if nothing is selected in terms of these stats)
 		self.Class = 0
 		self.attack = 1
 		self.defense = 1
 		self.speed = 1
-		#[atk,def,speed]
 
 		#Fonts
 		self.font = pygame.font.SysFont('Courier New',48)
@@ -49,7 +50,7 @@ class paint():
 		self.font_SS = pygame.font.SysFont('Courier New',16)
 
 	def new(self):
-		self.canvas = pygame.Surface((640,480))
+		self.canvas = pygame.Surface((640,480))#Creates surface and creates subsurfaces for each of the body parts
 		self.head_rect = (285,80,70,70)
 		self.torso_rect = (250,150,140,180)
 		self.L_arm_rect = (150,180,100,50)
@@ -86,9 +87,9 @@ class paint():
 
 		self.body_rects = [(x[0]+self.shift,x[1]+self.shift,x[2],x[3]) for x in self.body_rects_old]
 
-		self.grid = paintCanvas(self.canvas,1,5)
+		self.grid = paintCanvas(self.canvas,1,5)#Creates canvas object
 		self.canvas_Old = []
-		for i in range(len(COLORS)):
+		for i in range(len(COLORS)):#Creates list of selectable colors from the COLOR list in settings
 			if i == 17 and self.icons != []:
 				BTN(self.win,i,(30+(i*70)-((i > 8)*630),520+((i > 8)*70),60,60),self.ColorBTN,image = pygame.transform.scale(self.icons['eraser'].copy(),(60,60)))
 			else:
@@ -96,6 +97,9 @@ class paint():
 		for i in self.ColorBTN:
 			if i.cnum == 1:
 				i.selected = 1
+				
+		######Buttons######
+		
 		#Brush Size
 		self.BrushSize = BTN(self.win,0,(710,60,50,40),self.MenuBTN,text = str(self.grid.brush),fn = 'self.grid.brush=5;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
 		BTN(self.win,0,(670,60,30,40),self.MenuBTN,text = '<',fn = 'self.grid.brush-=1;self.BrushSize.update(newText=str(self.grid.brush))',clickable = False)
@@ -122,7 +126,7 @@ class paint():
 		BTN(self.win,0,(1050,300,90,90),self.Classes,text='Shooter',fn='self.Class = 2')
 		BTN(self.win,0,(1150,300,90,90),self.Classes,text='Brawler',fn='self.Class = 3')
 
-
+		#Creates the selection bars for character stats 
 		self.surf = pygame.Surface((280,150),pygame.SRCALPHA,32)
 		pygame.draw.rect(self.surf,GRAEY,(25,5,250,30))
 		pygame.draw.rect(self.surf,BLACK,(25,5,250,30),1)
@@ -136,7 +140,7 @@ class paint():
 		pygame.draw.circle(self.surf,BLACK,(25,70),20,1)
 		pygame.draw.circle(self.surf,GRAY,(25,120),20)
 		pygame.draw.circle(self.surf,BLACK,(25,120),20,1)
-		try:
+		try:#blits the sprite icons
 			self.surf.blit(pygame.transform.scale(self.icons['attack'].copy(),(20,20)),(15,10))
 			self.surf.blit(pygame.transform.scale(self.icons['defense'].copy(),(20,20)),(15,60))
 			self.surf.blit(pygame.transform.scale(self.icons['speed'].copy(),(20,20)),(15,110))
@@ -145,27 +149,27 @@ class paint():
 	def run(self):
 		self.playing = 1
 		self.Mouse = pygame.mouse.get_pos()
-		self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
+		self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)#Sets up mouse position so it can work with the canvas object
 		while self.playing:
 			events = pygame.event.get()
 			self.win.fill(WHITE)
 			self.buttons()
 			self.draw()
-			if self.boxUpdate:
+			if self.boxUpdate:#Updates text box if its selected with a key press
 				self.box.update(1,events)
 			else:
 				self.box.update(0)
-			if self.hold and self.grid.rect.collidepoint(self.Mouse):
-				if not(self.canvas_new):
+			if self.hold and self.grid.rect.collidepoint(self.Mouse):#Updates canvas
+				if not(self.canvas_new):#Saves canvas before changes (Allows you to undo by changing the current canvas to last object in this list)
 					self.canvas_Old.append(self.grid.save)
 					self.canvas_new = 1
 				self.Mouse2 = pygame.mouse.get_pos()
 				self.Mouse2 = (self.Mouse2[0]-self.shift,self.Mouse2[1]-self.shift)
-				if self.tool == 1:
+				if self.tool == 1:#Brush tool
 					self.grid.update([1,self.Mouse,self.Mouse2])
-				elif self.tool == 2:
+				elif self.tool == 2:#Circle tool
 					self.grid.update([2,self.Mouse])
-				elif self.tool == 3:
+				elif self.tool == 3:#Flood fill
 					for h,i in enumerate(self.body_rects_old):
 						tempRect = pygame.Rect(i)
 						if tempRect.collidepoint(self.Mouse):
@@ -175,16 +179,19 @@ class paint():
 				self.grid.update()
 			keys = pygame.key.get_pressed()
 			if ((keys[pygame.K_z] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.undo == 1) and self.canvas_Old:
+				#Undo changes if undo button is pressed or Ctrl+z is pressed
 				self.up = False
 				self.undo = 0
 				self.grid.win.blit(self.canvas_Old.pop(-1),(0,0))
 			if (keys[pygame.K_s] and (keys[pygame.K_RCTRL] or keys[pygame.K_LCTRL]) and self.up) or self.save == 1:
+				#Save character is save button is pressed or Ctrl+s is pressed
 				self.save = 0
 				self.popUp = 1
 				self.popUp_durration = 0
 				try:
-					if self.box.text == '':
+					if self.box.text == '':#Checks if text box is empty
 						0/0
+					#Saves character sprite
 					self.Savedirectory = (self.directory+'/'+str(self.box.text))
 					if not os.path.exists(self.Savedirectory):
 						os.makedirs(self.Savedirectory)
@@ -193,48 +200,36 @@ class paint():
 					f.write(str([self.Class,[self.attack,self.defense,self.speed]]))
 					f.close()
 					os.rename(self.Savedirectory+'/'+'data.txt',self.Savedirectory+'/'+"!data.trash")
-					self.good = 1
+					self.good = 1#If it successfully gets to the end it has saved properly. Now give proper feed back
 				except:
-					self.good = 0
+					self.good = 0#If it has crashed anywhere along the way it has not saved properly. Give error feed backs
 
-			for event in events:
-				if event.type == pygame.QUIT:
+			for event in events:#Loop through events
+				if event.type == pygame.QUIT:#If quit button is pressed return to GUI and tell that to quit as well
 					self.playing = 0
 					self.running = 0
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					if self.box.rect.collidepoint(pygame.mouse.get_pos()):
+					if self.box.rect.collidepoint(pygame.mouse.get_pos()):#If mouse is down and if it's also over the text box pass all events to the text box as well
 						self.boxUpdate = 1
 					else:
 						self.boxUpdate = 0
-					self.hold = True
+					self.hold = True#Set hold variable to true
 				elif event.type == pygame.MOUSEBUTTONUP:
-					if self.canvas_new:
+					if self.canvas_new:#Once the mouse button has lifted up save the canvas for undo's later on
 						self.canvas_new = 0
 					self.hold = False
 				if event.type == pygame.KEYUP:
-					self.up = True
-#					if event.key == pygame.K_p:
-#						self.new()
-					if event.key == pygame.K_RETURN:
+					self.up = True#Set hold variable to false
+					if event.key == pygame.K_RETURN:#If enter button is pressed exit the text box
 						self.boxUpdate = 0
-#					if event.key == pygame.K_f and self.grid.rect.collidepoint(self.Mouse):
-#						self.canvas_Old.append(self.grid.save)
-#						for h,i in enumerate(self.body_rects_old):
-#							tempRect = pygame.Rect(i)
-#							if tempRect.collidepoint(self.Mouse):
-#								self.grid.flood_fill((self.Mouse[0]-i[0],self.Mouse[1]-i[1]),self.body_surf[h])
-#								break
-#						else:
-#							self.grid.recursiveFill(self.Mouse)
-
 			self.Mouse = pygame.mouse.get_pos()
-			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)
+			self.Mouse = (self.Mouse[0]-self.shift,self.Mouse[1]-self.shift)#Change mouse position so it works with canvas
 			pygame.time.delay(10)
 			pygame.display.update()
 
 	def buttons(self):
 		#Button updates
-		for i in self.Classes:
+		for i in self.Classes:#Checks if player clicked on any of the selectable classes (The playable character types)
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				if self.hold==False and self.click==True:
 					self.click = False
@@ -251,19 +246,19 @@ class paint():
 					i.update(mOver = 1)
 			else:
 				i.update()
-		for i in self.ColorBTN:
-			if i.rect.collidepoint(pygame.mouse.get_pos()):
-				if self.hold:
-					for j in self.ColorBTN:
+		for i in self.ColorBTN:#Checks if the player clicked on any of the colors form the color pallet 
+			if i.rect.collidepoint(pygame.mouse.get_pos()):#Checks if mouse is over button
+				if self.hold:#Checks for button press
+					for j in self.ColorBTN:#Deslects other buttons and selects currently clicked done
 						j.update(clicked = 0)
 					i.update(clicked = 1)
-					self.grid.color = i.cnum
+					self.grid.color = i.cnum#Change color used to clicked one
 				else:
-					i.update(mOver = 1)
+					i.update(mOver = 1)#Add outline if button is hovered over
 			else:
 				i.update()
 
-		for i in self.MenuBTN:
+		for i in self.MenuBTN:#Checks if the player clicked on any of the buttons
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				if self.hold==False and self.click==True:
 					self.click = False
@@ -280,6 +275,7 @@ class paint():
 					i.update(mOver = 1)
 			else:
 				i.update()
+		#Limit the brush size to a max of 20 and a min of 1
 		if self.grid.brush > 20:
 			self.grid.brush = 20
 			self.BrushSize.update(newText=str(self.grid.brush))
@@ -287,9 +283,9 @@ class paint():
 			self.grid.brush = 1
 			self.BrushSize.update(newText=str(self.grid.brush))
 
-	def draw(self):
+	def draw(self):#Blits/draws all objects on screen
 		#Canvas
-		pygame.draw.line(self.win,BLACK,(17,17),(663,17),6)
+		pygame.draw.line(self.win,BLACK,(17,17),(663,17),6)#Canvas outlines
 		pygame.draw.line(self.win,BLACK,(662,17),(662,502),6)
 		pygame.draw.line(self.win,BLACK,(662,502),(17,502),6)
 		pygame.draw.line(self.win,BLACK,(17,503),(17,17),6)
@@ -352,12 +348,12 @@ class paint():
 			if not(self.popUp_durration):
 				self.popUp_alpha = 255
 				self.popUp_surf = pygame.Surface((1280,60))
-				if self.good:
+				if self.good:#Gives feed back if it's successfully saved
 					self.popUp_surf.fill((0,255,0))
 					self.text = self.font.render('Character has been sucessfully created',True,WHITE)
-				else:
+				else:#Gives an error if object can't be properly saved. (No name is selected or there already exists a file with this name)
 					self.popUp_surf.fill((255,0,0))
-					self.text = self.font.render('Error: Please fill in Character Name',True,WHITE)
+					self.text = self.font.render('Error: Please enter a proper Character Name',True,WHITE)
 				self.text_rect = self.text.get_rect(center=(640,30))
 				self.popUp_surf.blit(self.text,self.text_rect)
 				self.popUp_durration = 3
@@ -370,12 +366,3 @@ class paint():
 			else:
 				self.popUp = 0
 				self.popUp_durration = 0
-
-
-if __name__ == "__main__":
-	pygame.init()
-	win = pygame.display.set_mode(RES)
-	d = paint(win)
-	d.new()
-	d.run()
-	pygame.quit()

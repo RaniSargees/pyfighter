@@ -15,8 +15,4 @@ OUTPUTS:
 	SEGMENTATION FAULTS (bug in pygame's vector module, not the game)
 	SCREEN AT RESOLUTION 1280*720 DISPLAYING FIGHTING GAME
 """
-
-
-#Run
-#Starts the game
 import modules.GUI

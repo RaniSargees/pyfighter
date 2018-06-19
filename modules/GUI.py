@@ -12,7 +12,7 @@ from modules.map import *
 from modules.BTN import *
 
 class GUI():
-	def __init__(self,win,joysticks):
+	def __init__(self,win,joysticks):#init variables
 		self.win = win
 		self.joysticks = joysticks
 		self.bg = None
@@ -69,7 +69,7 @@ class GUI():
 		self.img = []
 		self.BTN_list = []
 		self.img.append([self.bg,(0,0)]) #Background image
-		self.reset_pointers()
+		self.reset_pointers()#Resets all controller positions on screen
 
 		if self.location == 0: #Main Menu
 			#Title Text
@@ -82,14 +82,8 @@ class GUI():
 							BTN(self.win,0,(840,300,300,200),self.MenuBTN,text='CREATE',fn='self.run_paint()',thickness = 2,clickable = False)],
 							[BTN(self.win,0,(140,550,600,100),self.MenuBTN,text='RECONNECT CONTROLLERS',fn='self.new(3)',thickness = 2,clickable = False),
 							BTN(self.win,0,(840,550,300,100),self.MenuBTN,text='QUIT',fn='self.playing = 0',thickness = 2,clickable = False)]]
-
-			#Insert moving character sprites(just the heads) in BG from sprites_folder
-			#Add transparency to it
-
-
 		elif self.location == 1: #Character Select screen
-			self.reset_pointers()
-			self.Sounds.play("choose")
+			self.Sounds.play("choose")#Play announcer sound 
 			#Back Button
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)]]
 			#Title Text
@@ -130,19 +124,18 @@ class GUI():
 				self.BTN_list.append(temp)
 				temp = []
 		elif self.location == 2: #Map select screen
-			self.reset_pointers()
 			self.text = self.font_LLL.render('Select your map',True,BLACK)
 			self.img.append([self.text,self.text.get_rect(center=(640,40))])
-			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)],
-							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),
-							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],
-							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]
+			#Selection buttons
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)],#Return to character select screen
+							[BTN(self.win,0,(200,200,50,200),self.MenuBTN,text='<',fn='self.map_pos-=1',clickable = False),#Change selected map 
+							BTN(self.win,0,(1030,200,50,200),self.MenuBTN,text='>',fn='self.map_pos+=1',clickable = False)],#Change selected map
+							[BTN(self.win,8,(540,600,200,100),self.MenuBTN,text='GO',fn='self.run_game()',clickable = False)]]#Start game with selected map
 		elif self.location == 3: #Controller Connection
-			self.reset_pointers()
 			self.text = self.font_LLL.render('Connect your controllers',True,BLACK)
 			self.img.append([self.text,self.text.get_rect(center=(640,80))])
-			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)],
-							[BTN(self.win,0,(390,500,500,100),self.MenuBTN,text='Reset Controllers',fn='self.new_joystick()', clickable = False)]]
+			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(0)', clickable = False)],#Back to main menu
+							[BTN(self.win,0,(390,500,500,100),self.MenuBTN,text='Reset Controllers',fn='self.new_joystick()', clickable = False)]]#Reconnect all joysticks
 			surf = pygame.Surface((1280,300),pygame.SRCALPHA,32)
 			for i in range(4):
 				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[i],(96*(i+1)+200*i,0,200,300))
@@ -151,30 +144,29 @@ class GUI():
 			for i in range(4):
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),210))])
-		elif self.location == 4:
-			self.reset_pointers()
+		elif self.location == 4:#Win/End of game screen
 			self.text = self.font_LLL.render("THE WINNER IS: "+str(self.ranks[0].name).upper(),1,BLACK)
 			self.img.append([self.text,(220,5)])
 			self.BTN_list = [[BTN(self.win,0,(5,5,200,60),self.MenuBTN,text='Back to Menu',fn='self.new(1)', clickable = False)]]
 			surf = pygame.Surface((1280,560),pygame.SRCALPHA,32)
 			temp = []
-			for h,i in enumerate(self.ranks):
+			for h,i in enumerate(self.ranks):#Loops through the ranks list and places character podium height based on weather if the won or not
 				l = i.joystick.get_id()
 				pygame.draw.rect(surf,(BLUE,RED,YELLOW, GREEN)[l],(96*(l+1)+200*l,(bool(h)*50),200,420))
 				pygame.draw.rect(surf,BLACK,(96*(l+1)+200*l,0+(bool(h)*50),200,430),3)
-				rank_text = self.font_LLL.render(('1st','2nd','3rd','4th')[h],True,((255,215,0),(192,192,192),(80,50,20),(70,130,180))[h])
-				if h == 0:
+				rank_text = self.font_LLL.render(('1st','2nd','3rd','4th')[h],True,((255,215,0),(192,192,192),(80,50,20),(70,130,180))[h])#Blit text with their position
+				if h == 0:#If they won play DAB animation
 					sprite = i.anim.DAB_ON_HATERS()
-				else:
+				else:#If they didn't win play idle animation
 					sprite = i.anim.idle()
 				self.img.append([pygame.transform.scale(sprite,(int(sprite.get_width()*1.5),int(sprite.get_height()*1.5))),(96*(l+1)+(200*l)-90,(bool(h)*50)-80)])
-				for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:
+				for k in [[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1]]:#Draw text outline (For bold effect)
 					outline = self.font_LLL.render(('1st','2nd','3rd','4th')[h],True,BLACK)
 					rect = outline.get_rect(center=(96*(l+1)+(200*l)+100+(k[0]),300+(k[1])))
 					temp.append([outline,rect])
 				temp.append([rank_text,rank_text.get_rect(center=(96*(l+1)+(200*l)+100,300))])
 			self.img.append([surf,(0,300)])
-			for i in range(len(self.ranks)):
+			for i in range(len(self.ranks)):#Draws what player they are
 				text = self.font_LLL.render('P '+str(i+1),True,BLACK)
 				self.img.append([text,text.get_rect(center=(100+(96*(i+1)+200*i),380))])
 			self.img.extend(temp)
@@ -182,7 +174,7 @@ class GUI():
 
 
 
-	def reset_pointers(self,char_name = 0):
+	def reset_pointers(self,char_name = 0):#Resets all controller pointer
 		self.pointer = []
 		self.pointerUpdate = []
 		self.joystick_button = []
@@ -203,6 +195,7 @@ class GUI():
 		self.char_selected.append(None)
 
 	def load_data(self):
+		#Loads in all required data
 		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
 		map_folder = os.path.join(game_folder, 'maps')
 		img_folder = os.path.join(game_folder, 'images')
@@ -259,11 +252,11 @@ class GUI():
 			if self.BTN_list != []:
 				self.pointers()
 				self.buttons()
-			self.dt = self.time.tick(60)/1000
+			self.dt = self.time.tick(60)/1000#Delta Time (max 60fps)
 			pygame.display.update()
 
 	def pointers(self):
-		for x in self.joysticks[:-1]:
+		for x in self.joysticks[:-1]:#Updates pointers based on controller movement. It also limits controller selection to stay within BTN_list
 			if not(self.pointerUpdate[x.get_id()]) and not(self.joystick_selected[x.get_id()]):
 				y = x.get_id()
 				if x.get_axis(0) < -.7:
@@ -284,7 +277,7 @@ class GUI():
 			elif abs(x.get_axis(0)) < .7 and abs(x.get_axis(1)) < .7:
 				self.pointerUpdate[x.get_id()] = 0
 
-		for x,y in enumerate(self.joystick_button):
+		for x,y in enumerate(self.joystick_button):#If the controller pressed the select button run the function of the pressed button
 			button = self.BTN_list[self.pointer[x][1]][self.pointer[x][0]]
 			self.joystick_button[x] = -1
 			if y == 0:
@@ -300,7 +293,7 @@ class GUI():
 
 
 	def buttons(self):
-		for i in self.MenuBTN:
+		for i in self.MenuBTN:#If the mouse selects and clicked a button run its function
 			if i.rect.collidepoint(pygame.mouse.get_pos()):
 				i.update(mOver=1,hColor=(BLUE,RED, YELLOW, GREEN)[self.joysticks[-1].get_id()])
 				if self.mDown:
@@ -332,7 +325,8 @@ class GUI():
 					self.win.blit(class_name,class_name_rect)
 					if self.once_char[i]:
 						self.once_char[i] = 0
-						self.Sounds.play(('mage','apyr','shooter','brawler')[stats[0]])
+						self.Sounds.play(('mage','apyr','shooter','brawler')[stats[0]])#Play sound effect if that char is selected
+					#Draws charcter stats
 					for k in range(stats[1]):
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*k),585,14,20))
 
@@ -343,7 +337,7 @@ class GUI():
 						pygame.draw.rect(self.win,GREEN,(35+(96*(i+1))+(200*i)+(14*m),665,14,20))
 				else:
 					self.once_char[i] = 1
-				for n in range(11):
+				for n in range(11):#Draw outline for character stats
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
@@ -361,7 +355,7 @@ class GUI():
 			else:
 				self.once = 1
 		elif self.location == 2:#Map Select Screen
-			if self.map_pos >= len(self.covers):
+			if self.map_pos >= len(self.covers):#Prevents the selected map to go beyond list of maps
 				self.map_pos = 0
 			elif self.map_pos < 0:
 				self.map_pos = len(self.covers)-1
@@ -387,7 +381,7 @@ class GUI():
 			else:
 				self.win.blit(img2,(10+(96),240))
 		
-		elif self.location == 4:
+		elif self.location == 4:#Play character sounds of the winner
 			self.counter += self.dt
 			if self.once3:
 				self.Sounds.play('winner')
@@ -399,13 +393,13 @@ class GUI():
 
 
 
-	def run_paint(self):
+	def run_paint(self):#Runs the paint program
 		p = paint(self.win,self.sprites_folder,self.icons)
 		p.new()
 		p.run()
 		self.playing = p.running
 
-	def run_game(self): #run the game
+	def run_game(self):#Runs the main game
 		self.Sounds.stop_all()
 		self.once2 = 1
 		self.once3 = 1
@@ -422,7 +416,7 @@ class GUI():
 		self.Sounds.load_music('menu')
 		pygame.mixer.music.play(-1)
 
-	def new_joystick(self):
+	def new_joystick(self):#Loads in joysticks
 		pygame.joystick.quit()
 		pygame.joystick.init()
 		joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]

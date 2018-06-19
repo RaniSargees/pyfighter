@@ -8,26 +8,26 @@ import pygame
 from settings import *
 
 class fireball(pygame.sprite.Sprite):
-	def __init__(self,char,x,y,direction):
+	def __init__(self,char,x,y,direction):#init variables
 		pygame.sprite.Sprite.__init__(self,char.game.objects)
-		char.game.Sounds.play('pew')
+		char.game.Sounds.play('pew')#play sound
 		self.char = char
-		self.loc = (x,y)
-		self.dir = direction
+		self.loc = (x,y)#Current location
+		self.dir = direction#Player direction
 		self.hitTarget = 0
 		self.count = 0
 		self.go = 0
-		self.Xspeed = 20
+		self.Xspeed = 20#Speed
 		self.Yspeed = 0
-		self.explosion = self.char.explosion
-		self.hit_list = [self,char]
+		self.explosion = self.char.explosion#Explosion effect
+		self.hit_list = [self,char]#Prevent hitting your self
 		self.hitbox = (0,0,0,0)
 		self.once = 1
 	def update(self):
 		self.hitbox = (self.loc[0]+50,self.loc[1]+50,100,100)
 		if self.hitTarget and not(self.count):
-			self.go = 1
-		elif not(self.count):
+			self.go = 1#Starts rest of object animation and collision
+		elif not(self.count):#Moves object in facing direction until it hits a target
 			self.loc = (self.loc[0] + (self.dir-0.5)*self.Xspeed,self.loc[1])
 			collisions = [(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
 			collisions.extend([(pygame.Rect((self.loc[0]+85,self.loc[1]+85,30,30)).colliderect(x.rect),x)for x in self.char.game.ground if not x.platform])
@@ -35,21 +35,21 @@ class fireball(pygame.sprite.Sprite):
 		if self.go:
 			if self.once:
 				self.once = 0
-				self.char.game.Sounds.play('explosion')
-			if self.count < self.char.special_1_len*2:
+				self.char.game.Sounds.play('explosion')#Plays explosion sfx
+			if self.count < self.char.special_1_len*2:#Plays explosion animation
 				self.char.game.win.blit(self.explosion[self.count//2],self.loc)
 				if self.count < 8:
 					collisions=[(pygame.Rect((self.loc[0]+50,self.loc[1]+50,100,100)).colliderect(x.hitbox),x)for x in self.char.game.sprites]
 				else: collisions=[]
 				self.count += 1
-				[x[1].damage(15*self.char.attack)for x in collisions if x[0]and not(x[1]in self.hit_list)]
+				[x[1].damage(15*self.char.attack)for x in collisions if x[0]and not(x[1]in self.hit_list)]#Calculates damage and knockback to colliding playerss
 				self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
 			else:
-				self.kill()
+				self.kill()#Remove object at the end
 		else:
 			self.char.game.win.blit(self.explosion[self.count],self.loc)
 		if self.loc[0] < -200 or self.loc[0] > 1280:
-			self.kill()
+			self.kill()#Remove object if it goes beyond the screen
 
 class rainbow_poop(pygame.sprite.Sprite):
 	def __init__(self, char, x, y, direction, yspeed = -5, xspeed = 2, bounce = 0):
@@ -90,6 +90,34 @@ class rainbow_poop(pygame.sprite.Sprite):
 			if not self.bounce:self.kill() #destroy if bounced too many times
 			else:self.bounce-=1;self.Yspeed*=-.8;self.Xspeed*=.8
 
+#All laser classes share similar aspects so I wont comment each one.
+
+class laser(pygame.sprite.Sprite):
+	def __init__(self,char,x,y,Xspeed,Yspeed,angle=0,hit_list=None):
+		pygame.sprite.Sprite.__init__(self, char.game.objects)
+		self.char = char
+		self.Xspeed = Xspeed#Sets Xspeed and Yspeed
+		self.Yspeed = Yspeed
+		self.loc = (x,y)#Starting location
+		self.image = pygame.transform.rotate(pygame.transform.scale(self.char.bullet[0],(40,30)),angle)#changes angle of object based on passed angle
+		self.image_rect = self.image.get_rect()
+		if hit_list == None: self.hit_list = [self.char]#If a specific hit list isn't passed give it it's own character
+		else: self.hit_list = [hit_list]
+		self.hitbox = (0,0,0,0)#Temporary hit box
+
+	def update(self):
+		self.char.game.win.blit(self.image,self.loc)#Blit object onto screen
+		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)#Move object in given speeds
+		self.hitbox = (self.loc[0]+self.image_rect[2]//4,self.loc[1]+self.image_rect[3]//4,self.image_rect[2]//2,self.image_rect[3]//2)#Calculate new hitbox
+		collisions=[(pygame.Rect(x.hitbox).colliderect(self.hitbox), x) for x in self.char.game.sprites]#Test for collisions 
+		collisions=[x[1].damage(3*self.char.attack) for x in collisions[:]if not(x[1] in self.hit_list) and x[0]]#Deal damage and knock back if they are not in hit_list
+		#Kill object if it hits a player or goes off screen
+		if self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000 or len(collisions):
+			self.kill()
+		elif [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0]:
+			self.kill()			
+			
+					
 class Tinylaser(pygame.sprite.Sprite):
 	def __init__(self,char,x,y,Xspeed,Yspeed,angle=0,hit_list=None):
 		pygame.sprite.Sprite.__init__(self, char.game.objects)
@@ -109,30 +137,6 @@ class Tinylaser(pygame.sprite.Sprite):
 		self.hitbox = (self.loc[0]+self.image_rect[2]//4,self.loc[1]+self.image_rect[3]//4,self.image_rect[2]//2,self.image_rect[3]//2)
 		collisions=[(pygame.Rect(x.hitbox).colliderect(self.hitbox), x) for x in self.char.game.sprites]
 		collisions=[x[1].damage(1*self.char.attack) for x in collisions[:]if not(x[1] in self.hit_list) and x[0]]
-		if self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000 or len(collisions):
-			self.kill()
-		elif [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0]:
-			self.kill()
-
-class laser(pygame.sprite.Sprite):
-	def __init__(self,char,x,y,Xspeed,Yspeed,angle=0,hit_list=None):
-		pygame.sprite.Sprite.__init__(self, char.game.objects)
-		self.char = char
-		self.Xspeed = Xspeed
-		self.Yspeed = Yspeed
-		self.loc = (x,y)
-		self.image = pygame.transform.rotate(pygame.transform.scale(self.char.bullet[0],(40,30)),angle)
-		self.image_rect = self.image.get_rect()
-		if hit_list == None: self.hit_list = [self.char]
-		else: self.hit_list = [hit_list]
-		self.hitbox = (0,0,0,0)
-
-	def update(self):
-		self.char.game.win.blit(self.image,self.loc)
-		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
-		self.hitbox = (self.loc[0]+self.image_rect[2]//4,self.loc[1]+self.image_rect[3]//4,self.image_rect[2]//2,self.image_rect[3]//2)
-		collisions=[(pygame.Rect(x.hitbox).colliderect(self.hitbox), x) for x in self.char.game.sprites]
-		collisions=[x[1].damage(3*self.char.attack) for x in collisions[:]if not(x[1] in self.hit_list) and x[0]]
 		if self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000 or len(collisions):
 			self.kill()
 		elif [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0]:
@@ -181,16 +185,17 @@ class Bomblaser(pygame.sprite.Sprite):
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
-		self.Yspeed += 0.5
+		self.Yspeed += 0.5#Accelerate object downwards
 		self.hitbox = (self.loc[0]+self.image_rect[2]//4,self.loc[1]+self.image_rect[3]//4,self.image_rect[2]//2,self.image_rect[3]//2)
 		collisions=[(pygame.Rect(x.hitbox).colliderect(self.hitbox), x) for x in self.char.game.sprites]
 		collisions=[(x[1].knockBack(18*self.char.attack,self.facing),x[1].damage(30*self.char.attack)) for x in collisions[:]if not(x[1] in self.hit_list) and x[0]]
-		self.angle += 4
+		self.angle += 4#Constant rotations
 		self.image = pygame.transform.rotate(self.char.bullet[0],self.angle)
 		self.image_rect = self.image.get_rect()
 		if [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0] or len(collisions):
 			self.char.game.Sounds.play('pew')
 			for i in [[0.707,0.707,-45],[0,1,-90],[-0.707,0.707,-135],[-0.707,-0.707,-180],[-1,0,135],[0,-1,90],[0.707,-0.707,45],[1,0,0]]:
+			#Creates 8 new smaller bombs and shoot them in different directions
 				M_Bomblaser(self.char,self.loc[0],self.loc[1],i[0]*10,(i[1]+1)*-10,angle = i[2],facing=self.facing,hit_list = self.hit_list)
 			self.kill()
 		elif self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000:
@@ -215,7 +220,7 @@ class M_Bomblaser(pygame.sprite.Sprite):
 	def update(self):
 		self.char.game.win.blit(self.image,self.loc)
 		self.loc = (self.loc[0]+self.Xspeed,self.loc[1]+self.Yspeed)
-		self.Yspeed += 0.5
+		self.Yspeed += 0.5#Accelerate object downwards
 		self.hitbox = (self.loc[0]+self.image_rect[2]//4,self.loc[1]+self.image_rect[3]//4,self.image_rect[2]//2,self.image_rect[3]//2)
 		collisions=[(pygame.Rect(x.hitbox).colliderect(self.hitbox), x) for x in self.char.game.sprites]
 		collisions=[(x[1].knockBack(4*self.char.attack,self.facing),x[1].damage(5*self.char.attack)) for x in collisions[:]if not(x[1] in self.hit_list) and x[0]]
@@ -224,6 +229,7 @@ class M_Bomblaser(pygame.sprite.Sprite):
 		self.image_rect = self.image.get_rect()
 		if [x for x in self.char.game.ground if pygame.Rect(x.rect).colliderect(self.hitbox) and x.platform == 0] or len(collisions):
 			for i in [[0.707,0.707,-45],[0,1,-90],[-0.707,0.707,-135],[-0.707,-0.707,-180],[-1,0,135],[0,-1,90],[0.707,-0.707,45],[1,0,0]]:
+			#Creates 8 new tiny lasers that goes in 8 different directions
 				Tinylaser(self.char,self.loc[0],self.loc[1],i[0]*40,i[1]*40,i[2],hit_list = self.hit_list)
 			self.kill()
 		elif self.loc[1] < -500 or self.loc[0] > 2080 or self.loc[0] < -800 or self.loc[1] > 1000:
