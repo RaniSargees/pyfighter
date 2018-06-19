@@ -7,50 +7,50 @@ from modules.projectiles import *
 
 class char(Char):
 	def special0(self):
-		if not self.ability_run+1:
+		if not self.ability_run+1: #if no ability running
 			self.game.Sounds.play('shortdrop')
-			self.ability_run = 0
+			self.ability_run = 0 #setup variables to run this ability continuously
 			self.release = 0
 			self.freeze = 2
 			self.ability_time = -1
-			self.fire = self.game.effects['flaming_turds'].copy()
+			self.fire = self.game.effects['flaming_turds'].copy() #setup variables for projectile
 			self.special_0_len = len(self.fire)
 			self.ability_count = -8
-	def run_special0(self):#Drops rainbow projectiles in a curve
+	def run_special0(self): #Drops rainbow projectiles in a curve
 		if self.release or (self.ability_count>0): self.ability_run=-1;self.release=0
 		self.ability_count += .2
 		rainbow_poop(self,self.x,self.y-40,self.facing, yspeed=self.ability_count, xspeed=(-self.ability_count+10)/20)
 
 	def special1(self, dir):
-		if not (self.ability_run+1 or self.ability_air_side):
+		if not (self.ability_run+1 or self.ability_air_side): #if ability can run
 			self.game.Sounds.play('dab')
-			self.ability_air_side = 1
+			self.ability_air_side = 1 #setup variables for ability
 			self.freeze=2
-			self.fire = self.game.effects['flaming_turds'].copy()
+			self.fire = self.game.effects['flaming_turds'].copy() #setup projectile surface
 			self.ability_run = 1
 			self.ability_time = 0.3
 	def run_special1(self):
-		self.hspeed += (100+(25*((self.maxMoveSpeed-200)/200)))*(self.facing*2-1)
-		self.vspeed = 0
+		self.hspeed += (100+(25*((self.maxMoveSpeed-200)/200)))*(self.facing*2-1) #dash sideways
+		self.vspeed = 0 #dont fall
 		self.gravityMultiplier = 0
-		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2))
-		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites]
+		rainbow_poop(self,self.x,self.y-40,not self.facing,yspeed=uniform(-4,4),xspeed=uniform(1,2)) #launch projectiles backwards
+		collisions=[(pygame.Rect(self.hitbox).colliderect(x.hitbox),x)for x in self.game.sprites] #deal knockback to characters in front
 		[(x[1].knockBack((abs(self.hspeed)/1000)*14*self.attack, self.facing),x[1].damage(5*self.attack))for x in collisions if x[0] and not(x[1] in self.hit_list)]
 		self.hit_list.extend([x[1] for x in collisions if x[0] and not(x[1] in self.hit_list)])
-		return self.anim.DAB_ON_HATERS()
+		return self.anim.DAB_ON_HATERS() #animate
 
 	def special2(self):
 		self.ability_air_side = 0
-		if self.ability_run+1 == 0 and not(self.ability_air):
-			self.game.Sounds.play('shortdrop')
+		if self.ability_run+1 == 0 and not(self.ability_air): #check if ability can run
+			self.game.Sounds.play('shortdrop') #setup variables for jump special
 			self.ability_air = 1
-			self.fire = self.game.effects['flaming_turds'].copy()
+			self.fire = self.game.effects['flaming_turds'].copy() #setup surface for projectile
 			self.ability_run = 2
 			self.ability_time = 0.3
 	def run_special2(self):
-		self.vspeed = -800
+		self.vspeed = -800 #jump
 		self.gravityMultiplier = 12
-		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."]
+		[rainbow_poop(self,self.x,self.y-40,randint(0,1),yspeed=5,xspeed=uniform(0,.25),bounce=1)for x in".."] #launch projectiles below
 
 
 	def special3(self):
@@ -78,8 +78,7 @@ class char(Char):
 				self.image_list.append(image)
 				self.image_x.append((randint(-60,180),randint(0,180),randint(5,20)))
 			self.img_len = len(image)
-			
-	
+
 	def run_special3(self):
 		self.count += 1
 		self.surf.fill((WHITE))
@@ -89,11 +88,9 @@ class char(Char):
 			if self.image_x[i][0] > 180:
 				self.image_x[i] = (-60,self.image_x[i][1],self.image_x[i][2])
 			self.surf.blit(j[self.count%self.img_len],(self.image_x[i][0],self.image_x[i][1]))
-			
 		pygame.draw.polygon(self.surf,WHITE,((0,0),(0,180),(60,180)))
 		pygame.draw.polygon(self.surf,WHITE,((180,0),(180,180),(120,180)))
 		self.surf.set_colorkey((WHITE))
 		self.img.append((self.surf,(self.x-90,self.y-180)))
-		
 		collisions=[(pygame.Rect((self.x-90,self.y-180,180,180)).colliderect(x.hitbox),x)for x in self.game.sprites]
 		[(x[1].knockBack(12*self.attack, x[1].x>(self.x)),x[1].damage(.5 * self.attack))for x in collisions if x[0] and x[1] != self]
