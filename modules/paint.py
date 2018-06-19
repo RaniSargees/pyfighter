@@ -12,12 +12,12 @@ from modules.text_box import *
 
 class paint():
 	def __init__(self,win,directory=None,img_lst = []):
-		self.win = win#init varibales and sprite groups
+		self.win = win#init variables and sprite groups
 		self.ColorBTN = pygame.sprite.Group()
 		self.MenuBTN = pygame.sprite.Group()
 		self.Misc = pygame.sprite.Group()
 		self.Classes = pygame.sprite.Group()
-		self.shift = 20#The space between (0,0) and the canvas
+		self.shift = 20#The space between (0,0) of the screen and (0,0) of the canvas
 		self.click = False
 		self.hold = False
 		self.up = True

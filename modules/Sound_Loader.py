@@ -5,9 +5,9 @@ import pygame, os, sys
 class Sound_Manager():
 	def __init__(self):
 		game_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
-		self.sfx_folder = os.path.join(game_folder, 'SFX')
+		self.sfx_folder = os.path.join(game_folder, 'SFX')#Loads in Sound folder
 		self.sfx_list = {}
-		for fileName in os.listdir(self.sfx_folder): #Load Sound Effects from game folder
+		for fileName in os.listdir(self.sfx_folder): #Load Sound Effects from SFX folder
 			file = os.path.join(self.sfx_folder,fileName)
 			self.sfx_list[str(fileName[:-4])] = file
 	def load(self,name): #load sound from sfx list

@@ -37,9 +37,10 @@ class Game():
 				elif "xbox" in x.get_name().lower(): shooter.char(self, x, 'test')
 				else: друг.char(self, x, 'test')
 				#Classes:
-				#	Mage
-				#	друг
-				#	Shooter
+				#   Mage
+				#   друг
+				#   Shooter
+				#   Brawler
 		else:
 			for x,y in enumerate(self.charList): #setup characters based on passed list
 				#x is num
@@ -203,7 +204,7 @@ if __name__ == "__main__": #Testing code, non-functional since re-structuring, w
 		except:joysticks.pop(joysticks.index(x)).quit()
 	if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 	else: joysticks=joysticks[:4]
-#	win = pygame.display.set_mode((1280,720), pygame.DOUBLEBUF|pygame.HWSURFACE|pygame.FULLSCREEN)
+#	win = pygame.display.set_mode((1280,720), pygame.FULLSCREEN)
 	win = pygame.display.set_mode((1280,720))
 
 	g = Game(win, joysticks, "default")

@@ -52,8 +52,8 @@ class TimedGround(Ground):
 		self.update_plat = True
 		self.speed = speed
 		self.dir = direction
-	def update(self): #blit self to screen, destroy self after time limit
-		if (1 in [pygame.Rect(x.hitbox).colliderect(self.rect) for x in self.game.sprites] and self.time) or self.time >= self.start-0.5:
+	def update(self): #blit self to screen
+		if (1 in [pygame.Rect(x.hitbox).colliderect(self.rect) for x in self.game.sprites] and self.time) or self.time >= self.start-0.5:#destroy if there are no players on the platform or time limit is exceeded
 			self.time -= self.game.dt
 			if self.time < 0:
 				self.time = 0

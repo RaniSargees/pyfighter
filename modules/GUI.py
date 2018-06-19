@@ -24,9 +24,10 @@ class GUI():
 		self.fade = 1
 		self.fade_dir = 0
 		self.map_pos = 0
-		self.BTN_list = []
+		self.BTN_list = []#List of buttons in a scene
 		self.action = 0
 		self.counter = 0
+		#variables used to run stuff only once
 		self.once = 1
 		self.once2= 1
 		self.once3= 1
@@ -445,6 +446,8 @@ for x in joysticks[:]:
 	except:joysticks.pop(joysticks.index(x)).quit()
 if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 else: joysticks=joysticks[:4]
+
+#Comment and Uncomment lines to have it be full screened or not
 win = pygame.display.set_mode((1280,720),pygame.FULLSCREEN)
 #win = pygame.display.set_mode(RES)
 
