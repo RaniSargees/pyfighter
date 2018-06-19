@@ -1,3 +1,22 @@
-#Run 
+"""
+PYFIGHTER
+
+RANI SARGEES - RYOTA PARSONS
+
+A MULTIPLAYER FIGHTING GAME WHERE THE PLAYERS DRAW THEIR OWN CHARACTERS
+
+INPUTS:
+	KEYBOARD
+	MOUSE
+	JOYSTICK (min. 1 req.)
+
+OUTPUTS:
+	ERROR MESSAGES (ignore them, they're not important)
+	SEGMENTATION FAULTS (bug in pygame's vector module, not the game)
+	SCREEN AT RESOLUTION 1280*720 DISPLAYING FIGHTING GAME
+"""
+
+
+#Run
 #Starts the game
 import modules.GUI

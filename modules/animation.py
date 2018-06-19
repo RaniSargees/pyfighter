@@ -1,5 +1,11 @@
 #		Animation
 #Returns character sprites animated
+#Uses vectors and cos/sine waves to generate movement
+#
+# PYGAME'S VECTOR IMPLEMENTATION IS BUGGY AND WILL CAUSE THIS TO SEGAULT
+# OCCASIONALY. THIS IS NOT A BUG IN THE ANIMATION MODULE, BUT IN PYGAME
+# ITSELF.
+
 
 import pygame
 from math import sin,cos,asin,acos,radians,degrees
