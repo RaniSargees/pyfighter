@@ -4,7 +4,7 @@ import pygame
 from settings import *
 class paintCanvas():
 	def __init__(self,win,color,brush):
-		self.win = win
+		self.win = win #store variables for paint canvas
 		self.color = color
 		self.brush = brush
 		self.colorList = COLORS
@@ -13,7 +13,7 @@ class paintCanvas():
 		self.win.fill((192,192,192))
 		self.save = self.win.copy()
 
-	def update(self,list = None):
+	def update(self,list = None): #update self surface (draw with brushes)
 		#List = [type,required info]
 		#types  1 = Line
 		#		2 = Circle
@@ -24,8 +24,8 @@ class paintCanvas():
 				pygame.draw.circle(self.win,self.colorList[self.color],list[1],self.brush*2)
 		self.save = self.win.copy()
 
-	def flood_fill(self,pos,win=None):
-		if win == None:
+	def flood_fill(self,pos,win=None): #iterative floot fill algorithm
+		if win == None:                #recursion was too slow and kept crashing the program
 			win = self.win
 		pxarray = pygame.PixelArray(win)
 		base = win.map_rgb(win.get_at(pos))
