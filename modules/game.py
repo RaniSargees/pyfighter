@@ -7,6 +7,7 @@
 import pygame, math, os, zipfile, sys
 from io import BytesIO
 from modules.character import *
+from modules.joystick_bot import *
 from chars import *
 from modules.map import *
 from modules.joystick_wrapper import *
@@ -49,6 +50,9 @@ class Game():
 					exec(str(['mage','друг','shooter','brawler'][y[0]])+'.char(self,self.joysticks[x],y[1],[0,3,1,2,4,5])')
 				else: #default controller mapping
 					exec(str(['mage','друг','shooter','brawler'][y[0]])+'.char(self,self.joysticks[x],y[1])')
+			#Crates AI player
+			self.joysticks.append(joystick_bot(len(self.joysticks)))
+			self.AI = mage.char(self,self.joysticks[-1],y[1])
 		#load map
 		for x in self.maps[self.map].open("map").readlines(): #read map file in .pfmap files
 			if x.strip():
@@ -133,9 +137,14 @@ class Game():
 		while self.playing:
 			keys = pygame.key.get_pressed() #get events and keys (once per frame, shared by all objects)
 			events = pygame.event.get()
-			for x in self.joysticks: #generate button press events for dummy joysticks
-				try:x.update(events)
-				except:pass #ignore errors caused by real joysticks
+			for i in self.joysticks: #generate button press events for dummy joysticks
+				try:
+					if i.get_name() == "Joystick AI":
+						i.update(events, [x for x in self.sprites],self.AI)
+						#i.update(events,[[j.x,j.y] for j in self.sprites])
+					else:
+						i.update(events)
+				except Exception as e:print(e) #ignore errors caused by real joysticks
 			self.dt = self.clock.tick(FPS) / 1000 #delta time implementation isn't complete, but it exists i guess
 			self.counter += self.dt
 			if self.counter > 3 and self.once: #play "GO" after 3 seconds pass
@@ -159,6 +168,7 @@ class Game():
 				self.playing = 0 #quit the game but not GUI
 				self.ranks = sorted([x for x in self.sprites], key=lambda x:x.dead) #sort players by time of death (breaks if game is played before jan 1 1970, or after jan 19 2038 on 32 bit systems)
 				if min(self.ranks, key=lambda x:x.dead).dead==0:self.ranks=[self.ranks[0]]+self.ranks[1:][::-1] #re-sort players since value of 0 is the winner, but larger numbers indicate higher place
+				self.joysticks.pop(-1)
 				pygame.mixer.stop() #stop music and SFX
 				pygame.mixer.music.stop()
 

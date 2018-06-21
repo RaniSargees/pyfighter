@@ -342,7 +342,7 @@ class GUI():
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),585,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),625,14,20),2)
 					pygame.draw.rect(self.win,BLACK,(35+(96*(i+1))+(200*i)+(14*n),665,14,20),2)
-			if len([x for x in self.char_selected if x != None]) == len(self.char_selected) and len(self.char_selected) > 1:
+			if len([x for x in self.char_selected if x != None]) == len(self.char_selected) and len(self.char_selected) >= 1:
 				if self.once:
 					self.once = 0
 					self.Sounds.play('slash')
@@ -448,8 +448,8 @@ if len(joysticks) < 4: joysticks.append(dummyJoystick(len(joysticks)))
 else: joysticks=joysticks[:4]
 
 #Comment and Uncomment lines to have it be full screened or not
-win = pygame.display.set_mode((1280,720),pygame.FULLSCREEN)
-#win = pygame.display.set_mode(RES)
+#win = pygame.display.set_mode((1280,720),pygame.FULLSCREEN)
+win = pygame.display.set_mode(RES)
 
 g = GUI(win,joysticks)
 g.new(0)

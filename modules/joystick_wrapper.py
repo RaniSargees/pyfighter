@@ -1,6 +1,6 @@
 import pygame
 
-class dummyJoystick(): #fake joystick class, emulates pygame joytick object using keyboard
+class dummyJoystick(): #fake joystick class, emulates pygame joystick object using keyboard
 	def __init__(self, joy, left=[pygame.K_a], right=[pygame.K_d], down=[pygame.K_s], up=[pygame.K_w],\
 	jump=[pygame.K_SPACE], heavyatk=[pygame.K_j], lightatk=[pygame.K_k], dodge=[pygame.K_l]):
 		self.joy = joy #stores joystick id
